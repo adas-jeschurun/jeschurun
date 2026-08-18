@@ -92,10 +92,6 @@ footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;paddin
 
 
 /* Native mastheads: optical, not mathematical, equalization */
-html[lang="en"] .masthead{max-width:min(790px,88vw)}
-html[lang="ru"] .masthead{max-width:min(690px,82vw)}
-html[lang="he"] .masthead{max-width:min(610px,78vw)}
-
 .publisher-seal{
   display:block;
   width:74px;
@@ -110,70 +106,70 @@ html[lang="he"] .masthead{max-width:min(610px,78vw)}
   margin:0;
 }
 @media(max-width:760px){
-  html[lang="en"] .masthead{max-width:92vw}
-  html[lang="ru"] .masthead{max-width:88vw}
-  html[lang="he"] .masthead{max-width:84vw}
   .publisher-seal{width:62px;margin-top:20px}
 }
 
 
-/* ===== Compact masthead header: definitive override ===== */
+/* ===== Jeschurun v3: compact desktop header, mobile preserved ===== */
 .site-header{
-  padding:10px 18px 12px !important;
+  padding:8px 18px 10px !important;
 }
-
 .site-header .masthead{
   display:block !important;
   width:auto !important;
-  height:clamp(105px, 15vh, 145px) !important;
-  max-height:145px !important;
-  max-width:70vw !important;
+  height:112px !important;
+  max-height:112px !important;
+  max-width:68vw !important;
   margin:0 auto !important;
   object-fit:contain !important;
   overflow:visible !important;
 }
-
 .language-switch{
-  margin-top:5px !important;
+  margin-top:2px !important;
+  gap:5px !important;
 }
-
 .language-switch a{
   padding:4px 8px !important;
+  font-size:.78rem !important;
 }
-
 .site-subtitle{
-  margin-top:8px !important;
-  font-size:.92rem !important;
-  line-height:1.32 !important;
+  margin-top:5px !important;
+  font-size:.88rem !important;
+  line-height:1.22 !important;
   max-width:760px !important;
 }
-
-/* Keep the whole blue header visually compact on desktop */
 @media (min-width:761px){
   .site-header{
-    max-height:30vh !important;
-    overflow:visible !important;
+    min-height:0 !important;
+    max-height:none !important;
   }
 }
 
-/* Mobile stays readable but compact */
+/* Keep the phone version close to the currently approved look */
 @media (max-width:760px){
   .site-header{
     padding:12px 12px 14px !important;
   }
   .site-header .masthead{
-    height:clamp(105px, 27vw, 135px) !important;
+    height:135px !important;
     max-height:135px !important;
     max-width:86vw !important;
   }
+  .language-switch{
+    margin-top:6px !important;
+  }
+  .language-switch a{
+    padding:6px 10px !important;
+    font-size:.86rem !important;
+  }
   .site-subtitle{
+    margin-top:8px !important;
     font-size:.88rem !important;
     line-height:1.28 !important;
-    margin-top:7px !important;
   }
 }
 
-/* Small publisher seal */
+/* Small publisher seal at the bottom */
 footer img.publisher-seal{
   display:block !important;
   width:56px !important;
@@ -187,4 +183,12 @@ footer img.publisher-seal{
     width:48px !important;
     max-width:48px !important;
   }
+}
+
+/* Extra cards */
+.grid.extended{
+  grid-template-columns:repeat(3,1fr);
+}
+@media(max-width:760px){
+  .grid.extended{grid-template-columns:1fr}
 }
