@@ -21,7 +21,8 @@ body.rtl{direction:rtl}
 .masthead{
   display:block;
   margin:0 auto;
-  width:auto;
+  width:min(700px,86vw);
+  max-width:700px;
   height:auto;
   object-fit:contain;
   overflow:visible;
@@ -92,10 +93,6 @@ footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;paddin
 
 
 /* Native mastheads: optical, not mathematical, equalization */
-html[lang="en"] .masthead{max-width:min(790px,88vw)}
-html[lang="ru"] .masthead{max-width:min(690px,82vw)}
-html[lang="he"] .masthead{max-width:min(610px,78vw)}
-
 .publisher-seal{
   display:block;
   width:74px;
@@ -110,8 +107,24 @@ html[lang="he"] .masthead{max-width:min(610px,78vw)}
   margin:0;
 }
 @media(max-width:760px){
-  html[lang="en"] .masthead{max-width:92vw}
-  html[lang="ru"] .masthead{max-width:88vw}
-  html[lang="he"] .masthead{max-width:84vw}
   .publisher-seal{width:62px;margin-top:20px}
+}
+
+footer img.publisher-seal{
+  display:block;
+  width:64px !important;
+  max-width:64px !important;
+  height:auto !important;
+  margin:30px auto 8px;
+  opacity:.88;
+}
+@media(max-width:760px){
+  .masthead{
+    width:90vw;
+    max-width:700px;
+  }
+  footer img.publisher-seal{
+    width:54px !important;
+    max-width:54px !important;
+  }
 }
