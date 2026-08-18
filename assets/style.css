@@ -18,15 +18,6 @@ body.rtl{direction:rtl}
   background:var(--blue);color:white;text-align:center;
   padding:32px 18px 30px;border-bottom:4px solid var(--gold)
 }
-.masthead{
-  display:block;
-  margin:0 auto;
-  width:min(700px,86vw);
-  max-width:700px;
-  height:auto;
-  object-fit:contain;
-  overflow:visible;
-}
 .site-subtitle{max-width:780px;margin:18px auto 0;color:#f2eee4;font-size:1rem}
 .language-switch{
   display:flex;justify-content:center;gap:6px;flex-wrap:wrap;
@@ -77,14 +68,6 @@ body.rtl .kicker{letter-spacing:0;text-transform:none}
 footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;padding:28px 18px;color:var(--muted);font-size:.84rem}
 @media(max-width:760px){
   .site-header{padding:24px 14px 24px}
-  .masthead{
-  display:block;
-  margin:0 auto;
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  overflow:visible;
-}
   .site-subtitle{font-size:.92rem}
   main{padding:22px 12px 45px}
   .issue-head,.issue-body{padding-left:18px;padding-right:18px}
@@ -93,38 +76,44 @@ footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;paddin
 
 
 /* Native mastheads: optical, not mathematical, equalization */
-.publisher-seal{
-  display:block;
-  width:74px;
-  height:auto;
-  margin:24px auto 7px;
-  opacity:.88;
-}
-.publisher-line{
+html[lang="en"] html[lang="ru"] html[lang="he"] .publisher-line{
   text-align:center;
   color:var(--muted);
   font-size:.82rem;
   margin:0;
 }
 @media(max-width:760px){
-  .publisher-seal{width:62px;margin-top:20px}
+  html[lang="en"] html[lang="ru"] html[lang="he"] }
+
+
+/* Definitive compact masthead sizing */
+.site-header .masthead{
+  display:block !important;
+  width:500px !important;
+  max-width:72vw !important;
+  height:auto !important;
+  margin:0 auto !important;
+  object-fit:contain !important;
+  overflow:visible !important;
 }
 
+/* Small publisher seal at the very bottom */
 footer img.publisher-seal{
-  display:block;
-  width:64px !important;
-  max-width:64px !important;
+  display:block !important;
+  width:58px !important;
+  max-width:58px !important;
   height:auto !important;
-  margin:30px auto 8px;
+  margin:30px auto 8px !important;
   opacity:.88;
 }
+
 @media(max-width:760px){
-  .masthead{
-    width:90vw;
-    max-width:700px;
+  .site-header .masthead{
+    width:82vw !important;
+    max-width:82vw !important;
   }
   footer img.publisher-seal{
-    width:54px !important;
-    max-width:54px !important;
+    width:50px !important;
+    max-width:50px !important;
   }
 }
