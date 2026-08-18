@@ -1,2 +1,2 @@
 # jeschurun
-Description можно написать: Jeschurun — articles and publications
+Jeschurun — articles and publications
