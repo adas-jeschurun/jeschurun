@@ -18,6 +18,14 @@ body.rtl{direction:rtl}
   background:var(--blue);color:white;text-align:center;
   padding:32px 18px 30px;border-bottom:4px solid var(--gold)
 }
+.masthead{
+  display:block;
+  margin:0 auto;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  overflow:visible;
+}
 .site-subtitle{max-width:780px;margin:18px auto 0;color:#f2eee4;font-size:1rem}
 .language-switch{
   display:flex;justify-content:center;gap:6px;flex-wrap:wrap;
@@ -68,6 +76,14 @@ body.rtl .kicker{letter-spacing:0;text-transform:none}
 footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;padding:28px 18px;color:var(--muted);font-size:.84rem}
 @media(max-width:760px){
   .site-header{padding:24px 14px 24px}
+  .masthead{
+  display:block;
+  margin:0 auto;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  overflow:visible;
+}
   .site-subtitle{font-size:.92rem}
   main{padding:22px 12px 45px}
   .issue-head,.issue-body{padding-left:18px;padding-right:18px}
@@ -76,44 +92,99 @@ footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;paddin
 
 
 /* Native mastheads: optical, not mathematical, equalization */
-html[lang="en"] html[lang="ru"] html[lang="he"] .publisher-line{
+html[lang="en"] .masthead{max-width:min(790px,88vw)}
+html[lang="ru"] .masthead{max-width:min(690px,82vw)}
+html[lang="he"] .masthead{max-width:min(610px,78vw)}
+
+.publisher-seal{
+  display:block;
+  width:74px;
+  height:auto;
+  margin:24px auto 7px;
+  opacity:.88;
+}
+.publisher-line{
   text-align:center;
   color:var(--muted);
   font-size:.82rem;
   margin:0;
 }
 @media(max-width:760px){
-  html[lang="en"] html[lang="ru"] html[lang="he"] }
+  html[lang="en"] .masthead{max-width:92vw}
+  html[lang="ru"] .masthead{max-width:88vw}
+  html[lang="he"] .masthead{max-width:84vw}
+  .publisher-seal{width:62px;margin-top:20px}
+}
 
 
-/* Definitive compact masthead sizing */
+/* ===== Compact masthead header: definitive override ===== */
+.site-header{
+  padding:10px 18px 12px !important;
+}
+
 .site-header .masthead{
   display:block !important;
-  width:500px !important;
-  max-width:72vw !important;
-  height:auto !important;
+  width:auto !important;
+  height:clamp(105px, 15vh, 145px) !important;
+  max-height:145px !important;
+  max-width:70vw !important;
   margin:0 auto !important;
   object-fit:contain !important;
   overflow:visible !important;
 }
 
-/* Small publisher seal at the very bottom */
-footer img.publisher-seal{
-  display:block !important;
-  width:58px !important;
-  max-width:58px !important;
-  height:auto !important;
-  margin:30px auto 8px !important;
-  opacity:.88;
+.language-switch{
+  margin-top:5px !important;
 }
 
-@media(max-width:760px){
-  .site-header .masthead{
-    width:82vw !important;
-    max-width:82vw !important;
+.language-switch a{
+  padding:4px 8px !important;
+}
+
+.site-subtitle{
+  margin-top:8px !important;
+  font-size:.92rem !important;
+  line-height:1.32 !important;
+  max-width:760px !important;
+}
+
+/* Keep the whole blue header visually compact on desktop */
+@media (min-width:761px){
+  .site-header{
+    max-height:30vh !important;
+    overflow:visible !important;
   }
+}
+
+/* Mobile stays readable but compact */
+@media (max-width:760px){
+  .site-header{
+    padding:12px 12px 14px !important;
+  }
+  .site-header .masthead{
+    height:clamp(105px, 27vw, 135px) !important;
+    max-height:135px !important;
+    max-width:86vw !important;
+  }
+  .site-subtitle{
+    font-size:.88rem !important;
+    line-height:1.28 !important;
+    margin-top:7px !important;
+  }
+}
+
+/* Small publisher seal */
+footer img.publisher-seal{
+  display:block !important;
+  width:56px !important;
+  max-width:56px !important;
+  height:auto !important;
+  margin:28px auto 7px !important;
+  opacity:.88 !important;
+}
+@media(max-width:760px){
   footer img.publisher-seal{
-    width:50px !important;
-    max-width:50px !important;
+    width:48px !important;
+    max-width:48px !important;
   }
 }
