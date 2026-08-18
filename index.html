@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jeschurun</title>
+<script>
+(function(){
+  var lang=(navigator.language||navigator.userLanguage||"en").toLowerCase();
+  if(lang.indexOf("he")===0){ location.replace("./he/"); }
+  else if(lang.indexOf("ru")===0){ location.replace("./ru/"); }
+  else if(lang.indexOf("de")===0){ location.replace("./de/"); }
+  else if(lang.indexOf("fr")===0){ location.replace("./fr/"); }
+  else { location.replace("./en/"); }
+})();
+</script>
+<noscript>
+  <p><a href="./he/">עברית</a> · <a href="./en/">EN</a> · <a href="./ru/">RU</a> · <a href="./de/">DE</a> · <a href="./fr/">FR</a></p>
+</noscript>
+</head><body></body></html>
