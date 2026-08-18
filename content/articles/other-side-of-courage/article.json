@@ -4,23 +4,79 @@
   "languages": {
     "ru": {
       "title": "Другая сторона мужества",
-      "summary": "Что делает человека нравственным, когда привычные ограничения ослабевают?"
+      "summary": "Что делает человека нравственным — внутреннее убеждение или система внешних ограничений? В обычной жизни это трудно проверить.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "Лагерь как испытание"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "Полный текст статьи будет храниться здесь и редактироваться через редактор. На главной странице публикуется только краткий анонс."
+        }
+      ]
     },
     "he": {
       "title": "צדו השני של האומץ",
-      "summary": "מה הופך אדם למוסרי כאשר מגבלות החיים הרגילות נחלשות?"
+      "summary": "מה הופך אדם למוסרי — הכרה פנימית או מערכת של מגבלות חיצוניות? בחיים הרגילים קשה לבחון זאת.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "המחנה כנסיון"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "הטקסט המלא של המאמר יישמר כאן וייערך דרך העורך. בדף הראשי יופיע רק תקציר קצר."
+        }
+      ]
     },
     "en": {
       "title": "The Other Side of Courage",
-      "summary": "What makes a person moral when the ordinary restraints of life grow weaker?"
+      "summary": "What makes a person moral — inner conviction, or a system of external restraints? In ordinary life the distinction is difficult to test.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "The Camp as a Test"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "The full article will live here and later be edited through the publishing editor. The home page will display only a short summary."
+        }
+      ]
     },
     "de": {
       "title": "Die andere Seite des Mutes",
-      "summary": "Was macht einen Menschen moralisch, wenn die gewohnten Grenzen schwächer werden?"
+      "summary": "Was macht einen Menschen moralisch — seine innere Überzeugung oder ein System äußerer Grenzen?",
+      "body": [
+        {
+          "type": "p",
+          "text": "Der vollständige Artikel wird hier gespeichert und später über den Editor bearbeitet."
+        }
+      ]
     },
     "fr": {
       "title": "L’autre face du courage",
-      "summary": "Qu’est-ce qui rend une personne morale lorsque les limites habituelles s’affaiblissent ?"
+      "summary": "Qu’est-ce qui rend une personne morale — sa conviction intérieure ou un système de contraintes extérieures ?",
+      "body": [
+        {
+          "type": "p",
+          "text": "L’article complet sera conservé ici et modifié ultérieurement à l’aide de l’éditeur."
+        }
+      ]
     }
-  }
+  },
+  "slug": "other-side-of-courage",
+  "status": "published"
 }

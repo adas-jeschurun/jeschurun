@@ -1,0 +1,65 @@
+КАК ДОБАВЛЯТЬ МАТЕРИАЛЫ В PUBLISHING V2
+
+1. PDF / EPUB выпуска
+
+Папка:
+content/issues/5786/ki-tetze/downloads/
+
+Пример:
+en.pdf
+fr.pdf
+en.epub
+fr.epub
+
+После загрузки файлов откройте:
+content/issues/5786/ki-tetze/issue.json
+
+В блоке downloads добавьте, например:
+
+"en": {
+  "pdf": "downloads/en.pdf",
+  "epub": "downloads/en.epub"
+},
+"fr": {
+  "pdf": "downloads/fr.pdf",
+  "epub": "downloads/fr.epub"
+}
+
+Если файла или записи нет, кнопки на сайте не будет.
+
+2. Полный текст статьи
+
+Откройте:
+content/articles/other-side-of-courage/article.json
+
+В нужном языке есть:
+"title"
+"summary"
+"body"
+
+summary — только карточка на главной/в каталоге.
+body — полный текст отдельной страницы статьи.
+
+Пример:
+
+"ru": {
+  "title": "Другая сторона мужества",
+  "summary": "Краткое описание...",
+  "body": [
+    {"type":"h2","text":"Заголовок раздела"},
+    {"type":"p","text":"Первый абзац полного текста."},
+    {"type":"hebrew","text":"טקסט בעברית"},
+    {"type":"quote","text":"Цитата"}
+  ]
+}
+
+3. После изменения
+
+Commit changes.
+
+GitHub Actions автоматически:
+- пересобирает главную;
+- пересобирает страницу выпуска;
+- пересобирает отдельную страницу статьи;
+- обновляет архив и каталог статей;
+- добавляет/убирает кнопки PDF/EPUB.
