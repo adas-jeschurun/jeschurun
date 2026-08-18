@@ -19,9 +19,12 @@ body.rtl{direction:rtl}
   padding:32px 18px 30px;border-bottom:4px solid var(--gold)
 }
 .masthead{
-  display:block;margin:0 auto;max-width:min(620px,78vw);
-  max-height:180px;width:auto;height:auto;
-  filter:brightness(0) invert(1)
+  display:block;
+  margin:0 auto;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  overflow:visible;
 }
 .site-subtitle{max-width:780px;margin:18px auto 0;color:#f2eee4;font-size:1rem}
 .language-switch{
@@ -73,9 +76,42 @@ body.rtl .kicker{letter-spacing:0;text-transform:none}
 footer{margin-top:48px;border-top:1px solid var(--line);text-align:center;padding:28px 18px;color:var(--muted);font-size:.84rem}
 @media(max-width:760px){
   .site-header{padding:24px 14px 24px}
-  .masthead{max-width:88vw;max-height:145px}
+  .masthead{
+  display:block;
+  margin:0 auto;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  overflow:visible;
+}
   .site-subtitle{font-size:.92rem}
   main{padding:22px 12px 45px}
   .issue-head,.issue-body{padding-left:18px;padding-right:18px}
   .grid{grid-template-columns:1fr}
+}
+
+
+/* Native mastheads: optical, not mathematical, equalization */
+html[lang="en"] .masthead{max-width:min(790px,88vw)}
+html[lang="ru"] .masthead{max-width:min(690px,82vw)}
+html[lang="he"] .masthead{max-width:min(610px,78vw)}
+
+.publisher-seal{
+  display:block;
+  width:74px;
+  height:auto;
+  margin:24px auto 7px;
+  opacity:.88;
+}
+.publisher-line{
+  text-align:center;
+  color:var(--muted);
+  font-size:.82rem;
+  margin:0;
+}
+@media(max-width:760px){
+  html[lang="en"] .masthead{max-width:92vw}
+  html[lang="ru"] .masthead{max-width:88vw}
+  html[lang="he"] .masthead{max-width:84vw}
+  .publisher-seal{width:62px;margin-top:20px}
 }
