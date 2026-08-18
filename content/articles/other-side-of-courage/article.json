@@ -1,0 +1,26 @@
+{
+  "id": "other-side-of-courage",
+  "source_issue": "5786/ki-tetze",
+  "languages": {
+    "ru": {
+      "title": "Другая сторона мужества",
+      "summary": "Что делает человека нравственным, когда привычные ограничения ослабевают?"
+    },
+    "he": {
+      "title": "צדו השני של האומץ",
+      "summary": "מה הופך אדם למוסרי כאשר מגבלות החיים הרגילות נחלשות?"
+    },
+    "en": {
+      "title": "The Other Side of Courage",
+      "summary": "What makes a person moral when the ordinary restraints of life grow weaker?"
+    },
+    "de": {
+      "title": "Die andere Seite des Mutes",
+      "summary": "Was macht einen Menschen moralisch, wenn die gewohnten Grenzen schwächer werden?"
+    },
+    "fr": {
+      "title": "L’autre face du courage",
+      "summary": "Qu’est-ce qui rend une personne morale lorsque les limites habituelles s’affaiblissent ?"
+    }
+  }
+}

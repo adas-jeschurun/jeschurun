@@ -1,0 +1,26 @@
+{
+  "id": "samson-raphael-hirsch",
+  "years": "1808–1888",
+  "languages": {
+    "ru": {
+      "name": "Рав Шимшон Рафаэль Гирш",
+      "summary": "Раввин Франкфурта и один из главных представителей Тора им дерех эрец."
+    },
+    "he": {
+      "name": "הרב שמשון רפאל הירש",
+      "summary": "רבה של פרנקפורט ומן הדמויות המרכזיות של תורה עם דרך ארץ."
+    },
+    "en": {
+      "name": "Rabbi Samson Raphael Hirsch",
+      "summary": "Rabbi of Frankfurt and a central figure of Torah im Derech Eretz."
+    },
+    "de": {
+      "name": "Rabbiner Samson Raphael Hirsch",
+      "summary": "Rabbiner in Frankfurt und eine zentrale Gestalt von Tora im Derech Eretz."
+    },
+    "fr": {
+      "name": "Rabbin Samson Raphaël Hirsch",
+      "summary": "Rabbin de Francfort et figure majeure de Torah im Derech Eretz."
+    }
+  }
+}

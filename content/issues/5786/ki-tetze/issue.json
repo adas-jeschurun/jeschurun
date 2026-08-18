@@ -1,0 +1,112 @@
+{
+  "id": "5786-ki-tetze",
+  "hebrew_year": 5786,
+  "slug": "ki-tetze",
+  "parasha_key": "ki-tetze",
+  "published_at": "2026-08-21",
+  "status": "published",
+  "sort_order": 1,
+  "languages": {
+    "he": {
+      "parasha": "כי תצא",
+      "title": "צדו השני של האומץ",
+      "kicker": "פרשת השבוע",
+      "summary": "מה הופך אדם למוסרי — הכרה פנימית או מערכת של מגבלות חיצוניות? בחיים הרגילים קשה לבחון זאת. המלחמה משנה את התנאים: האדם מקבל נשק ורשות להפעיל כוח, וחלק מן המגבלות הרגילות של החיים האזרחיים נחלשות.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "המחנה כנסיון"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "הטקסט המלא יוזן בהמשך דרך העורך."
+        }
+      ]
+    },
+    "en": {
+      "parasha": "Ki Tetze",
+      "title": "The Other Side of Courage",
+      "kicker": "Weekly Torah Portion",
+      "summary": "What makes a person moral — inner conviction, or a system of external restraints? In ordinary life the distinction is difficult to test. War changes the conditions: a person receives a weapon and the authority to use force, while many of the ordinary restraints of civilian life grow weaker.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "The Camp as a Test"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "The full text will later be entered through the editor."
+        }
+      ]
+    },
+    "ru": {
+      "parasha": "Ки Теце",
+      "title": "Другая сторона мужества",
+      "kicker": "Недельная глава",
+      "summary": "Что делает человека нравственным — внутреннее убеждение или система внешних ограничений? В обычной жизни это трудно проверить. Война меняет условия: человек получает оружие и право применять силу, а многие привычные ограничения мирной жизни ослабевают.",
+      "body": [
+        {
+          "type": "h2",
+          "text": "Лагерь как испытание"
+        },
+        {
+          "type": "hebrew",
+          "text": "כִּי תֵצֵא מַחֲנֶה עַל אֹיְבֶיךָ וְנִשְׁמַרְתָּ מִכֹּל דָּבָר רָע."
+        },
+        {
+          "type": "p",
+          "text": "Полный текст позднее будет занесён через редактор."
+        }
+      ]
+    },
+    "de": {
+      "parasha": "Ki Tetze",
+      "title": "Die andere Seite des Mutes",
+      "kicker": "Wochenabschnitt",
+      "summary": "Was macht einen Menschen moralisch — seine innere Überzeugung oder ein System äußerer Grenzen? Im gewöhnlichen Leben ist das schwer zu prüfen.",
+      "body": [
+        {
+          "type": "p",
+          "text": "Der vollständige Text wird später über den Editor eingepflegt."
+        }
+      ]
+    },
+    "fr": {
+      "parasha": "Ki Tetsé",
+      "title": "L’autre face du courage",
+      "kicker": "Paracha de la semaine",
+      "summary": "Qu’est-ce qui rend une personne morale — sa conviction intérieure ou un système de contraintes extérieures ? Dans la vie ordinaire, il est difficile de le vérifier.",
+      "body": [
+        {
+          "type": "p",
+          "text": "Le texte complet sera ajouté ultérieurement par l’éditeur."
+        }
+      ]
+    }
+  },
+  "downloads": {
+    "ru": {
+      "pdf": "downloads/ru.pdf",
+      "epub": "downloads/ru.epub"
+    },
+    "he": {
+      "pdf": "downloads/he.pdf"
+    }
+  },
+  "articles": [
+    "other-side-of-courage"
+  ],
+  "tags": [
+    "war",
+    "ethics",
+    "hirsch"
+  ]
+}

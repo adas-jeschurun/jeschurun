@@ -1,0 +1,35 @@
+ЧТО ДЕЛАТЬ СЕЙЧАС
+
+1. Скачайте и распакуйте ZIP.
+
+2. В GitHub-репозитории adas-jeschurun/jeschurun удалите старые сгенерированные файлы:
+   - index.html
+   - папки en, he, ru, de, fr
+   Старый README можно заменить.
+
+3. Загрузите В КОРЕНЬ репозитория:
+   .github/
+   assets/
+   config/
+   content/
+   scripts/
+   README.md
+
+4. Commit changes.
+
+5. GitHub → Settings → Pages.
+
+6. Build and deployment:
+   Source → GitHub Actions
+   вместо Deploy from a branch.
+
+7. Откройте вкладку Actions.
+   Должен запуститься:
+   Build and deploy Jeschurun
+
+8. Дождитесь зелёной галочки.
+
+9. Откройте прежний адрес GitHub Pages.
+
+С этого момента HTML больше не меняем вручную.
+Работаем с content/config/downloads; сайт пересобирается автоматически.

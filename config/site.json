@@ -1,0 +1,31 @@
+{
+  "site_name": "Jeschurun",
+  "publisher": "Levi Jöel Rits",
+  "publisher_place": "Haifa",
+  "publisher_email": "maky.rits@gmail.com",
+  "languages": [
+    "he",
+    "en",
+    "ru",
+    "de",
+    "fr"
+  ],
+  "default_language": "en",
+  "current_issue": "5786/ki-tetze",
+  "archive_start_year": 5786,
+  "archive_policy": "5786 archive begins with Ki Tetze; earlier parashot will appear in the next yearly cycle in the new format.",
+  "mastheads": {
+    "he": "masthead-he.png",
+    "en": "masthead-en.png",
+    "ru": "masthead-ru.png",
+    "de": "masthead-de.png",
+    "fr": "masthead-fr.png"
+  },
+  "footer_name": {
+    "he": "עדת ישורון",
+    "ru": "Адас Йешурун",
+    "en": "Adas Jeschurun",
+    "de": "Adas Jeschurun",
+    "fr": "Adas Jeschurun"
+  }
+}
