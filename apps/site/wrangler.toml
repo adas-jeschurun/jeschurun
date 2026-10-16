@@ -1,0 +1,47 @@
+name = "jes-v2-site"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "CONTENT_DB"
+database_name = "jes-v2-content"
+database_id = "2458ca38-cfc4-4b2b-bb4e-7eb5a4497a03"
+
+[[d1_databases]]
+binding = "QUESTIONS_DB"
+database_name = "jes-v2-questions"
+database_id = "4b971814-7b36-438b-9184-07c097ddd9a6"
+
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "jes-v2-analytics"
+database_id = "9b3f485d-5029-4130-96b0-657ffa1d255d"
+
+[[r2_buckets]]
+binding = "FILES"
+bucket_name = "jes-v2-files"
+
+[vars]
+TURNSTILE_SITEKEY = "0x4AAAAAAFYQA9cTdRkj-9BB"
+
+[[env.preview.d1_databases]]
+binding = "CONTENT_DB"
+database_name = "jes-v2-content-preview"
+database_id = "04cb03a2-e1c0-4114-ab9d-6f998090b07e"
+
+[[env.preview.d1_databases]]
+binding = "QUESTIONS_DB"
+database_name = "jes-v2-questions-preview"
+database_id = "ad5ca4aa-9294-4375-ac25-7d479d5c71ca"
+
+[[env.preview.d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "jes-v2-analytics-preview"
+database_id = "e7dd4598-88b5-4f5e-b2f1-0413c57642f4"
+
+[[env.preview.r2_buckets]]
+binding = "FILES"
+bucket_name = "jes-v2-files"
+
+[env.preview.vars]
+TURNSTILE_SITEKEY = "0x4AAAAAAFYQA9cTdRkj-9BB"

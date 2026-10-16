@@ -18,6 +18,15 @@
     "dev:site": "npm run sync-functions && npm run dev -w apps/site",
     "dev:admin": "npm run sync-functions && npm run dev -w apps/admin",
     "cf": "node scripts/cf.mjs",
-    "assert-isolation": "node scripts/assert-isolation.mjs"
+    "assert-isolation": "node scripts/assert-isolation.mjs",
+    "import:content": "node scripts/import-content.mjs",
+    "seed:tags": "node scripts/seed-tags.mjs",
+    "rebuild:interlinks": "node scripts/rebuild-interlinks.mjs",
+    "test:offline": "npm run sync-functions && vitest run",
+    "test:live": "node scripts/test-live.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "vitest": "^3.0.0"
   }
 }

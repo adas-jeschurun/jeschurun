@@ -1,0 +1,17 @@
+{
+  "teshuvah": { "he": "תשובה", "en": "Teshuvah", "ru": "Тшува", "de": "Teschuwa", "fr": "Techouva" },
+  "shabbat": { "he": "שבת", "en": "Shabbat", "ru": "Шаббат", "de": "Schabbat", "fr": "Chabbat" },
+  "halakha": { "he": "הלכה", "en": "Halakha", "ru": "Галаха", "de": "Halacha", "fr": "Halakha" },
+  "ethics": { "he": "מוסר", "en": "Ethics", "ru": "Этика", "de": "Ethik", "fr": "Éthique" },
+  "history": { "he": "היסטוריה", "en": "History", "ru": "История", "de": "Geschichte", "fr": "Histoire" },
+  "prayer": { "he": "תפילה", "en": "Prayer", "ru": "Молитва", "de": "Gebet", "fr": "Prière" },
+  "custom": { "he": "מנהג", "en": "Custom", "ru": "Обычай", "de": "Brauch", "fr": "Coutume" },
+  "courage": { "he": "אומץ", "en": "Courage", "ru": "Мужество", "de": "Mut", "fr": "Courage" },
+  "society": { "he": "חברה", "en": "Society", "ru": "Общество", "de": "Gesellschaft", "fr": "Société" },
+  "creation": { "he": "בריאה", "en": "Creation", "ru": "Творение", "de": "Schöpfung", "fr": "Création" },
+  "memory": { "he": "זיכרון", "en": "Memory", "ru": "Память", "de": "Erinnerung", "fr": "Mémoire" },
+  "hirsch": { "he": "הירש", "en": "Hirsch", "ru": "Гирш", "de": "Hirsch", "fr": "Hirsch" },
+  "rosh-hashanah": { "he": "ראש השנה", "en": "Rosh Hashanah", "ru": "Рош а-Шана", "de": "Rosch Haschana", "fr": "Roch Hachana" },
+  "selichot": { "he": "סליחות", "en": "Selichot", "ru": "Слихот", "de": "Slichot", "fr": "Seli'hot" },
+  "zohar": { "he": "זוהר", "en": "Zohar", "ru": "Зоар", "de": "Zohar", "fr": "Zohar" }
+}
