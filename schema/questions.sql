@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS incoming_questions (
   name TEXT NOT NULL DEFAULT '',
   reply_email TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL DEFAULT 'new',
-  policy_version TEXT NOT NULL
+  policy_version TEXT NOT NULL,
+  admin_notes TEXT NOT NULL DEFAULT ''
 );
 
 CREATE INDEX IF NOT EXISTS idx_incoming_questions_status_date

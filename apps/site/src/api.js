@@ -3,10 +3,10 @@ export async function fetchCatalog() {
   return r.json();
 }
 
-export async function fetchMaterial(kind, slug) {
-  const r = await fetch(
-    `/api/material?kind=${encodeURIComponent(kind)}&slug=${encodeURIComponent(slug)}`,
-  );
+export async function fetchMaterial(kind, slug, opts = {}) {
+  const q = new URLSearchParams({ kind, slug });
+  if (opts.adminPreview) q.set("admin_preview", opts.adminPreview);
+  const r = await fetch(`/api/material?${q}`);
   return r.json();
 }
 

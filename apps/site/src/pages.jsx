@@ -276,12 +276,14 @@ function Blocks({ body }) {
 export function MaterialPage({ kind }) {
   const { lang, ui } = useOutletContext();
   const { slug } = useParams();
+  const [searchParams] = useSearchParams();
+  const adminPreview = searchParams.get("admin_preview") || "";
   const [mat, setMat] = useState(null);
   useEffect(() => {
-    fetchMaterial(kind, slug).then(setMat);
-  }, [kind, slug]);
+    fetchMaterial(kind, slug, { adminPreview: adminPreview || undefined }).then(setMat);
+  }, [kind, slug, adminPreview]);
   useEffect(() => {
-    if (mat?.material?.id) {
+    if (mat?.material?.id && !adminPreview) {
       trackEvent({
         content_id: mat.material.id,
         content_type: kind,
@@ -290,7 +292,7 @@ export function MaterialPage({ kind }) {
         source: "",
       });
     }
-  }, [mat, kind, lang]);
+  }, [mat, kind, lang, adminPreview]);
   if (!mat) return <p>…</p>;
   if (!mat.ok) return <p>Not found</p>;
   const m = mat.material;
@@ -298,6 +300,9 @@ export function MaterialPage({ kind }) {
   const title = d.title || d.name || m.slug;
   return (
     <article className="material">
+      {adminPreview && m.status !== "published" ? (
+        <p className="meta">Preview draft · {m.status}</p>
+      ) : null}
       <h1>{title}</h1>
       {d.question ? <p className="question">{d.question}</p> : null}
       {d.summary ? <p className="summary">{d.summary}</p> : null}

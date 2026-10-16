@@ -11,6 +11,22 @@ function tableFor(kind) {
         : null;
 }
 
+function previewOk(request, env) {
+  const expected = env.ADMIN_PREVIEW_TOKEN;
+  if (!expected || !String(expected).trim()) return false;
+  const u = new URL(request.url);
+  const q = u.searchParams.get("admin_preview") || "";
+  if (q && q === expected) return true;
+  const auth = request.headers.get("authorization") || "";
+  if (/^Bearer\s+/i.test(auth) && auth.replace(/^Bearer\s+/i, "").trim() === expected) {
+    return true;
+  }
+  const cookie = request.headers.get("cookie") || "";
+  const m = cookie.match(/(?:^|;\s*)admin_token=([^;]+)/);
+  if (m && decodeURIComponent(m[1].trim()) === expected) return true;
+  return false;
+}
+
 export async function onRequestGet({ request, env }) {
   try {
     if (!env.CONTENT_DB) return json({ ok: false, error: "CONTENT_DB missing" }, 500);
@@ -26,7 +42,13 @@ export async function onRequestGet({ request, env }) {
     )
       .bind(slug)
       .first();
-    if (!row || (kind !== "bio" && row.status !== "published") || (kind === "bio" && row.status === "hidden")) {
+    const allowDraft = previewOk(request, env);
+    if (
+      !row ||
+      (!allowDraft &&
+        ((kind !== "bio" && row.status !== "published") ||
+          (kind === "bio" && row.status === "hidden")))
+    ) {
       return json({ ok: false, error: "Not found" }, 404);
     }
 
