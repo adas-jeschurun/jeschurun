@@ -29,15 +29,24 @@ describe("ui gates", () => {
     expect(pages).toMatch(/related-block/);
   });
 
-  it("noindex headers + robots", () => {
+  it("noindex scoped to pages.dev; custom domain indexable", () => {
     expect(readFileSync(resolve(root, "apps/site/public/robots.txt"), "utf8")).toMatch(
-      /Disallow: \//,
+      /Allow: \//,
     );
-    expect(readFileSync(resolve(root, "apps/site/public/_headers"), "utf8")).toMatch(
+    expect(readFileSync(resolve(root, "apps/site/public/_headers"), "utf8")).not.toMatch(
       /noindex/,
     );
-    expect(
-      readFileSync(resolve(root, "packages/functions/site/_middleware.js"), "utf8"),
-    ).toMatch(/X-Robots-Tag/);
+    const mw = readFileSync(
+      resolve(root, "packages/functions/site/_middleware.js"),
+      "utf8",
+    );
+    expect(mw).toMatch(/pages\.dev/);
+    expect(mw).toMatch(/X-Robots-Tag/);
+    const robotsFn = readFileSync(
+      resolve(root, "packages/functions/site/robots.txt.js"),
+      "utf8",
+    );
+    expect(robotsFn).toMatch(/Allow: \//);
+    expect(robotsFn).toMatch(/Disallow: \//);
   });
 });
