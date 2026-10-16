@@ -44,18 +44,13 @@ f.onsubmit=async(e)=>{
 </body>
 </html>`;
 
-function wantsHtml(request) {
-  const accept = request.headers.get("accept") || "";
-  return accept.includes("text/html");
+function isLoginShellPath(pathname) {
+  return pathname === "/" || pathname === "/index.html";
 }
 
-function isPublicPath(pathname) {
-  if (pathname === "/api/login") return true;
-  // static SPA assets must load so login redirect can reach the studio after cookie set;
-  // unauthenticated HTML navigations still get the login page below.
+function isStaticAsset(pathname) {
   if (pathname.startsWith("/assets/")) return true;
-  if (/\.(js|css|ico|svg|png|jpg|jpeg|webp|woff2?|map|txt)$/i.test(pathname)) return true;
-  return false;
+  return /\.(js|css|ico|svg|png|jpg|jpeg|webp|woff2?|map|txt)$/i.test(pathname);
 }
 
 function withSecurity(res) {
@@ -69,7 +64,21 @@ function withSecurity(res) {
   });
 }
 
-/** Fail-closed ADMIN_PREVIEW_TOKEN. Browser GET / → login HTML; API → 401 JSON. */
+function loginPage() {
+  return withSecurity(
+    new Response(LOGIN_HTML, {
+      status: 200,
+      headers: { "content-type": "text/html; charset=utf-8" },
+    }),
+  );
+}
+
+/**
+ * Fail-closed ADMIN_PREVIEW_TOKEN.
+ * Unauthenticated GET /|/index.html → HTML login (200).
+ * Unauthenticated /api/* → 401 JSON.
+ * Static assets pass through; authenticated requests continue.
+ */
 export async function onRequest(context) {
   const { request } = context;
   const url = new URL(request.url);
@@ -79,23 +88,18 @@ export async function onRequest(context) {
     return withSecurity(await context.next());
   }
 
-  if (isPublicPath(path) && !path.startsWith("/api/")) {
+  if (isStaticAsset(path)) {
     return withSecurity(await context.next());
   }
 
   const gate = requireAdmin(request, context.env);
   if (!gate.ok) {
-    if (
-      request.method === "GET" &&
-      wantsHtml(request) &&
-      !path.startsWith("/api/")
-    ) {
-      return withSecurity(
-        new Response(LOGIN_HTML, {
-          status: 401,
-          headers: { "content-type": "text/html; charset=utf-8" },
-        }),
-      );
+    if (request.method === "GET" && isLoginShellPath(path)) {
+      return loginPage();
+    }
+    // Other SPA navigations without auth also get the login shell (browser UX).
+    if (request.method === "GET" && !path.startsWith("/api/")) {
+      return loginPage();
     }
     return withSecurity(gate.response || json({ ok: false, error: "Unauthorized" }, 401));
   }
