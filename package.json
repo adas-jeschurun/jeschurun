@@ -1,0 +1,23 @@
+{
+  "name": "jeschurun",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "sync-functions": "node scripts/sync-functions.mjs",
+    "build": "npm run sync-functions && npm run build -w apps/site && npm run build -w apps/admin",
+    "build:site": "npm run sync-functions && npm run build -w apps/site",
+    "build:admin": "npm run sync-functions && npm run build -w apps/admin",
+    "dev:site": "npm run sync-functions && npm run dev -w apps/site",
+    "dev:admin": "npm run sync-functions && npm run dev -w apps/admin",
+    "cf": "node scripts/cf.mjs",
+    "assert-isolation": "node scripts/assert-isolation.mjs"
+  }
+}

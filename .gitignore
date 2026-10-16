@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+.dev.vars
+.wrangler/
+
+# Generated from packages/functions via scripts/sync-functions.mjs
+apps/site/functions/
+apps/admin/functions/
+
+# Python legacy build output
+# (keep if present)
+__pycache__/
+*.pyc

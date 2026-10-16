@@ -1,0 +1,7 @@
+{
+  "name": "@jeschurun/functions",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Pages Functions source; synced into apps/*/functions at build"
+}
