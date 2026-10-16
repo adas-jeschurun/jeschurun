@@ -42,6 +42,10 @@ describe("ui gates", () => {
     );
     expect(mw).toMatch(/pages\.dev/);
     expect(mw).toMatch(/X-Robots-Tag/);
+    expect(mw).toMatch(/www\.jeschurun\.org/);
+    expect(mw).toMatch(/Response\.redirect/);
+    expect(mw).toMatch(/301/);
+    expect(mw).toMatch(/jeschurun\.org/);
     const robotsFn = readFileSync(
       resolve(root, "packages/functions/site/robots.txt.js"),
       "utf8",
