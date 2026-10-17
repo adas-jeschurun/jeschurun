@@ -15,6 +15,7 @@ import {
   submitQuestion,
   trackEvent,
 } from "./api.js";
+import { PUBLIC_BIOS } from "./features.js";
 import { langData, useCatalog } from "./hooks.js";
 
 function formatPublishedAt(publishedAt, lang) {
@@ -61,6 +62,12 @@ export function HomePage() {
       const mapped = p.items
         .map((it) => {
           const [type, id] = String(it.key).split(":");
+          if (
+            !PUBLIC_BIOS &&
+            (type === "bio" || type === "biography")
+          ) {
+            return null;
+          }
           const list =
             type === "article"
               ? data.articles
@@ -604,7 +611,9 @@ export function SearchPage() {
     const pool = [
       ...(corpus.articles || []).map((i) => ({ item: i, kind: "article" })),
       ...(corpus.answers || []).map((i) => ({ item: i, kind: "answer" })),
-      ...(corpus.biographies || []).map((i) => ({ item: i, kind: "bio" })),
+      ...(PUBLIC_BIOS
+        ? (corpus.biographies || []).map((i) => ({ item: i, kind: "bio" }))
+        : []),
     ];
     return rankSearchCorpus(pool, { q, lang, limit: 50 });
   }, [corpus, q, lang]);

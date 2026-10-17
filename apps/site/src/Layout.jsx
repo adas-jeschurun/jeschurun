@@ -7,6 +7,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
+import { PUBLIC_BIOS } from "./features.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
 
@@ -128,7 +129,7 @@ export function Layout() {
     ["", ui.home],
     ["articles", ui.articles],
     ["ask-rav", ui.ask],
-    ["biographies", ui.bios],
+    ...(PUBLIC_BIOS ? [["biographies", ui.bios]] : []),
     ["about", ui.about],
   ];
 
@@ -227,7 +228,9 @@ export function Layout() {
             <Link to={`/${lang}/archive/`}>{ui.archive}</Link>
             <Link to={`/${lang}/articles/`}>{ui.articles}</Link>
             <Link to={`/${lang}/ask-rav/`}>{ui.ask}</Link>
-            <Link to={`/${lang}/biographies/`}>{ui.bios}</Link>
+            {PUBLIC_BIOS ? (
+              <Link to={`/${lang}/biographies/`}>{ui.bios}</Link>
+            ) : null}
             <Link to={`/${lang}/about/`}>{ui.about}</Link>
             <Link to={`/${lang}/search/`}>{ui.search}</Link>
           </nav>
