@@ -10,6 +10,7 @@ import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
 import { PUBLIC_BIOS } from "./features.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
+const PUBLISHER_EMAIL = "maky.rits@gmail.com";
 
 function pathRest(pathname) {
   const m = String(pathname || "").match(/^\/[a-z]{2}(\/.*)?$/i);
@@ -39,7 +40,21 @@ function routeUiTitle(rest, ui) {
   if (rest === "/about/" || rest === "/about") return ui.about;
   if (rest === "/archive/" || rest === "/archive") return ui.archive;
   if (rest === "/search/" || rest === "/search") return ui.search;
+  if (rest === "/terms/" || rest === "/terms") return ui.terms;
+  if (rest === "/privacy/" || rest === "/privacy") return ui.privacy;
+  if (rest === "/cookies/" || rest === "/cookies") return ui.cookies;
   return null;
+}
+
+function injectJsonLd(id, data) {
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("script");
+    el.type = "application/ld+json";
+    el.id = id;
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
 }
 
 function useSeoHead(lang) {
@@ -104,10 +119,42 @@ function useSeoHead(lang) {
       document.head.appendChild(meta);
     }
 
+    injectJsonLd("jes-ld-org", {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: ui.publisher,
+      alternateName: "Jeschurun",
+      url: SITE_ORIGIN,
+      email: PUBLISHER_EMAIL,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Haifa",
+        addressCountry: "IL",
+      },
+      logo: `${SITE_ORIGIN}/assets/publisher-seal.png`,
+    });
+    injectJsonLd("jes-ld-website", {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Jeschurun",
+      url: SITE_ORIGIN,
+      inLanguage: LANGS,
+      publisher: {
+        "@type": "Organization",
+        name: ui.publisher,
+        url: SITE_ORIGIN,
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${SITE_ORIGIN}/${lang}/search/?q={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    });
+
     return () => {
       document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
     };
-  }, [lang, location.pathname, location.search]);
+  }, [lang, location.pathname, location.search, ui]);
 }
 
 export function Layout() {
@@ -221,21 +268,33 @@ export function Layout() {
           <img
             className="publisher-seal"
             src="/assets/publisher-seal.png"
-            alt=""
+            alt={ui.publisher}
           />
-          <nav className="footer-nav" aria-label="Footer">
-            <Link to={`/${lang}/`}>{ui.home}</Link>
-            <Link to={`/${lang}/archive/`}>{ui.archive}</Link>
-            <Link to={`/${lang}/articles/`}>{ui.articles}</Link>
-            <Link to={`/${lang}/ask-rav/`}>{ui.ask}</Link>
-            {PUBLIC_BIOS ? (
-              <Link to={`/${lang}/biographies/`}>{ui.bios}</Link>
-            ) : null}
-            <Link to={`/${lang}/about/`}>{ui.about}</Link>
-            <Link to={`/${lang}/search/`}>{ui.search}</Link>
-          </nav>
+          <div className="footer-columns footer-nav">
+            <nav className="footer-col" aria-label={ui.footerExplore}>
+              <h2 className="footer-col-title">{ui.footerExplore}</h2>
+              <Link to={`/${lang}/articles/`}>{ui.articles}</Link>
+              <Link to={`/${lang}/archive/`}>{ui.archive}</Link>
+              <Link to={`/${lang}/ask-rav/`}>{ui.ask}</Link>
+              <Link to={`/${lang}/search/`}>{ui.search}</Link>
+            </nav>
+            <nav className="footer-col" aria-label={ui.footerAbout}>
+              <h2 className="footer-col-title">{ui.footerAbout}</h2>
+              <Link to={`/${lang}/`}>{ui.home}</Link>
+              <Link to={`/${lang}/about/`}>{ui.about}</Link>
+            </nav>
+            <nav className="footer-col" aria-label={ui.footerLegal}>
+              <h2 className="footer-col-title">{ui.footerLegal}</h2>
+              <Link to={`/${lang}/terms/`}>{ui.terms}</Link>
+              <Link to={`/${lang}/privacy/`}>{ui.privacy}</Link>
+              <Link to={`/${lang}/cookies/`}>{ui.cookies}</Link>
+            </nav>
+          </div>
           <p className="publisher-line">
-            {ui.publisher} · Haifa
+            {ui.publisher} · {ui.publisherPlace || "Haifa"}
+          </p>
+          <p className="copyright-line">
+            {ui.copyright} {new Date().getFullYear()} {ui.publisher}
           </p>
         </footer>
       </div>

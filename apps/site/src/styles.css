@@ -412,16 +412,52 @@ a.content-card:focus-visible h3,
 }
 
 .site-footer {
-  margin-top: 48px; padding: 28px 8px 12px; border-top: 1px solid var(--line);
+  margin-top: 48px; padding: 28px 8px 16px; border-top: 1px solid var(--line);
   text-align: center;
 }
-.publisher-seal { width: 72px; height: auto; opacity: .9; }
-.footer-nav {
-  display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center;
-  margin: 14px 0;
+.publisher-seal { width: 72px; height: auto; opacity: .9; margin-bottom: 8px; }
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 28px;
+  text-align: start;
+  margin: 18px auto 10px;
+  max-width: 720px;
 }
-.footer-nav a { color: var(--blue-dark); text-decoration: none; font-size: .9rem; }
-.publisher-line { opacity: .75; font-size: .9rem; }
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+.footer-col-title {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+}
+.footer-col a {
+  color: var(--blue-dark);
+  text-decoration: none;
+  font-size: .9rem;
+  line-height: 1.45;
+}
+.footer-col a:hover { text-decoration: underline; }
+.publisher-line { opacity: .8; font-size: .9rem; margin: 14px 0 4px; }
+.copyright-line { opacity: .7; font-size: .85rem; margin: 0; }
+.legal-page p { max-width: 42rem; line-height: 1.55; }
+.about-eeat { max-width: 42rem; }
+.about-eeat p { line-height: 1.55; }
+.about-eeat .about-meta { opacity: .85; font-size: .95rem; }
+body.rtl .footer-columns { text-align: start; }
+@media (max-width: 640px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 280px;
+  }
+}
 
 .sort-control { display: block; margin: 8px 0 16px; }
 .tag-filter {

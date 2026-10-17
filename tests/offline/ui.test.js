@@ -13,6 +13,7 @@ describe("ui gates", () => {
 
   it("archive in footer not main nav", () => {
     const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/footer-columns/);
     expect(layout).toMatch(/footer-nav/);
     const navStart = layout.indexOf("const nav = [");
     const navEnd = layout.indexOf("];", navStart);
@@ -21,6 +22,10 @@ describe("ui gates", () => {
     expect(navBlock).not.toMatch(/current/);
     expect(layout).toMatch(/\/\$\{lang\}\/archive\//);
     expect(layout).not.toMatch(/\/\$\{lang\}\/current\//);
+    expect(layout).toMatch(/\/\$\{lang\}\/terms\//);
+    expect(layout).toMatch(/\/\$\{lang\}\/privacy\//);
+    expect(layout).toMatch(/\/\$\{lang\}\/cookies\//);
+    expect(layout).toMatch(/application\/ld\+json/);
   });
 
   it("current route removed; issue card on home", () => {

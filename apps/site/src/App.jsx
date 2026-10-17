@@ -10,6 +10,7 @@ import {
   BiosPage,
   HomePage,
   IssuePage,
+  LegalPage,
   MaterialPage,
   RedirectHome,
   SearchPage,
@@ -39,6 +40,9 @@ export function App() {
           element={PUBLIC_BIOS ? <BiosPage /> : <RedirectLangHome />}
         />
         <Route path="about" element={<AboutPage />} />
+        <Route path="terms" element={<LegalPage kind="terms" />} />
+        <Route path="privacy" element={<LegalPage kind="privacy" />} />
+        <Route path="cookies" element={<LegalPage kind="cookies" />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="issue/:year/:slug" element={<IssuePage />} />
         <Route path="article/:slug" element={<MaterialPage kind="article" />} />

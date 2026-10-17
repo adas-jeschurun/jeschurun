@@ -3,6 +3,7 @@ import { Link, useOutletContext, useParams, useSearchParams } from "react-router
 import {
   ARTICLES_PAGE_SIZE,
   LANGS,
+  LEGAL,
   rankSearchCorpus,
   sortArticles,
   normalizeSort,
@@ -17,6 +18,8 @@ import {
 } from "./api.js";
 import { PUBLIC_BIOS } from "./features.js";
 import { langData, useCatalog } from "./hooks.js";
+
+const SITE_ORIGIN = "https://jeschurun.org";
 
 function formatPublishedAt(publishedAt, lang) {
   if (!publishedAt) return null;
@@ -438,6 +441,44 @@ export function MaterialPage({ kind }) {
       document.title = "Jeschurun";
     };
   }, [title]);
+  useEffect(() => {
+    const id = "jes-ld-article";
+    if (kind !== "article" || !m || !title) {
+      document.getElementById(id)?.remove();
+      return undefined;
+    }
+    let el = document.getElementById(id);
+    if (!el) {
+      el = document.createElement("script");
+      el.type = "application/ld+json";
+      el.id = id;
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      headline: title,
+      description: d.summary || "",
+      inLanguage: lang,
+      datePublished: m.published_at || undefined,
+      mainEntityOfPage: `${SITE_ORIGIN}/${lang}/article/${m.slug}/`,
+      author: {
+        "@type": "Organization",
+        name: ui.publisher,
+      },
+      publisher: {
+        "@type": "Organization",
+        name: ui.publisher,
+        logo: {
+          "@type": "ImageObject",
+          url: `${SITE_ORIGIN}/assets/publisher-seal.png`,
+        },
+      },
+    });
+    return () => {
+      document.getElementById(id)?.remove();
+    };
+  }, [kind, m, title, d.summary, lang, ui.publisher]);
   if (!mat) return <p>…</p>;
   if (!mat.ok || !m) return <p>Not found</p>;
   return (
@@ -590,17 +631,66 @@ export function BiosPage() {
 
 export function AboutPage() {
   const { lang, ui } = useOutletContext();
-  const text = {
-    he: "Jeschurun הוא כתב עת תורני של עדת ישורון בחיפה.",
-    en: "Jeschurun is a Torah journal of Adas Jeschurun in Haifa.",
-    ru: "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе.",
-    de: "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa.",
-    fr: "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa.",
+  const copy = {
+    he: {
+      lead: "Jeschurun הוא כתב עת תורני של עדת ישורון בחיפה.",
+      tradition:
+        "החומרים נשענים על תורתו של מורינו הרב שמשון רפאל הירש זצ״ל ועל ממשיכי דרכו.",
+      publisher: "המוציא לאור: עדת ישורון, חיפה.",
+      contact: "ליצירת קשר עם המערכת: maky.rits@gmail.com",
+    },
+    en: {
+      lead: "Jeschurun is a Torah journal of Adas Jeschurun in Haifa.",
+      tradition:
+        "Its materials draw on the teachings of Rabbi Samson Raphael Hirsch, of blessed memory, and of those who continue in his path.",
+      publisher: "Publisher: Adas Jeschurun, Haifa.",
+      contact: "Editorial contact: maky.rits@gmail.com",
+    },
+    ru: {
+      lead: "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе.",
+      tradition:
+        "Материалы опираются на учение рава Шимшона Рафаэля Гирша, благословенной памяти, и продолжателей его пути.",
+      publisher: "Издатель: Адас Йешурун, Хайфа.",
+      contact: "Связь с редакцией: maky.rits@gmail.com",
+    },
+    de: {
+      lead: "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa.",
+      tradition:
+        "Die Beiträge stützen sich auf die Lehre Rabbiner Samson Raphael Hirschs sel. A. und derer, die seinen Weg fortführen.",
+      publisher: "Herausgeber: Adas Jeschurun, Haifa.",
+      contact: "Redaktion: maky.rits@gmail.com",
+    },
+    fr: {
+      lead: "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa.",
+      tradition:
+        "Les textes s’appuient sur l’enseignement du rabbin Samson Raphaël Hirsch, de mémoire bénie, et de ceux qui poursuivent sa voie.",
+      publisher: "Éditeur : Adas Jeschurun, Haïfa.",
+      contact: "Rédaction : maky.rits@gmail.com",
+    },
   };
+  const t = copy[lang] || copy.en;
   return (
-    <div>
+    <div className="about-eeat">
       <h1>{ui.about}</h1>
-      <p>{text[lang] || text.en}</p>
+      <p>{t.lead}</p>
+      <p>{t.tradition}</p>
+      <p className="about-meta">{t.publisher}</p>
+      <p className="about-meta">{t.contact}</p>
+    </div>
+  );
+}
+
+export function LegalPage({ kind }) {
+  const { lang, ui } = useOutletContext();
+  const title =
+    kind === "privacy" ? ui.privacy : kind === "cookies" ? ui.cookies : ui.terms;
+  const paras = LEGAL[kind]?.[lang] || LEGAL[kind]?.en || [];
+  return (
+    <div className="legal-page">
+      <h1>{title}</h1>
+      {paras.map((p, i) => (
+        <p key={i}>{p}</p>
+      ))}
     </div>
   );
 }
