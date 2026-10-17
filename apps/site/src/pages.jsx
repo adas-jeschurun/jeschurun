@@ -136,41 +136,48 @@ function IssueView({ issue, lang, ui, featured = false }) {
   const fileBase = `content/issues/${issue.hebrew_year}/${issue.slug}`;
   return (
     <section className={`issue-card${featured ? " issue-card--home" : ""}`}>
-      <h1 className="issue-card-title">
-        {d.title || `${issue.hebrew_year} / ${issue.slug}`}
-      </h1>
-      {(d.parasha || issue.parasha_key) && (
-        <p className="issue-card-parasha">{d.parasha || issue.parasha_key}</p>
-      )}
-      {d.summary ? <p className="issue-card-lead">{d.summary}</p> : null}
-      {(dl.pdf || dl.epub) && (
-        <p className="issue-card-downloads">
-          {ui.download}:{" "}
-          {dl.pdf ? (
-            <a
-              href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.pdf}`)}`}
-            >
-              PDF
-            </a>
-          ) : null}
-          {dl.pdf && dl.epub ? " " : null}
-          {dl.epub ? (
-            <a
-              href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.epub}`)}`}
-            >
-              EPUB
-            </a>
-          ) : null}
-        </p>
-      )}
-      <h2 className="issue-card-toc">{ui.inIssue}</h2>
-      <div className="content-list issue-card-list">
-        {articles.map((a) => (
-          <Card key={a.id} lang={lang} item={a} kind="article" />
-        ))}
-        {answers.map((a) => (
-          <Card key={a.id} lang={lang} item={a} kind="answer" />
-        ))}
+      <header className="issue-card-head">
+        <h1 className="issue-card-title">
+          {d.title || `${issue.hebrew_year} / ${issue.slug}`}
+        </h1>
+        {(d.parasha || issue.parasha_key) && (
+          <p className="issue-card-parasha">{d.parasha || issue.parasha_key}</p>
+        )}
+        {d.summary ? <p className="issue-card-lead">{d.summary}</p> : null}
+        {(dl.pdf || dl.epub) && (
+          <div className="issue-card-downloads">
+            <span className="issue-card-downloads-label">{ui.download}</span>
+            <div className="issue-card-download-links">
+              {dl.pdf ? (
+                <a
+                  className="issue-card-dl"
+                  href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.pdf}`)}`}
+                >
+                  PDF
+                </a>
+              ) : null}
+              {dl.epub ? (
+                <a
+                  className="issue-card-dl"
+                  href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.epub}`)}`}
+                >
+                  EPUB
+                </a>
+              ) : null}
+            </div>
+          </div>
+        )}
+      </header>
+      <div className="issue-card-body">
+        <h2 className="issue-card-toc">{ui.inIssue}</h2>
+        <div className="content-list issue-card-list">
+          {articles.map((a) => (
+            <Card key={a.id} lang={lang} item={a} kind="article" />
+          ))}
+          {answers.map((a) => (
+            <Card key={a.id} lang={lang} item={a} kind="answer" />
+          ))}
+        </div>
       </div>
     </section>
   );
