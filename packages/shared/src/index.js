@@ -47,6 +47,118 @@ export function searchTokens(q) {
     .filter(Boolean);
 }
 
+/** Articles list page size (tag filter applies before pagination). */
+export const ARTICLES_PAGE_SIZE = 20;
+
+/**
+ * Score one language variant of a corpus item.
+ * Weights: exact phrase in title ≫ title token ≫ summary ≫ body;
+ * bonus for current lang; light decay by published_at age.
+ * @returns {{ score: number, andOk: boolean } | null}
+ */
+export function scoreSearchHit({
+  title,
+  summary,
+  body,
+  publishedAt,
+  tokens,
+  query,
+  isCurrentLang,
+}) {
+  const nTitle = normalizeSearchText(title);
+  const nSummary = normalizeSearchText(summary);
+  const nBody = normalizeSearchText(body);
+  const nq = normalizeSearchText(query);
+  if (!tokens.length) return null;
+
+  const inFields = (t) =>
+    nTitle.includes(t) || nSummary.includes(t) || nBody.includes(t);
+  const andOk = tokens.every(inFields);
+  const orOk = tokens.some(inFields);
+  if (!andOk && !orOk) return null;
+
+  let score = 0;
+  if (nq.length >= 2) {
+    if (nTitle.includes(nq)) score += 100;
+    else if (nSummary.includes(nq)) score += 35;
+    else if (nBody.includes(nq)) score += 8;
+  }
+  for (const t of tokens) {
+    if (nTitle.includes(t)) score += 25;
+    if (nSummary.includes(t)) score += 8;
+    if (nBody.includes(t)) score += 2;
+  }
+  if (isCurrentLang) score += 20;
+  if (andOk) score += 40;
+
+  if (publishedAt) {
+    const ms = Date.parse(publishedAt);
+    if (!Number.isNaN(ms)) {
+      const ageYears = Math.max(0, (Date.now() - ms) / (365.25 * 86400000));
+      score += Math.max(0, 12 * Math.exp(-ageYears / 3));
+    }
+  }
+
+  return { score, andOk };
+}
+
+/**
+ * Rank search corpus: AND matches first, OR fallback if empty; top `limit`.
+ * @param {{ item: object, kind: string }[]} pool
+ * @param {{ q: string, lang: string, limit?: number }} opts
+ */
+export function rankSearchCorpus(pool, { q, lang, limit = 50 }) {
+  const tokens = searchTokens(q);
+  if (!tokens.length) return [];
+
+  function gather(requireAnd) {
+    const out = [];
+    for (const x of pool) {
+      const matches = [];
+      for (const l of LANGS) {
+        const d = x.item.languages?.[l];
+        if (!d) continue;
+        const hit = scoreSearchHit({
+          title: d.title || d.name || "",
+          summary: d.summary || d.question || "",
+          body: (d.body || []).map((b) => b.text || "").join(" "),
+          publishedAt: x.item.published_at,
+          tokens,
+          query: q,
+          isCurrentLang: l === lang,
+        });
+        if (!hit) continue;
+        if (requireAnd && !hit.andOk) continue;
+        matches.push({
+          item: x.item,
+          kind: x.kind,
+          lang: l,
+          score: hit.score,
+          title: d.title || d.name,
+          summary: d.summary,
+        });
+      }
+      if (!matches.length) continue;
+      matches.sort((a, b) => b.score - a.score);
+      const best = matches[0];
+      const prefer = matches.find((m) => m.lang === lang) || best;
+      out.push({
+        ...best,
+        score: best.score,
+        displayLang: prefer.lang,
+        title: prefer.title,
+        summary: prefer.summary,
+        lang: prefer.lang,
+      });
+    }
+    out.sort((a, b) => b.score - a.score);
+    return out.slice(0, limit);
+  }
+
+  const andHits = gather(true);
+  return andHits.length ? andHits : gather(false);
+}
+
 export function sortArticles(list, sort, lang) {
   const mode = normalizeSort(sort);
   const titleOf = (a) =>
@@ -115,6 +227,8 @@ export const UI = {
     sortDateDesc: "Сначала новые",
     sortDateAsc: "Сначала старые",
     sortTitleAsc: "По названию",
+    tagAll: "Все темы",
+    pagination: "Страницы",
     publisher: "Адас Йешурун",
   },
   he: {
@@ -160,6 +274,8 @@ export const UI = {
     sortDateDesc: "חדשים תחילה",
     sortDateAsc: "ישנים תחילה",
     sortTitleAsc: "לפי כותרת",
+    tagAll: "כל הנושאים",
+    pagination: "עמודים",
     publisher: "עדת ישורון",
   },
   en: {
@@ -205,6 +321,8 @@ export const UI = {
     sortDateDesc: "Newest first",
     sortDateAsc: "Oldest first",
     sortTitleAsc: "By title",
+    tagAll: "All topics",
+    pagination: "Pages",
     publisher: "Adas Jeschurun",
   },
   de: {
@@ -250,6 +368,8 @@ export const UI = {
     sortDateDesc: "Neueste zuerst",
     sortDateAsc: "Älteste zuerst",
     sortTitleAsc: "Nach Titel",
+    tagAll: "Alle Themen",
+    pagination: "Seiten",
     publisher: "Adas Jeschurun",
   },
   fr: {
@@ -295,6 +415,8 @@ export const UI = {
     sortDateDesc: "Plus récents",
     sortDateAsc: "Plus anciens",
     sortTitleAsc: "Par titre",
+    tagAll: "Tous les sujets",
+    pagination: "Pages",
     publisher: "Adas Jeschurun",
   },
 };

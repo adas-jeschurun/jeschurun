@@ -27,7 +27,11 @@ export async function onRequest(context) {
 
   const res = await context.next();
   const headers = new Headers(res.headers);
-  if (isPagesDevHost(host)) {
+  const path = new URL(context.request.url).pathname;
+  const isArchive = /^\/(he|en|ru|de|fr)\/archive(\/|$)/i.test(path);
+  if (isArchive) {
+    headers.set("X-Robots-Tag", "noindex, follow");
+  } else if (isPagesDevHost(host)) {
     headers.set("X-Robots-Tag", "noindex, nofollow");
   }
   headers.set("X-Content-Type-Options", "nosniff");

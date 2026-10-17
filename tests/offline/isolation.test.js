@@ -44,4 +44,50 @@ describe("shared sort/search", async () => {
       shared.normalizeSearchText("בראשית"),
     );
   });
+  it("rankSearchCorpus prefers phrase title and AND then OR", () => {
+    const pool = [
+      {
+        kind: "article",
+        item: {
+          id: "1",
+          slug: "a",
+          published_at: "2024-01-01",
+          languages: {
+            en: { title: "Torah and mitzvot", summary: "about law", body: [] },
+            ru: { title: "Тора", summary: "закон", body: [] },
+          },
+        },
+      },
+      {
+        kind: "article",
+        item: {
+          id: "2",
+          slug: "b",
+          published_at: "2020-01-01",
+          languages: {
+            en: {
+              title: "Other",
+              summary: "mentions Torah elsewhere",
+              body: [{ text: "Torah only in body" }],
+            },
+          },
+        },
+      },
+    ];
+    const ranked = shared.rankSearchCorpus(pool, {
+      q: "Torah mitzvot",
+      lang: "en",
+      limit: 50,
+    });
+    expect(ranked[0].item.id).toBe("1");
+    expect(ranked.length).toBeGreaterThanOrEqual(1);
+    const orOnly = shared.rankSearchCorpus(pool, {
+      q: "mitzvot nowhereelse",
+      lang: "en",
+    });
+    expect(orOnly.some((r) => r.item.id === "1")).toBe(true);
+  });
+  it("ARTICLES_PAGE_SIZE is 20", () => {
+    expect(shared.ARTICLES_PAGE_SIZE).toBe(20);
+  });
 });

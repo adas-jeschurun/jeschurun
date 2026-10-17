@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import {
+  ARTICLES_PAGE_SIZE,
   LANGS,
-  normalizeSearchText,
-  searchTokens,
+  rankSearchCorpus,
   sortArticles,
   normalizeSort,
 } from "@jeschurun/shared";
@@ -177,11 +177,13 @@ export function ArchivePage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
   if (!data?.ok) return <p>…</p>;
+  const currentId = data.currentIssue?.id;
+  const archived = (data.issues || []).filter((iss) => iss.id !== currentId);
   return (
     <div>
       <h1>{ui.archive}</h1>
       <div className="content-list">
-        {(data.issues || []).map((iss) => {
+        {archived.map((iss) => {
           const d = langData(iss.languages, lang);
           return (
             <article key={iss.id} className="content-card">
@@ -215,8 +217,54 @@ export function ArticlesPage() {
   const { data } = useCatalog();
   const [sp, setSp] = useSearchParams();
   const sort = normalizeSort(sp.get("sort"));
+  const tagFilter = (sp.get("tag") || "").trim();
+  const pageRaw = Math.max(1, Number.parseInt(sp.get("page") || "1", 10) || 1);
+  const tagsByArticle = data?.tagsByArticle || {};
+
+  const tagCatalog = useMemo(() => {
+    const map = new Map();
+    for (const list of Object.values(tagsByArticle)) {
+      for (const t of list || []) {
+        if (t?.slug && !map.has(t.slug)) map.set(t.slug, t);
+      }
+    }
+    return [...map.values()].sort((a, b) =>
+      String(a.labels?.[lang] || a.slug).localeCompare(
+        String(b.labels?.[lang] || b.slug),
+        lang,
+      ),
+    );
+  }, [tagsByArticle, lang]);
+
+  const filtered = useMemo(() => {
+    if (!data?.ok) return [];
+    let list = data.articles || [];
+    if (tagFilter) {
+      list = list.filter((a) =>
+        (tagsByArticle[a.id] || a.tags || []).some((t) => t.slug === tagFilter),
+      );
+    }
+    return sortArticles(list, sort, lang);
+  }, [data, tagsByArticle, tagFilter, sort, lang]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ARTICLES_PAGE_SIZE));
+  const page = Math.min(pageRaw, totalPages);
+  const slice = filtered.slice(
+    (page - 1) * ARTICLES_PAGE_SIZE,
+    page * ARTICLES_PAGE_SIZE,
+  );
+
+  function patchParams(mutate) {
+    const next = new URLSearchParams(sp);
+    mutate(next);
+    if (!next.get("sort") || next.get("sort") === "date_desc") next.delete("sort");
+    if (!next.get("tag")) next.delete("tag");
+    if (!next.get("page") || next.get("page") === "1") next.delete("page");
+    setSp(next);
+  }
+
   if (!data?.ok) return <p>…</p>;
-  const list = sortArticles(data.articles || [], sort, lang);
+
   return (
     <div>
       <h1>{ui.articles}</h1>
@@ -225,9 +273,10 @@ export function ArticlesPage() {
         <select
           value={sort}
           onChange={(e) => {
-            const next = new URLSearchParams(sp);
-            next.set("sort", e.target.value);
-            setSp(next);
+            patchParams((next) => {
+              next.set("sort", e.target.value);
+              next.delete("page");
+            });
           }}
         >
           <option value="date_desc">{ui.sortDateDesc}</option>
@@ -235,11 +284,62 @@ export function ArticlesPage() {
           <option value="title_asc">{ui.sortTitleAsc}</option>
         </select>
       </label>
+      {tagCatalog.length ? (
+        <div className="tag-filter" role="group" aria-label={ui.tags}>
+          <button
+            type="button"
+            className={`tag-chip${!tagFilter ? " active" : ""}`}
+            onClick={() =>
+              patchParams((next) => {
+                next.delete("tag");
+                next.delete("page");
+              })
+            }
+          >
+            {ui.tagAll}
+          </button>
+          {tagCatalog.map((t) => (
+            <button
+              key={t.slug}
+              type="button"
+              className={`tag-chip${tagFilter === t.slug ? " active" : ""}`}
+              onClick={() =>
+                patchParams((next) => {
+                  next.set("tag", t.slug);
+                  next.delete("page");
+                })
+              }
+            >
+              {t.labels?.[lang] || t.slug}
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="content-list">
-        {list.map((a) => (
+        {slice.map((a) => (
           <Card key={a.id} lang={lang} item={a} kind="article" />
         ))}
       </div>
+      {totalPages > 1 ? (
+        <nav className="pagination" aria-label={ui.pagination}>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`page-num${n === page ? " active" : ""}`}
+              aria-current={n === page ? "page" : undefined}
+              onClick={() =>
+                patchParams((next) => {
+                  if (n <= 1) next.delete("page");
+                  else next.set("page", String(n));
+                })
+              }
+            >
+              {n}
+            </button>
+          ))}
+        </nav>
+      ) : null}
     </div>
   );
 }
@@ -316,9 +416,13 @@ export function MaterialPage({ kind }) {
         <p className="tags">
           {ui.tags}:{" "}
           {m.tags.map((t) => (
-            <span key={t.slug} className="tag">
+            <Link
+              key={t.slug}
+              className="tag"
+              to={`/${lang}/articles/?tag=${encodeURIComponent(t.slug)}`}
+            >
               {t.labels?.[lang] || t.slug}
-            </span>
+            </Link>
           ))}
         </p>
       ) : null}
@@ -460,27 +564,6 @@ export function AboutPage() {
   );
 }
 
-function scoreItem(item, kind, lang, tokens, q) {
-  const d = item.languages?.[lang];
-  if (!d) return null;
-  const title = normalizeSearchText(d.title || d.name || "");
-  const summary = normalizeSearchText(d.summary || d.question || "");
-  const body = normalizeSearchText(
-    (d.body || []).map((b) => b.text || "").join(" "),
-  );
-  const nq = normalizeSearchText(q);
-  let score = 0;
-  if (title.includes(nq)) score += 50;
-  if (summary.includes(nq)) score += 20;
-  for (const t of tokens) {
-    if (title.includes(t)) score += 10;
-    if (summary.includes(t)) score += 4;
-    if (body.includes(t)) score += 1;
-  }
-  if (score <= 0) return null;
-  return { item, kind, lang, score, title: d.title || d.name, summary: d.summary };
-}
-
 export function SearchPage() {
   const { lang, ui } = useOutletContext();
   const [sp, setSp] = useSearchParams();
@@ -491,28 +574,12 @@ export function SearchPage() {
   }, []);
   const results = useMemo(() => {
     if (!corpus?.ok || !q.trim()) return [];
-    const tokens = searchTokens(q);
-    if (!tokens.length) return [];
     const pool = [
       ...(corpus.articles || []).map((i) => ({ item: i, kind: "article" })),
       ...(corpus.answers || []).map((i) => ({ item: i, kind: "answer" })),
       ...(corpus.biographies || []).map((i) => ({ item: i, kind: "bio" })),
     ];
-    const out = [];
-    for (const x of pool) {
-      const matches = LANGS.map((l) =>
-        scoreItem(x.item, x.kind, l, tokens, q),
-      ).filter(Boolean);
-      if (!matches.length) continue;
-      matches.sort((a, b) => b.score - a.score);
-      const best = matches[0];
-      out.push({
-        ...best,
-        displayLang: best.lang === lang ? lang : best.lang,
-      });
-    }
-    out.sort((a, b) => b.score - a.score);
-    return out.slice(0, 50);
+    return rankSearchCorpus(pool, { q, lang, limit: 50 });
   }, [corpus, q, lang]);
 
   return (

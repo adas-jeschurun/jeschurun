@@ -1,6 +1,94 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useParams } from "react-router-dom";
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
+
+const SITE_ORIGIN = "https://jeschurun.org";
+
+function pathRest(pathname) {
+  const m = String(pathname || "").match(/^\/[a-z]{2}(\/.*)?$/i);
+  return m?.[1] || "/";
+}
+
+function withTrailingSlash(p) {
+  if (!p || p === "/") return "/";
+  return p.endsWith("/") ? p : `${p}/`;
+}
+
+/** Build same-path URL for another language; drop page on switch. */
+function langHref(targetLang, pathname, search) {
+  const rest = withTrailingSlash(pathRest(pathname));
+  const params = new URLSearchParams(search);
+  params.delete("page");
+  const qs = params.toString();
+  const path = `/${targetLang}${rest === "/" ? "/" : rest}`;
+  return qs ? `${path}?${qs}` : path;
+}
+
+function useSeoHead(lang) {
+  const location = useLocation();
+
+  useEffect(() => {
+    const rest = withTrailingSlash(pathRest(location.pathname));
+    const params = new URLSearchParams(location.search);
+    const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
+    const isArticles = rest === "/articles/" || rest === "/articles";
+    const isArchive = /^\/archive(\/|$)/.test(rest);
+
+    const hrefParams = new URLSearchParams(location.search);
+    hrefParams.delete("page");
+    const altQs = hrefParams.toString();
+
+    document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
+
+    for (const l of LANGS) {
+      const link = document.createElement("link");
+      link.setAttribute("data-seo", "jes");
+      link.rel = "alternate";
+      link.hreflang = l;
+      const path = `/${l}${rest === "/" ? "/" : rest}`;
+      link.href = altQs ? `${SITE_ORIGIN}${path}?${altQs}` : `${SITE_ORIGIN}${path}`;
+      document.head.appendChild(link);
+    }
+
+    const xd = document.createElement("link");
+    xd.setAttribute("data-seo", "jes");
+    xd.rel = "alternate";
+    xd.hreflang = "x-default";
+    const enPath = `/en${rest === "/" ? "/" : rest}`;
+    xd.href = altQs ? `${SITE_ORIGIN}${enPath}?${altQs}` : `${SITE_ORIGIN}${enPath}`;
+    document.head.appendChild(xd);
+
+    const can = document.createElement("link");
+    can.setAttribute("data-seo", "jes");
+    can.rel = "canonical";
+    if (isArticles && page >= 2) {
+      can.href = `${SITE_ORIGIN}/${lang}/articles/`;
+    } else {
+      const selfPath = `/${lang}${rest === "/" ? "/" : rest}`;
+      const selfQs = location.search.replace(/^\?/, "");
+      can.href = selfQs ? `${SITE_ORIGIN}${selfPath}?${selfQs}` : `${SITE_ORIGIN}${selfPath}`;
+    }
+    document.head.appendChild(can);
+
+    if (isArchive) {
+      const meta = document.createElement("meta");
+      meta.setAttribute("data-seo", "jes");
+      meta.name = "robots";
+      meta.content = "noindex, follow";
+      document.head.appendChild(meta);
+    }
+
+    return () => {
+      document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
+    };
+  }, [lang, location.pathname, location.search]);
+}
 
 export function Layout() {
   const { lang: raw } = useParams();
@@ -8,6 +96,8 @@ export function Layout() {
   const ui = UI[lang] || UI.en;
   const rtl = lang === "he";
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  useSeoHead(lang);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -39,7 +129,7 @@ export function Layout() {
               <Link
                 key={l}
                 className={l === lang ? "active" : ""}
-                to={`/${l}/`}
+                to={langHref(l, location.pathname, location.search)}
                 lang={l}
                 hrefLang={l}
               >

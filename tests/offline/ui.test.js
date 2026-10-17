@@ -46,6 +46,27 @@ describe("ui gates", () => {
     expect(pages).toMatch(/related-block/);
   });
 
+  it("hreflang canonical tag filter pagination archive", () => {
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/hreflang/);
+    expect(layout).toMatch(/x-default/);
+    expect(layout).toMatch(/rel = "canonical"/);
+    expect(layout).toMatch(/noindex, follow/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/ARTICLES_PAGE_SIZE/);
+    expect(pages).toMatch(/rankSearchCorpus/);
+    expect(pages).toMatch(/tag-filter/);
+    expect(pages).toMatch(/pagination/);
+    expect(pages).toMatch(/currentIssue\?\.id/);
+    expect(pages).toMatch(/iss\.id !== currentId/);
+    const mw = readFileSync(
+      resolve(root, "packages/functions/site/_middleware.js"),
+      "utf8",
+    );
+    expect(mw).toMatch(/archive/);
+    expect(mw).toMatch(/noindex, follow/);
+  });
+
   it("search-corpus does not SELECT source_issue from bios", () => {
     const src = readFileSync(
       resolve(root, "packages/functions/site/api/search-corpus.js"),
