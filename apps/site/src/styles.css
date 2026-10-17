@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap");
-
 :root {
   --ink: #1a1f26;
   --blue: #1a3d67;
@@ -24,8 +22,8 @@ body {
     linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
 }
 
-.site { margin: 0; padding: 0 0 48px; }
-.site-body { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+.site { margin: 0; padding: 0 0 48px; overflow-x: clip; }
+.site-body { max-width: 980px; margin: 0 auto; padding: 0 16px; min-width: 0; }
 
 .site-header {
   background: var(--blue);
@@ -133,9 +131,9 @@ body {
     line-height: 1.32;
   }
 
-  /* Fixed top bar on mobile — sits above header via site padding */
+  /* Fixed top bar on mobile — padding must clear full nav height (~53–56px) */
   .site {
-    padding-top: 48px;
+    padding-top: 56px;
   }
   .main-nav.top-bar {
     position: fixed !important;
@@ -144,22 +142,28 @@ body {
     justify-content: flex-start; flex-wrap: nowrap;
     overflow-x: auto; white-space: nowrap;
     margin: 0;
+    /* room for overflow menu button on the trailing edge */
+    padding-inline-end: 44px;
   }
   .page-main { padding-top: 20px; }
+  /* Sit in the fixed nav corner — never mid-viewport over cards/forms */
   .mobile-nav-trigger {
-    display: flex; position: fixed; z-index: 70; top: 52%; right: 6px;
+    display: flex; position: fixed; z-index: 70; top: 12px; right: 8px;
     width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
     background: #fff; align-items: center; justify-content: center;
     flex-direction: column; gap: 3px; padding: 0;
+    box-shadow: 0 1px 4px rgba(22, 54, 83, 0.12);
   }
-  body.rtl .mobile-nav-trigger { right: auto; left: 6px; }
+  body.rtl .mobile-nav-trigger { right: auto; left: 8px; }
   .mobile-nav-trigger span {
     width: 4px; height: 4px; border-radius: 50%; background: var(--blue-dark);
   }
   .mobile-nav-panel.open {
-    display: flex; position: fixed; z-index: 65; top: 48px; left: 8px; right: 8px;
+    display: flex; position: fixed; z-index: 65; top: 56px; left: 8px; right: 8px;
     background: rgba(255,255,255,.98); border: 1px solid var(--line);
     border-radius: 10px; padding: 8px; gap: 4px; overflow-x: auto;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 20px rgba(22, 54, 83, 0.12);
   }
   .mobile-nav-panel a {
     color: var(--blue-dark); text-decoration: none; padding: 8px 10px;
@@ -485,8 +489,11 @@ body.rtl .footer-columns { text-align: start; }
   .footer-columns {
     grid-template-columns: 1fr;
     gap: 18px;
-    max-width: 280px;
+    max-width: min(280px, 100%);
+    padding: 0 4px;
   }
+  .footer-col { max-width: 100%; }
+  .footer-col a { overflow-wrap: anywhere; }
 }
 
 .sort-control { display: block; margin: 8px 0 16px; }
@@ -515,12 +522,13 @@ body.rtl .footer-columns { text-align: start; }
 .page-num.active {
   background: var(--blue-dark); color: #fff; border-color: var(--blue-dark);
 }
-.ask-form { display: grid; gap: 12px; max-width: 560px; margin: 16px 0 28px; }
+.ask-form { display: grid; gap: 12px; max-width: min(560px, 100%); margin: 16px 0 28px; }
 .ask-page .content-list { margin-top: 8px; }
-.ask-form label { display: grid; gap: 4px; font-weight: 600; }
+.ask-form label { display: grid; gap: 4px; font-weight: 600; min-width: 0; }
 .ask-form input, .ask-form textarea {
   padding: 10px; border: 1px solid var(--line); border-radius: 6px;
-  font: inherit; background: #fff;
+  font: inherit; background: #fff; width: 100%; max-width: 100%;
+  min-width: 0;
 }
 .hp-website {
   position: absolute !important; left: -9999px !important; opacity: 0 !important;
@@ -537,8 +545,13 @@ body.rtl .footer-columns { text-align: start; }
   text-underline-offset: 2px;
 }
 .related-block { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); }
-.site-search-form { display: flex; gap: 8px; margin: 12px 0 20px; }
-.site-search-form input { flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 6px; }
+.site-search-form {
+  display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 20px; max-width: 100%;
+}
+.site-search-form input {
+  flex: 1 1 12rem; min-width: 0; padding: 10px;
+  border: 1px solid var(--line); border-radius: 6px;
+}
 .article-body img { max-width: 100%; height: auto; }
 .article-body figure { margin: 1.2rem 0; }
 .downloads a { margin-inline-end: 10px; }

@@ -172,6 +172,10 @@ export function Layout() {
     document.body.classList.toggle("rtl", rtl);
   }, [lang, rtl]);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname, location.search]);
+
   const nav = [
     ["", ui.home],
     ["articles", ui.articles],

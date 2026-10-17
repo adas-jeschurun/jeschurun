@@ -100,6 +100,26 @@ describe("ui gates", () => {
     expect(bioSelect).toBeTruthy();
     expect(bioSelect).not.toMatch(/source_issue/);
     expect(bioSelect).toMatch(/FROM \$\{table\}/);
+    // Edge Cache API + batched translations + clipped body (payload budget)
+    expect(src).toMatch(/caches\.default/);
+    expect(src).toMatch(/search-corpus-v2/);
+    expect(src).toMatch(/Promise\.all/);
+    expect(src).toMatch(/BODY_CHARS/);
+    expect(src).toMatch(/parent_id IN/);
+  });
+
+  it("mobile nav clears header; menu not mid-viewport", () => {
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
+    expect(css).toMatch(/padding-top:\s*56px/);
+    expect(css).not.toMatch(/top:\s*52%/);
+    expect(css).toMatch(/\.mobile-nav-trigger[\s\S]*?top:\s*12px/);
+    const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
+    expect(html).toMatch(/fonts\.googleapis\.com/);
+    expect(html).toMatch(/preconnect/);
+    const cssNoImport = css.includes("@import url(\"https://fonts.googleapis");
+    expect(cssNoImport).toBe(false);
+    const api = readFileSync(resolve(root, "apps/site/src/api.js"), "utf8");
+    expect(api).toMatch(/searchCorpusCache/);
   });
 
   it("noindex scoped to pages.dev; custom domain indexable", () => {

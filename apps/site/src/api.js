@@ -12,9 +12,26 @@ export async function fetchMaterial(kind, slug, opts = {}) {
   return r.json();
 }
 
+/** Module-level corpus cache — search page only; avoid refetch on lang switch. */
+let searchCorpusCache = null;
+let searchCorpusInflight = null;
+
 export async function fetchSearchCorpus() {
-  const r = await fetch("/api/search-corpus");
-  return r.json();
+  if (searchCorpusCache) return searchCorpusCache;
+  if (!searchCorpusInflight) {
+    searchCorpusInflight = fetch("/api/search-corpus", { credentials: "omit" })
+      .then((r) => r.json())
+      .then((d) => {
+        searchCorpusCache = d;
+        searchCorpusInflight = null;
+        return d;
+      })
+      .catch((e) => {
+        searchCorpusInflight = null;
+        throw e;
+      });
+  }
+  return searchCorpusInflight;
 }
 
 export async function fetchPopular(lang) {

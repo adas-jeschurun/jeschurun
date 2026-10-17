@@ -729,8 +729,19 @@ export function SearchPage() {
   const [sp, setSp] = useSearchParams();
   const q = sp.get("q") || "";
   const [corpus, setCorpus] = useState(null);
+  const [corpusError, setCorpusError] = useState(null);
   useEffect(() => {
-    fetchSearchCorpus().then(setCorpus);
+    let cancelled = false;
+    fetchSearchCorpus()
+      .then((d) => {
+        if (!cancelled) setCorpus(d);
+      })
+      .catch((e) => {
+        if (!cancelled) setCorpusError(e);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
   const results = useMemo(() => {
     if (!corpus?.ok || !q.trim()) return [];
@@ -768,9 +779,13 @@ export function SearchPage() {
       {q ? (
         <section>
           <h2>
-            {ui.searchResults} <span>{results.length}</span>
+            {ui.searchResults} <span>{corpus?.ok ? results.length : "…"}</span>
           </h2>
-          {results.length ? (
+          {corpusError ? (
+            <p>{ui.searchNoResults}</p>
+          ) : !corpus ? (
+            <p aria-busy="true">…</p>
+          ) : results.length ? (
             <div className="content-list">
               {results.map((r) => (
                 <Card
