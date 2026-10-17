@@ -31,7 +31,6 @@ function formatPublishedAt(publishedAt, lang) {
 function Card({ lang, item, kind, label }) {
   const d = langData(item.languages, lang);
   const title = d.title || d.name || item.slug;
-  const summary = d.summary || d.question || "";
   const publishedLabel = formatPublishedAt(item.published_at, lang);
   const href =
     kind === "article"
@@ -40,18 +39,15 @@ function Card({ lang, item, kind, label }) {
         ? `/${lang}/answer/${item.slug}/`
         : `/${lang}/biography/${item.slug}/`;
   return (
-    <article className="content-card">
-      <h3>
-        <Link to={href}>{title}</Link>
-      </h3>
+    <Link to={href} className="content-card">
+      {label ? <span className="content-card-kicker">{label}</span> : null}
+      <h3>{title}</h3>
       {publishedLabel ? (
         <time className="content-card-date" dateTime={item.published_at}>
           {publishedLabel}
         </time>
       ) : null}
-      {summary ? <p>{summary}</p> : null}
-      {label ? <span className="meta">{label}</span> : null}
-    </article>
+    </Link>
   );
 }
 
@@ -186,14 +182,14 @@ export function ArchivePage() {
         {archived.map((iss) => {
           const d = langData(iss.languages, lang);
           return (
-            <article key={iss.id} className="content-card">
-              <h3>
-                <Link to={`/${lang}/issue/${iss.hebrew_year}/${iss.slug}/`}>
-                  {d.title || `${iss.hebrew_year} / ${iss.slug}`}
-                </Link>
-              </h3>
-              <p>{d.summary}</p>
-            </article>
+            <Link
+              key={iss.id}
+              to={`/${lang}/issue/${iss.hebrew_year}/${iss.slug}/`}
+              className="content-card"
+            >
+              <h3>{d.title || `${iss.hebrew_year} / ${iss.slug}`}</h3>
+              {d.summary ? <p>{d.summary}</p> : null}
+            </Link>
           );
         })}
       </div>
