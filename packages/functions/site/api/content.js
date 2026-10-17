@@ -117,13 +117,19 @@ export async function onRequestGet({ env }) {
       )
       .all();
     const tagsByArticle = {};
+    const tagIndex = new Map();
     for (const r of tagRows.results || []) {
-      if (!tagsByArticle[r.article_id]) tagsByArticle[r.article_id] = [];
-      tagsByArticle[r.article_id].push({
+      const entry = {
         slug: r.tag_slug,
         labels: JSON.parse(r.labels_json || "{}"),
-      });
+      };
+      if (!tagsByArticle[r.article_id]) tagsByArticle[r.article_id] = [];
+      tagsByArticle[r.article_id].push(entry);
+      if (!tagIndex.has(r.tag_slug)) tagIndex.set(r.tag_slug, entry);
     }
+    const tags = [...tagIndex.values()].sort((a, b) =>
+      String(a.slug).localeCompare(String(b.slug)),
+    );
 
     return json(
       {
@@ -133,6 +139,7 @@ export async function onRequestGet({ env }) {
         answers,
         biographies,
         currentIssue,
+        tags,
         tagsByArticle,
         customOrnaments: [],
       },

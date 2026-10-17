@@ -381,6 +381,10 @@ a.content-card:focus-visible h3,
   color: var(--blue-dark); text-decoration: none;
 }
 .tags a.tag:hover { color: var(--accent); }
+.article-body a.internal-link {
+  color: var(--blue-dark, #1a3d67); text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .related-block { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); }
 .site-search-form { display: flex; gap: 8px; margin: 12px 0 20px; }
 .site-search-form input { flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 6px; }

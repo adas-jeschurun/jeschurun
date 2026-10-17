@@ -135,13 +135,21 @@ kbd{display:inline-block;min-width:108px;padding:4px 8px;border:1px solid #d7d0c
 <section id="screen-tags" class="screen">
 <div class="panel"><div class="head">Теги и перелинковка <span style="flex:1"></span><button id="tagsRefresh" class="btn">↻</button><button id="tagsRebuild" class="btn primary">⌘ Rebuild interlinks</button></div>
 <div class="body">
-<div class="hint">Создавайте теги, назначайте статьям, затем пересобирайте related_articles.</div>
-<div class="two"><div><label>Новый slug</label><input id="tagSlug" type="text" placeholder="parasha-ki-tetze"></div>
-<div><label>Подпись RU</label><input id="tagLabelRu" type="text"></div></div>
-<button id="tagCreate" class="btn primary" style="margin:8px 0 14px">+ Создать / обновить тег</button>
+<div class="hint">Создавайте/редактируйте теги (5 языков), назначайте статьям, затем пересобирайте related + inline-ссылки в текстах.</div>
+<div class="two"><div><label>Slug</label><input id="tagSlug" type="text" placeholder="parasha-ki-tetze"></div>
+<div><label>Подпись RU</label><input id="tagLabelRu" type="text" placeholder="русская подпись"></div></div>
+<div class="two"><div><label>EN</label><input id="tagLabelEn" type="text"></div><div><label>HE</label><input id="tagLabelHe" type="text" dir="rtl"></div></div>
+<div class="two"><div><label>DE</label><input id="tagLabelDe" type="text"></div><div><label>FR</label><input id="tagLabelFr" type="text"></div></div>
+<div class="inline" style="margin:8px 0 14px;gap:8px;flex-wrap:wrap">
+<button id="tagCreate" class="btn primary">+ Создать / обновить тег</button>
+<button id="tagDelete" class="btn dangerBtn">Удалить тег</button>
+</div>
 <div id="tagsList"></div>
-<div style="margin-top:18px"><label>Статья (slug) → теги через запятую</label>
-<div class="two"><input id="tagArticleSlug" type="text" placeholder="article-slug"><input id="tagArticleTags" type="text" placeholder="tag1, tag2"></div>
+<div style="margin-top:18px"><label>Статья → теги (через запятую, заменяет набор)</label>
+<div class="two">
+<select id="tagArticleSelect"><option value="">— выберите статью —</option></select>
+<input id="tagArticleTags" type="text" placeholder="tag1, tag2">
+</div>
 <button id="tagAssign" class="btn" style="margin-top:8px">Назначить теги статье</button></div>
 <div id="tagsMsg" class="syncLog"></div>
 </div></div></section>
@@ -1106,39 +1114,89 @@ async function loadQuestions(){
     };
   });
 }
+let _tagsCache={tags:[],article_tags:[],articles:[]};
+function fillTagForm(t){
+  if(!t)return;
+  $('#tagSlug').value=t.slug||'';
+  const L=t.labels||{};
+  if($('#tagLabelRu'))$('#tagLabelRu').value=L.ru||'';
+  if($('#tagLabelEn'))$('#tagLabelEn').value=L.en||'';
+  if($('#tagLabelHe'))$('#tagLabelHe').value=L.he||'';
+  if($('#tagLabelDe'))$('#tagLabelDe').value=L.de||'';
+  if($('#tagLabelFr'))$('#tagLabelFr').value=L.fr||'';
+}
 async function loadTagsPanel(){
   const r=await fetch('/api/tags',{headers:{Accept:'application/json'}});const j=await r.json();
   const root=$('#tagsList');
   if(!r.ok||!j.ok){root.innerHTML='<div class="repoEmpty">'+esc(j.error||'')+'</div>';return}
+  _tagsCache=j;
   const tags=j.tags||[];
-  root.innerHTML=tags.length?`<table class="statsTable"><thead><tr><th>slug</th><th>labels</th><th>articles</th></tr></thead><tbody>${tags.map(t=>{
+  const arts=j.articles||[];
+  const sel=$('#tagArticleSelect');
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML='<option value="">— выберите статью —</option>'+arts.map(a=>`<option value="${esc(a.id)}" data-slug="${esc(a.slug)}">${esc(a.slug)}</option>`).join('');
+    if(cur)sel.value=cur;
+  }
+  root.innerHTML=tags.length?`<table class="statsTable"><thead><tr><th>slug</th><th>labels</th><th>articles</th><th></th></tr></thead><tbody>${tags.map(t=>{
     const n=(j.article_tags||[]).filter(x=>x.tag_slug===t.slug).length;
-    return `<tr><td><code>${esc(t.slug)}</code></td><td>${esc(JSON.stringify(t.labels||{}))}</td><td class="num">${n}</td></tr>`;
+    const lab=esc((t.labels&& (t.labels.ru||t.labels.en||t.labels.he))||'');
+    return `<tr data-tag-slug="${esc(t.slug)}"><td><code>${esc(t.slug)}</code></td><td>${lab}</td><td class="num">${n}</td><td><button type="button" class="btn" data-tag-edit="${esc(t.slug)}">✎</button></td></tr>`;
   }).join('')}</tbody></table>`:'<div class="repoEmpty">Тегов пока нет.</div>';
+  root.querySelectorAll('[data-tag-edit]').forEach(btn=>{
+    btn.onclick=()=>{
+      const t=tags.find(x=>x.slug===btn.dataset.tagEdit);
+      fillTagForm(t);
+    };
+  });
+  if(sel)sel.onchange=()=>{
+    const id=sel.value;
+    const linked=(j.article_tags||[]).filter(x=>x.article_id===id).map(x=>x.tag_slug);
+    $('#tagArticleTags').value=linked.join(', ');
+  };
 }
 function wireJesV2(){
   if($('#qRefresh'))$('#qRefresh').onclick=loadQuestions;
   if($('#qStatusFilter'))$('#qStatusFilter').onchange=loadQuestions;
   if($('#tagsRefresh'))$('#tagsRefresh').onclick=loadTagsPanel;
   if($('#tagsRebuild'))$('#tagsRebuild').onclick=async()=>{
+    if(!confirm('Пересобрать related_articles и inline-ссылки в текстах из тегов?'))return;
     const r=await fetch('/api/interlinks',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});
     const j=await r.json();
     $('#tagsMsg').classList.add('show');
-    $('#tagsMsg').textContent=j.ok?`OK edges=${j.undirectedEdges} cross=${j.crossIssuePairs}`:(j.error||'fail');
+    $('#tagsMsg').textContent=j.ok
+      ?`OK edges=${j.undirectedEdges} cross=${j.crossIssuePairs} inlineBodies=${j.inlineBodiesUpdated||0} links=${j.inlineLinks||0}`
+      :(j.error||'fail');
   };
   if($('#tagCreate'))$('#tagCreate').onclick=async()=>{
     const slug=$('#tagSlug').value.trim(); if(!slug)return alert('slug');
-    const labels={ru:$('#tagLabelRu').value.trim()||slug,en:slug,he:slug,de:slug,fr:slug};
+    const labels={
+      ru:($('#tagLabelRu')?.value||'').trim()||slug,
+      en:($('#tagLabelEn')?.value||'').trim()||slug,
+      he:($('#tagLabelHe')?.value||'').trim()||slug,
+      de:($('#tagLabelDe')?.value||'').trim()||slug,
+      fr:($('#tagLabelFr')?.value||'').trim()||slug
+    };
     const r=await fetch('/api/tags',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({slug,labels})});
     const j=await r.json(); if(!r.ok||!j.ok)return alert(j.error||r.status); flash('Тег сохранён');loadTagsPanel();
   };
+  if($('#tagDelete'))$('#tagDelete').onclick=async()=>{
+    const slug=$('#tagSlug').value.trim(); if(!slug)return alert('slug');
+    if(!confirm('Удалить тег '+slug+' и все назначения?'))return;
+    const r=await fetch('/api/tags',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'delete-tag',slug})});
+    const j=await r.json(); if(!r.ok||!j.ok)return alert(j.error||r.status); flash('Тег удалён');fillTagForm({slug:'',labels:{}});loadTagsPanel();
+  };
   if($('#tagAssign'))$('#tagAssign').onclick=async()=>{
-    const slug=$('#tagArticleSlug').value.trim();
+    const artId=$('#tagArticleSelect')?.value||'';
     const tags=$('#tagArticleTags').value.split(',').map(s=>s.trim()).filter(Boolean);
-    // resolve article id by listing
-    const r0=await fetch('/api/materials?kind=article');const j0=await r0.json();
-    const art=(j0.items||[]).find(x=>x.slug===slug); if(!art)return alert('Статья не найдена');
-    const r=await fetch('/api/tags',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'set-article-tags',article_id:art.id,tags})});
+    let article_id=artId;
+    if(!article_id){
+      const slugHint=$('#tagArticleSelect')?.selectedOptions?.[0]?.dataset?.slug;
+      const art=(_tagsCache.articles||[]).find(x=>x.slug===slugHint);
+      article_id=art?.id;
+    }
+    if(!article_id)return alert('Выберите статью');
+    const r=await fetch('/api/tags',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'set-article-tags',article_id,tags})});
     const j=await r.json(); if(!r.ok||!j.ok)return alert(j.error||r.status); flash('Теги назначены');loadTagsPanel();
   };
 }

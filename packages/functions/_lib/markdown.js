@@ -8,9 +8,20 @@ function esc(s) {
 
 function inlineMd(s) {
   let x = esc(s);
+  // Internal site paths (keep in-app navigation; no target=_blank)
+  x = x.replace(
+    /\[([^\]]+)\]\((\/(?:he|en|ru|de|fr)\/(?:article|answer|biography|articles)\/[^)\s]+)\)/g,
+    '<a href="$2" class="internal-link">$1</a>',
+  );
+  // External http(s)
   x = x.replace(
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     '<a href="$2" target="_blank" rel="noopener">$1</a>',
+  );
+  // Other root-relative paths
+  x = x.replace(
+    /\[([^\]]+)\]\((\/[^)\s]+)\)/g,
+    '<a href="$2" class="internal-link">$1</a>',
   );
   x = x.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   x = x.replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "<em>$1</em>");

@@ -38,12 +38,23 @@ describe("ui gates", () => {
     expect(css).toMatch(/--blue:\s*#1a3d67/);
   });
 
-  it("sort + related block", () => {
+  it("sort + related block + tag filter", () => {
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/date_desc/);
     expect(pages).toMatch(/date_asc/);
     expect(pages).toMatch(/title_asc/);
     expect(pages).toMatch(/related-block/);
+    expect(pages).toMatch(/tagFilter|sp\.get\("tag"\)/);
+    expect(pages).toMatch(/articles\/\?tag=/);
+  });
+
+  it("markdown allows internal interlinks", () => {
+    const md = readFileSync(
+      resolve(root, "packages/functions/_lib/markdown.js"),
+      "utf8",
+    );
+    expect(md).toMatch(/internal-link/);
+    expect(md).toMatch(/article\|answer\|biography/);
   });
 
   it("hreflang canonical tag filter pagination archive", () => {
