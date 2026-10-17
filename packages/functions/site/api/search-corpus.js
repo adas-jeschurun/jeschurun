@@ -7,10 +7,11 @@ export async function onRequestGet({ env }) {
     const out = { articles: [], answers: [], biographies: [] };
 
     async function load(kind, table, bucket) {
+      // bios has no source_issue column (schema/content.sql)
       const rows = await db
         .prepare(
           kind === "bio"
-            ? `SELECT id, slug, status, source_issue, published_at FROM ${table} WHERE status!='hidden'`
+            ? `SELECT id, slug, status, published_at FROM ${table} WHERE status!='hidden'`
             : `SELECT id, slug, status, source_issue, published_at FROM ${table} WHERE status='published'`,
         )
         .all();
@@ -50,7 +51,7 @@ export async function onRequestGet({ env }) {
           slug: row.slug,
           type: kind,
           status: row.status,
-          source_issue: row.source_issue || "",
+          source_issue: kind === "bio" ? "" : row.source_issue || "",
           published_at: row.published_at || "",
           languages,
         });

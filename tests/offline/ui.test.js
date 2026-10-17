@@ -29,6 +29,21 @@ describe("ui gates", () => {
     expect(pages).toMatch(/related-block/);
   });
 
+  it("search-corpus does not SELECT source_issue from bios", () => {
+    const src = readFileSync(
+      resolve(root, "packages/functions/site/api/search-corpus.js"),
+      "utf8",
+    );
+    expect(src).toMatch(/kind === "bio"/);
+    // bios table has no source_issue — bio branch must omit it
+    const bioSelect = src.match(
+      /kind === "bio"\s*\?\s*`([^`]+)`/,
+    )?.[1];
+    expect(bioSelect).toBeTruthy();
+    expect(bioSelect).not.toMatch(/source_issue/);
+    expect(bioSelect).toMatch(/FROM \$\{table\}/);
+  });
+
   it("noindex scoped to pages.dev; custom domain indexable", () => {
     expect(readFileSync(resolve(root, "apps/site/public/robots.txt"), "utf8")).toMatch(
       /Allow: \//,
