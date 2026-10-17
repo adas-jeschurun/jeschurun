@@ -55,13 +55,39 @@ function Card({ lang, item, kind, label }) {
   );
 }
 
+function HomeSkeleton({ ui }) {
+  return (
+    <div className="home home--skeleton" aria-busy="true" aria-live="polite">
+      <section className="issue-card issue-card--home skeleton-block">
+        <div className="skeleton-line skeleton-line--title" />
+        <div className="skeleton-line skeleton-line--sub" />
+        <div className="skeleton-line" />
+        <div className="skeleton-line skeleton-line--short" />
+      </section>
+      <section className="home-latest">
+        <h2>{ui.latestArticles}</h2>
+        <div className="content-list">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="content-card skeleton-card" aria-hidden="true">
+              <div className="skeleton-line skeleton-line--card" />
+              <div className="skeleton-line skeleton-line--short" />
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function HomePage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
   const [popular, setPopular] = useState([]);
   useEffect(() => {
+    if (!data?.ok) return;
+    let cancelled = false;
     fetchPopular(lang).then((p) => {
-      if (!p?.items?.length || !data) return;
+      if (cancelled || !p?.items?.length) return;
       const mapped = p.items
         .map((it) => {
           const [type, id] = String(it.key).split(":");
@@ -83,8 +109,11 @@ export function HomePage() {
         .slice(0, 6);
       setPopular(mapped);
     });
+    return () => {
+      cancelled = true;
+    };
   }, [lang, data]);
-  if (!data?.ok) return <p className="loading">…</p>;
+  if (!data?.ok) return <HomeSkeleton ui={ui} />;
   const issue = data.currentIssue;
   return (
     <div className="home">

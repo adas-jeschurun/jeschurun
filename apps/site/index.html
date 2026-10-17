@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Start catalog fetch in parallel with JS parse/boot (SPA still needs it). -->
+    <link rel="preload" href="/api/content" as="fetch" crossorigin="anonymous" />
   </head>
   <body>
     <div id="root"></div>

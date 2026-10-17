@@ -1,5 +1,7 @@
 export async function fetchCatalog() {
-  const r = await fetch("/api/content");
+  // credentials:omit matches <link rel=preload as=fetch crossorigin> so the
+  // early preload can be reused instead of issuing a second request.
+  const r = await fetch("/api/content", { credentials: "omit" });
   return r.json();
 }
 

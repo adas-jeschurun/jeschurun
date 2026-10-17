@@ -315,6 +315,36 @@ h1, h2, h3 { font-family: var(--font-display); color: var(--blue-dark); line-hei
 .home-latest > h2 { margin-top: 0; }
 .empty-note { color: #5a6068; }
 
+.skeleton-block {
+  min-height: 180px;
+  padding: 20px 0;
+}
+.skeleton-card {
+  pointer-events: none;
+  min-height: 72px;
+}
+.skeleton-line {
+  height: 12px;
+  margin: 10px 0;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 61, 103, 0.08) 0%,
+    rgba(26, 61, 103, 0.16) 50%,
+    rgba(26, 61, 103, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+.skeleton-line--title { height: 28px; width: min(70%, 420px); }
+.skeleton-line--sub { height: 16px; width: min(40%, 240px); }
+.skeleton-line--card { height: 18px; width: 85%; }
+.skeleton-line--short { width: 45%; }
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 .content-list {
   display: grid;
   gap: 14px;
