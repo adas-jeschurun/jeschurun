@@ -63,6 +63,8 @@ describe("ui gates", () => {
     expect(layout).toMatch(/x-default/);
     expect(layout).toMatch(/rel = "canonical"/);
     expect(layout).toMatch(/noindex, follow/);
+    expect(layout).toMatch(/document\.title/);
+    expect(layout).toMatch(/routeUiTitle/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/ARTICLES_PAGE_SIZE/);
     expect(pages).toMatch(/rankSearchCorpus/);
@@ -70,6 +72,8 @@ describe("ui gates", () => {
     expect(pages).toMatch(/pagination/);
     expect(pages).toMatch(/currentIssue\?\.id/);
     expect(pages).toMatch(/iss\.id !== currentId/);
+    expect(pages).toMatch(/\$\{iss\.hebrew_year\} · \$\{parasha\}/);
+    expect(pages).toMatch(/document\.title/);
     const mw = readFileSync(
       resolve(root, "packages/functions/site/_middleware.js"),
       "utf8",

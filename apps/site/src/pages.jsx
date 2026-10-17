@@ -181,14 +181,20 @@ export function ArchivePage() {
       <div className="content-list">
         {archived.map((iss) => {
           const d = langData(iss.languages, lang);
+          const parasha = d.parasha || iss.parasha_key || iss.slug;
+          const heading = iss.hebrew_year
+            ? `${iss.hebrew_year} · ${parasha}`
+            : parasha;
           return (
             <Link
               key={iss.id}
               to={`/${lang}/issue/${iss.hebrew_year}/${iss.slug}/`}
               className="content-card"
             >
-              <h3>{d.title || `${iss.hebrew_year} / ${iss.slug}`}</h3>
-              {d.summary ? <p>{d.summary}</p> : null}
+              <h3>{heading}</h3>
+              {d.kicker ? (
+                <span className="content-card-kicker">{d.kicker}</span>
+              ) : null}
             </Link>
           );
         })}
@@ -204,6 +210,19 @@ export function IssuePage() {
   const issue = data?.issues?.find(
     (i) => String(i.hebrew_year) === String(year) && i.slug === slug,
   );
+  const d = issue ? langData(issue.languages, lang) : null;
+  const pageTitle = d
+    ? d.parasha
+      ? `${issue.hebrew_year} · ${d.parasha}`
+      : d.title || `${issue.hebrew_year} / ${issue.slug}`
+    : "";
+  useEffect(() => {
+    if (!pageTitle) return;
+    document.title = `${pageTitle} · Jeschurun`;
+    return () => {
+      document.title = "Jeschurun";
+    };
+  }, [pageTitle]);
   if (!data?.ok) return <p>…</p>;
   return <IssueView issue={issue} lang={lang} ui={ui} />;
 }
@@ -395,11 +414,18 @@ export function MaterialPage({ kind }) {
       });
     }
   }, [mat, kind, lang, adminPreview]);
+  const m = mat?.ok ? mat.material : null;
+  const d = m ? langData(m.languages, lang) : {};
+  const title = m ? d.title || d.name || m.slug : "";
+  useEffect(() => {
+    if (!title) return;
+    document.title = `${title} · Jeschurun`;
+    return () => {
+      document.title = "Jeschurun";
+    };
+  }, [title]);
   if (!mat) return <p>…</p>;
-  if (!mat.ok) return <p>Not found</p>;
-  const m = mat.material;
-  const d = langData(m.languages, lang);
-  const title = d.title || d.name || m.slug;
+  if (!mat.ok || !m) return <p>Not found</p>;
   return (
     <article className="material">
       {adminPreview && m.status !== "published" ? (
@@ -531,14 +557,19 @@ export function BiosPage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
   if (!data?.ok) return <p>…</p>;
+  const bios = data.biographies || [];
   return (
     <div>
       <h1>{ui.bios}</h1>
-      <div className="content-list">
-        {(data.biographies || []).map((a) => (
-          <Card key={a.id} lang={lang} item={a} kind="bio" />
-        ))}
-      </div>
+      {bios.length ? (
+        <div className="content-list">
+          {bios.map((a) => (
+            <Card key={a.id} lang={lang} item={a} kind="bio" />
+          ))}
+        </div>
+      ) : (
+        <p className="empty-note">{ui.searchNoResults}</p>
+      )}
     </div>
   );
 }

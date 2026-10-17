@@ -30,8 +30,20 @@ function langHref(targetLang, pathname, search) {
   return qs ? `${path}?${qs}` : path;
 }
 
+function routeUiTitle(rest, ui) {
+  if (rest === "/" || rest === "") return null;
+  if (rest === "/articles/" || rest === "/articles") return ui.articles;
+  if (rest === "/ask-rav/" || rest === "/ask-rav") return ui.ask;
+  if (rest === "/biographies/" || rest === "/biographies") return ui.bios;
+  if (rest === "/about/" || rest === "/about") return ui.about;
+  if (rest === "/archive/" || rest === "/archive") return ui.archive;
+  if (rest === "/search/" || rest === "/search") return ui.search;
+  return null;
+}
+
 function useSeoHead(lang) {
   const location = useLocation();
+  const ui = UI[lang] || UI.en;
 
   useEffect(() => {
     const rest = withTrailingSlash(pathRest(location.pathname));
@@ -43,6 +55,13 @@ function useSeoHead(lang) {
     const hrefParams = new URLSearchParams(location.search);
     hrefParams.delete("page");
     const altQs = hrefParams.toString();
+
+    // Section routes set title here; article/answer/bio/issue pages own document.title.
+    const section = routeUiTitle(rest, ui);
+    const pageOwnsTitle = /^\/(article|answer|biography|issue)(\/|$)/.test(rest);
+    if (!pageOwnsTitle) {
+      document.title = section ? `${section} · Jeschurun` : "Jeschurun";
+    }
 
     document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
 

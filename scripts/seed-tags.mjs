@@ -134,7 +134,18 @@ async function main() {
     for (const t of ameta.tags || []) {
       const s = typeof t === "string" ? slugify(t) : slugify(t.slug || t.id);
       if (s) {
-        ensureTag(s);
+        ensureTag(
+          s,
+          typeof t === "object" && t.labels
+            ? t.labels
+            : dict[s] || {
+                en: typeof t === "string" ? t : t.label || s,
+                he: s,
+                ru: s,
+                de: s,
+                fr: s,
+              },
+        );
         set.add(s);
       }
     }
