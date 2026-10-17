@@ -3,11 +3,20 @@
 export const LANGS = ["he", "en", "ru", "de", "fr"];
 
 export const LANG_LABEL = {
-  he: "עב",
+  he: "עברית",
   en: "EN",
   ru: "RU",
   de: "DE",
   fr: "FR",
+};
+
+/** Masthead tagline under language pills (friend-site copy). */
+export const HEADER_SUBTITLE = {
+  ru: "Из учения нашего наставника, рава Шимшона Рафаэля Гирша, благословенной памяти, и продолжателей его пути, прошлых и ныне живущих.",
+  he: "מתורתו של מורינו הרב שמשון רפאל הירש זצ״ל וממשיכי דרכו זצ״ל ויבלחט״א",
+  en: "From the teachings of our teacher, Rabbi Samson Raphael Hirsch, of blessed memory, and of those who continue in his path — past and present.",
+  de: "Aus der Lehre unseres Lehrers, Rabbiner Samson Raphael Hirsch sel. A., und derer, die seinen Weg fortführen — früher und heute.",
+  fr: "D’après l’enseignement de notre maître, le rabbin Samson Raphaël Hirsch, de mémoire bénie, et de ceux qui poursuivent sa voie, hier comme aujourd’hui.",
 };
 
 export const SORT_OPTIONS = ["date_desc", "date_asc", "title_asc"];

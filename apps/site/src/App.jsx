@@ -6,7 +6,6 @@ import {
   ArticlesPage,
   AskRavPage,
   BiosPage,
-  CurrentPage,
   HomePage,
   IssuePage,
   MaterialPage,
@@ -20,7 +19,8 @@ export function App() {
       <Route path="/" element={<RedirectHome />} />
       <Route path="/:lang" element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="current" element={<CurrentPage />} />
+        {/* /current removed permanently — old URLs go home */}
+        <Route path="current" element={<Navigate to=".." replace />} />
         <Route path="archive" element={<ArchivePage />} />
         <Route path="articles" element={<ArticlesPage />} />
         <Route path="ask-rav" element={<AskRavPage />} />

@@ -18,7 +18,24 @@ describe("ui gates", () => {
     const navEnd = layout.indexOf("];", navStart);
     const navBlock = layout.slice(navStart, navEnd);
     expect(navBlock).not.toMatch(/archive/);
+    expect(navBlock).not.toMatch(/current/);
     expect(layout).toMatch(/\/\$\{lang\}\/archive\//);
+    expect(layout).not.toMatch(/\/\$\{lang\}\/current\//);
+  });
+
+  it("current route removed; issue card on home", () => {
+    const app = readFileSync(resolve(root, "apps/site/src/App.jsx"), "utf8");
+    expect(app).not.toMatch(/CurrentPage/);
+    expect(app).toMatch(/path="current"/);
+    expect(app).toMatch(/Navigate to="\.\."/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).not.toMatch(/export function CurrentPage/);
+    expect(pages).toMatch(/issue-card--home/);
+    expect(pages).toMatch(/IssueView issue=\{issue\}/);
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
+    expect(css).toMatch(/\.issue-card-downloads/);
+    expect(css).toMatch(/\.site-header/);
+    expect(css).toMatch(/--blue:\s*#1a3d67/);
   });
 
   it("sort + related block", () => {

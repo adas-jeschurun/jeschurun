@@ -63,24 +63,10 @@ export function HomePage() {
   }, [lang, data]);
   if (!data?.ok) return <p className="loading">…</p>;
   const issue = data.currentIssue;
-  const issueLang = langData(issue?.languages, lang);
   return (
     <div className="home">
-      <section className="section-hero">
-        <h1>Jeschurun</h1>
-        {issue ? (
-          <>
-            <h2>{issueLang.title || `${issue.hebrew_year} / ${issue.slug}`}</h2>
-            <p>{issueLang.summary}</p>
-            <Link className="button primary" to={`/${lang}/current/`}>
-              {ui.readIssue}
-            </Link>
-          </>
-        ) : (
-          <p>{ui.noIssue}</p>
-        )}
-      </section>
-      <section>
+      <IssueView issue={issue} lang={lang} ui={ui} featured />
+      <section className="home-latest">
         <h2>{ui.latestArticles}</h2>
         <div className="content-list">
           {(data.articles || []).slice(0, 6).map((a) => (
@@ -115,9 +101,9 @@ export function HomePage() {
   );
 }
 
-function IssueView({ issue, lang, ui }) {
+function IssueView({ issue, lang, ui, featured = false }) {
   const { data } = useCatalog();
-  if (!issue) return <p>{ui.noIssue}</p>;
+  if (!issue) return <p className="empty-note">{ui.noIssue}</p>;
   const d = langData(issue.languages, lang);
   const articles = (issue.articles || [])
     .map((slug) => data?.articles?.find((a) => a.slug === slug || a.id === slug))
@@ -127,28 +113,38 @@ function IssueView({ issue, lang, ui }) {
     .filter(Boolean);
   const downloads = issue.downloads || {};
   const dl = downloads[lang] || downloads.en || {};
+  const fileBase = `content/issues/${issue.hebrew_year}/${issue.slug}`;
   return (
-    <div className="issue-page">
-      <h1>{d.title || `${issue.hebrew_year} / ${issue.slug}`}</h1>
-      <p className="kicker">{d.parasha || issue.parasha_key}</p>
-      <p>{d.summary}</p>
+    <section className={`issue-card${featured ? " issue-card--home" : ""}`}>
+      <h1 className="issue-card-title">
+        {d.title || `${issue.hebrew_year} / ${issue.slug}`}
+      </h1>
+      {(d.parasha || issue.parasha_key) && (
+        <p className="issue-card-parasha">{d.parasha || issue.parasha_key}</p>
+      )}
+      {d.summary ? <p className="issue-card-lead">{d.summary}</p> : null}
       {(dl.pdf || dl.epub) && (
-        <p className="downloads">
+        <p className="issue-card-downloads">
           {ui.download}:{" "}
           {dl.pdf ? (
-            <a href={`/api/file?path=${encodeURIComponent(`content/issues/${issue.hebrew_year}/${issue.slug}/${dl.pdf}`)}`}>
+            <a
+              href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.pdf}`)}`}
+            >
               PDF
             </a>
-          ) : null}{" "}
+          ) : null}
+          {dl.pdf && dl.epub ? " " : null}
           {dl.epub ? (
-            <a href={`/api/file?path=${encodeURIComponent(`content/issues/${issue.hebrew_year}/${issue.slug}/${dl.epub}`)}`}>
+            <a
+              href={`/api/file?path=${encodeURIComponent(`${fileBase}/${dl.epub}`)}`}
+            >
               EPUB
             </a>
           ) : null}
         </p>
       )}
-      <h2>{ui.inIssue}</h2>
-      <div className="content-list">
+      <h2 className="issue-card-toc">{ui.inIssue}</h2>
+      <div className="content-list issue-card-list">
         {articles.map((a) => (
           <Card key={a.id} lang={lang} item={a} kind="article" />
         ))}
@@ -156,15 +152,8 @@ function IssueView({ issue, lang, ui }) {
           <Card key={a.id} lang={lang} item={a} kind="answer" />
         ))}
       </div>
-    </div>
+    </section>
   );
-}
-
-export function CurrentPage() {
-  const { lang, ui } = useOutletContext();
-  const { data } = useCatalog();
-  if (!data?.ok) return <p>…</p>;
-  return <IssueView issue={data.currentIssue} lang={lang} ui={ui} />;
 }
 
 export function ArchivePage() {
