@@ -17,10 +17,22 @@ import {
 } from "./api.js";
 import { langData, useCatalog } from "./hooks.js";
 
+function formatPublishedAt(publishedAt, lang) {
+  if (!publishedAt) return null;
+  const d = new Date(publishedAt);
+  if (Number.isNaN(d.getTime())) return null;
+  try {
+    return new Intl.DateTimeFormat(lang, { dateStyle: "long" }).format(d);
+  } catch {
+    return new Intl.DateTimeFormat("en", { dateStyle: "long" }).format(d);
+  }
+}
+
 function Card({ lang, item, kind, label }) {
   const d = langData(item.languages, lang);
   const title = d.title || d.name || item.slug;
   const summary = d.summary || d.question || "";
+  const publishedLabel = formatPublishedAt(item.published_at, lang);
   const href =
     kind === "article"
       ? `/${lang}/article/${item.slug}/`
@@ -32,6 +44,11 @@ function Card({ lang, item, kind, label }) {
       <h3>
         <Link to={href}>{title}</Link>
       </h3>
+      {publishedLabel ? (
+        <time className="content-card-date" dateTime={item.published_at}>
+          {publishedLabel}
+        </time>
+      ) : null}
       {summary ? <p>{summary}</p> : null}
       {label ? <span className="meta">{label}</span> : null}
     </article>
@@ -362,11 +379,6 @@ export function AskRavPage() {
   return (
     <div className="ask-page">
       <h1>{ui.askSubmitTitle}</h1>
-      <div className="content-list">
-        {(data?.answers || []).slice(0, 8).map((a) => (
-          <Card key={a.id} lang={lang} item={a} kind="answer" />
-        ))}
-      </div>
       <form className="ask-form" ref={formRef} onSubmit={onSubmit}>
         <input
           className="hp-website"
@@ -406,6 +418,11 @@ export function AskRavPage() {
         </button>
         {status ? <p className="form-status">{status}</p> : null}
       </form>
+      <div className="content-list">
+        {(data?.answers || []).slice(0, 8).map((a) => (
+          <Card key={a.id} lang={lang} item={a} kind="answer" />
+        ))}
+      </div>
     </div>
   );
 }

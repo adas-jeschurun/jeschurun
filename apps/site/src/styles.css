@@ -224,6 +224,9 @@ h1, h2, h3 { font-family: var(--font-display); color: var(--blue-dark); line-hei
 
 .content-list { display: grid; gap: 18px; margin-top: 12px; }
 .content-card h3 { margin: 0 0 6px; }
+.content-card-date {
+  display: block; margin: 0 0 6px; font-size: .9rem; opacity: .7;
+}
 .content-card p { margin: 0; opacity: .9; }
 .content-card a { color: inherit; text-decoration: none; }
 .content-card a:hover { color: var(--accent); }
@@ -241,7 +244,8 @@ h1, h2, h3 { font-family: var(--font-display); color: var(--blue-dark); line-hei
 .publisher-line { opacity: .75; font-size: .9rem; }
 
 .sort-control { display: block; margin: 8px 0 16px; }
-.ask-form { display: grid; gap: 12px; max-width: 560px; margin-top: 24px; }
+.ask-form { display: grid; gap: 12px; max-width: 560px; margin: 16px 0 28px; }
+.ask-page .content-list { margin-top: 8px; }
 .ask-form label { display: grid; gap: 4px; font-weight: 600; }
 .ask-form input, .ask-form textarea {
   padding: 10px; border: 1px solid var(--line); border-radius: 6px;
