@@ -60,6 +60,23 @@ describe("ui gates", () => {
     );
     expect(md).toMatch(/internal-link/);
     expect(md).toMatch(/article\|answer\|biography/);
+    expect(md).toMatch(/mailto:/);
+  });
+
+  it("About page uses full markdown bodies for five langs", () => {
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/ABOUT_MD/);
+    expect(pages).toMatch(/stripLeadingH1/);
+    expect(pages).toMatch(/markdownBlocks/);
+    for (const lang of ["he", "en", "ru", "de", "fr"]) {
+      const body = readFileSync(
+        resolve(root, `apps/site/src/content/about/${lang}.md`),
+        "utf8",
+      );
+      expect(body).toMatch(/^# /);
+      expect(body).toMatch(/Jeschurun/);
+      expect(body).toMatch(/ask@jeschurun\.org/);
+    }
   });
 
   it("hreflang canonical tag filter pagination archive", () => {
