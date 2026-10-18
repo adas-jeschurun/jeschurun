@@ -68,8 +68,9 @@ describe("ui gates", () => {
     expect(layout).toMatch(/x-default/);
     expect(layout).toMatch(/rel = "canonical"/);
     expect(layout).toMatch(/noindex, follow/);
-    expect(layout).toMatch(/document\.title/);
-    expect(layout).toMatch(/routeUiTitle/);
+    expect(layout).toMatch(/setDocumentTitle|brandTitle/);
+    expect(layout).toMatch(/setMetaDescription/);
+    expect(layout).toMatch(/routeSectionMeta/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/ARTICLES_PAGE_SIZE/);
     expect(pages).toMatch(/rankSearchCorpus/);
@@ -78,13 +79,54 @@ describe("ui gates", () => {
     expect(pages).toMatch(/currentIssue\?\.id/);
     expect(pages).toMatch(/iss\.id !== currentId/);
     expect(pages).toMatch(/\$\{iss\.hebrew_year\} · \$\{parasha\}/);
-    expect(pages).toMatch(/document\.title/);
+    expect(pages).toMatch(/articlesListTitle/);
+    expect(pages).toMatch(/setMetaDescription/);
     const mw = readFileSync(
       resolve(root, "packages/functions/site/_middleware.js"),
       "utf8",
     );
     expect(mw).toMatch(/archive/);
     expect(mw).toMatch(/noindex, follow/);
+  });
+
+  it("SEO titles descriptions in all five langs", async () => {
+    const {
+      LANGS,
+      SEO,
+      brandTitle,
+      articlesListTitle,
+      fillSeoTemplate,
+      seoFor,
+      UI,
+    } = await import(resolve(root, "packages/shared/src/index.js"));
+    for (const lang of LANGS) {
+      const seo = seoFor(lang);
+      expect(seo).toBe(SEO[lang]);
+      expect(seo.homeDescription.length).toBeGreaterThan(40);
+      expect(seo.articlesDescription.length).toBeGreaterThan(20);
+      expect(seo.askDescription.length).toBeGreaterThan(20);
+      expect(seo.aboutDescription.length).toBeGreaterThan(20);
+      expect(brandTitle(UI[lang].about, lang)).toMatch(/Jeschurun/);
+      expect(brandTitle("", lang)).toBe("Jeschurun");
+      expect(
+        articlesListTitle({
+          lang,
+          articlesLabel: UI[lang].articles,
+          page: 2,
+        }),
+      ).toMatch(/2/);
+      expect(
+        fillSeoTemplate(seo.articlesTagDescription, { tag: "Ethics" }),
+      ).toMatch(/Ethics/);
+    }
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/seoFor/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/<h1>\{ui\.articles\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{ui\.about\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{ui\.askSubmitTitle\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{title\}<\/h1>/);
+    expect(pages).toMatch(/issue-card-title/);
   });
 
   it("search-corpus does not SELECT source_issue from bios", () => {
