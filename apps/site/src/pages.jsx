@@ -4,7 +4,11 @@ import {
   ARTICLES_PAGE_SIZE,
   LANGS,
   LEGAL,
+  articlesListTitle,
+  brandTitle,
+  fillSeoTemplate,
   rankSearchCorpus,
+  seoFor,
   sortArticles,
   normalizeSort,
 } from "@jeschurun/shared";
@@ -18,6 +22,7 @@ import {
 } from "./api.js";
 import { PUBLIC_BIOS } from "./features.js";
 import { langData, useCatalog } from "./hooks.js";
+import { setDocumentTitle, setMetaDescription } from "./seo.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
 const CONTACT_EMAIL = "ask@jeschurun.org";
@@ -118,7 +123,14 @@ export function HomePage() {
   const issue = data.currentIssue;
   return (
     <div className="home">
-      <IssueView issue={issue} lang={lang} ui={ui} featured />
+      {issue ? (
+        <IssueView issue={issue} lang={lang} ui={ui} featured />
+      ) : (
+        <>
+          <h1>{ui.home}</h1>
+          <p className="empty-note">{ui.noIssue}</p>
+        </>
+      )}
       <section className="home-latest">
         <h2>{ui.latestArticles}</h2>
         <div className="content-list">
@@ -265,11 +277,13 @@ export function IssuePage() {
     : "";
   useEffect(() => {
     if (!pageTitle) return;
-    document.title = `${pageTitle} · Jeschurun`;
+    const seo = seoFor(lang);
+    setDocumentTitle(brandTitle(pageTitle, lang));
+    setMetaDescription(d?.summary || seo.issueFallbackDescription);
     return () => {
-      document.title = "Jeschurun";
+      setDocumentTitle(seoFor(lang).brand);
     };
-  }, [pageTitle]);
+  }, [pageTitle, lang, d?.summary]);
   if (!data?.ok) return <p>…</p>;
   return <IssueView issue={issue} lang={lang} ui={ui} />;
 }
@@ -324,6 +338,28 @@ export function ArticlesPage() {
     if (!next.get("page") || next.get("page") === "1") next.delete("page");
     setSp(next);
   }
+
+  const tagLabel = tagFilter
+    ? tagCatalog.find((t) => t.slug === tagFilter)?.labels?.[lang] || tagFilter
+    : "";
+
+  useEffect(() => {
+    if (!data?.ok) return;
+    const seo = seoFor(lang);
+    setDocumentTitle(
+      articlesListTitle({
+        lang,
+        articlesLabel: ui.articles,
+        page,
+        tagLabel,
+      }),
+    );
+    setMetaDescription(
+      tagLabel
+        ? fillSeoTemplate(seo.articlesTagDescription, { tag: tagLabel })
+        : seo.articlesDescription,
+    );
+  }, [data?.ok, lang, ui.articles, page, tagLabel]);
 
   if (!data?.ok) return <p>…</p>;
 
@@ -466,11 +502,19 @@ export function MaterialPage({ kind }) {
   const title = m ? d.title || d.name || m.slug : "";
   useEffect(() => {
     if (!title) return;
-    document.title = `${title} · Jeschurun`;
+    const seo = seoFor(lang);
+    setDocumentTitle(brandTitle(title, lang));
+    const fallback =
+      kind === "answer"
+        ? seo.answerFallbackDescription
+        : kind === "bio"
+          ? seo.bioFallbackDescription
+          : seo.articleFallbackDescription;
+    setMetaDescription(d.summary || d.question || fallback);
     return () => {
-      document.title = "Jeschurun";
+      setDocumentTitle(seoFor(lang).brand);
     };
-  }, [title]);
+  }, [title, lang, kind, d.summary, d.question]);
   useEffect(() => {
     const id = "jes-ld-article";
     if (kind !== "article" || !m || !title) {
