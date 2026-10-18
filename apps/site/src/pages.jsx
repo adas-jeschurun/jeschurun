@@ -20,6 +20,7 @@ import { PUBLIC_BIOS } from "./features.js";
 import { langData, useCatalog } from "./hooks.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
+const CONTACT_EMAIL = "ask@jeschurun.org";
 
 function formatPublishedAt(publishedAt, lang) {
   if (!publishedAt) return null;
@@ -589,6 +590,9 @@ export function AskRavPage() {
   return (
     <div className="ask-page">
       <h1>{ui.askSubmitTitle}</h1>
+      <p className="ask-direct-mail">
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      </p>
       <form className="ask-form" ref={formRef} onSubmit={onSubmit}>
         <input
           className="hp-website"
@@ -666,35 +670,35 @@ export function AboutPage() {
       tradition:
         "החומרים נשענים על תורתו של מורינו הרב שמשון רפאל הירש זצ״ל ועל ממשיכי דרכו.",
       publisher: "המוציא לאור: עדת ישורון, חיפה.",
-      contact: "ליצירת קשר עם המערכת: maky.rits@gmail.com",
+      contactLabel: "ליצירת קשר עם המערכת:",
     },
     en: {
       lead: "Jeschurun is a Torah journal of Adas Jeschurun in Haifa.",
       tradition:
         "Its materials draw on the teachings of Rabbi Samson Raphael Hirsch, of blessed memory, and of those who continue in his path.",
       publisher: "Publisher: Adas Jeschurun, Haifa.",
-      contact: "Editorial contact: maky.rits@gmail.com",
+      contactLabel: "Editorial contact:",
     },
     ru: {
       lead: "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе.",
       tradition:
         "Материалы опираются на учение рава Шимшона Рафаэля Гирша, благословенной памяти, и продолжателей его пути.",
       publisher: "Издатель: Адас Йешурун, Хайфа.",
-      contact: "Связь с редакцией: maky.rits@gmail.com",
+      contactLabel: "Связь с редакцией:",
     },
     de: {
       lead: "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa.",
       tradition:
         "Die Beiträge stützen sich auf die Lehre Rabbiner Samson Raphael Hirschs sel. A. und derer, die seinen Weg fortführen.",
       publisher: "Herausgeber: Adas Jeschurun, Haifa.",
-      contact: "Redaktion: maky.rits@gmail.com",
+      contactLabel: "Redaktion:",
     },
     fr: {
       lead: "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa.",
       tradition:
         "Les textes s’appuient sur l’enseignement du rabbin Samson Raphaël Hirsch, de mémoire bénie, et de ceux qui poursuivent sa voie.",
       publisher: "Éditeur : Adas Jeschurun, Haïfa.",
-      contact: "Rédaction : maky.rits@gmail.com",
+      contactLabel: "Rédaction :",
     },
   };
   const t = copy[lang] || copy.en;
@@ -704,7 +708,10 @@ export function AboutPage() {
       <p>{t.lead}</p>
       <p>{t.tradition}</p>
       <p className="about-meta">{t.publisher}</p>
-      <p className="about-meta">{t.contact}</p>
+      <p className="about-meta">
+        {t.contactLabel}{" "}
+        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+      </p>
     </div>
   );
 }

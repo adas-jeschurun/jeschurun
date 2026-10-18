@@ -10,7 +10,8 @@ import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
 import { PUBLIC_BIOS } from "./features.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
-const PUBLISHER_EMAIL = "maky.rits@gmail.com";
+const CONTACT_EMAIL = "ask@jeschurun.org";
+const PUBLISHER_EMAIL = CONTACT_EMAIL;
 
 function pathRest(pathname) {
   const m = String(pathname || "").match(/^\/[a-z]{2}(\/.*)?$/i);
@@ -296,6 +297,9 @@ export function Layout() {
           </div>
           <p className="publisher-line">
             {ui.publisher} · {ui.publisherPlace || "Haifa"}
+          </p>
+          <p className="publisher-line">
+            <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
           </p>
           <p className="copyright-line">
             {ui.copyright} {new Date().getFullYear()} {ui.publisher}

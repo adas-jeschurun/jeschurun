@@ -1,4 +1,5 @@
 import { json, LANG_SET } from "../_lib/json.js";
+import { notifyNewQuestion } from "../_lib/notify-question.js";
 
 const plain = (v, max) =>
   String(v ?? "")
@@ -56,6 +57,16 @@ export async function onRequestPost({ request, env }) {
     )
       .bind(id, language, subject, question, name, email)
       .run();
+
+    // Soft-fail: form success must not depend on email delivery
+    await notifyNewQuestion(env, {
+      id,
+      language,
+      name,
+      email,
+      subject,
+      question,
+    }).catch(() => {});
 
     return json({ ok: true, id });
   } catch {
