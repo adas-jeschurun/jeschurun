@@ -122,6 +122,15 @@ describe("ui gates", () => {
     expect(api).toMatch(/searchCorpusCache/);
   });
 
+  it("ask-rav honeypot does not expand RTL scrollWidth", () => {
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
+    // left:-9999px blows document scrollWidth (~10k) and squeezes HE mobile
+    expect(css).not.toMatch(/left:\s*-9999px/);
+    expect(css).toMatch(/\.hp-website[\s\S]*?clip-path:\s*inset\(50%\)/);
+    expect(css).toMatch(/\.ask-form[\s\S]*?overflow:\s*hidden/);
+    expect(css).toMatch(/html\s*\{[\s\S]*?overflow-x:\s*hidden/);
+  });
+
   it("noindex scoped to pages.dev; custom domain indexable", () => {
     expect(readFileSync(resolve(root, "apps/site/public/robots.txt"), "utf8")).toMatch(
       /Allow: \//,
