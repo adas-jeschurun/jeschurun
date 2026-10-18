@@ -177,6 +177,15 @@ export function Layout() {
     setMenuOpen(false);
   }, [location.pathname, location.search]);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   const nav = [
     ["", ui.home],
     ["articles", ui.articles],
@@ -240,7 +249,9 @@ export function Layout() {
         <button
           type="button"
           className="mobile-nav-trigger"
-          aria-label="Menu"
+          aria-label={ui.menu || "Menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-panel"
           onClick={() => setMenuOpen((v) => !v)}
         >
           <span />
@@ -248,8 +259,11 @@ export function Layout() {
           <span />
         </button>
         <div
+          id="mobile-nav-panel"
           className={`mobile-nav-panel${menuOpen ? " open" : ""}`}
           hidden={!menuOpen}
+          role="navigation"
+          aria-label={ui.menu || "Menu"}
         >
           {nav.map(([r, t]) => (
             <Link
