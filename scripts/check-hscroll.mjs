@@ -25,8 +25,9 @@ const PATHS = [
 
 async function measure(page, lang, path) {
   const url = `${BASE}/${lang}/${path}`.replace(/([^:]\/)\/+/g, "$1");
-  await page.goto(url, { waitUntil: "networkidle", timeout: 60000 });
-  await page.waitForTimeout(400);
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
+  await page.waitForSelector(".site-body, #root", { timeout: 20000 });
+  await page.waitForTimeout(800);
   return page.evaluate(() => {
     const el = document.documentElement;
     const body = document.body;
