@@ -115,7 +115,8 @@ function routeSectionMeta(rest, lang, ui, seo, search) {
       description: seo.cookiesDescription,
     };
   }
-  return null;
+  // Unknown section / material miss → NotFoundPage owns title + description
+  return { pageOwns: true };
 }
 
 function injectJsonLd(id, data) {

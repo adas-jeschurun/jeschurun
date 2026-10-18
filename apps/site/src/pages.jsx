@@ -87,6 +87,30 @@ function HomeSkeleton({ ui }) {
   );
 }
 
+/** Localized 404 for unknown routes and missing materials/issues. */
+export function NotFoundPage() {
+  const { lang, ui } = useOutletContext();
+  const seo = seoFor(lang);
+  useEffect(() => {
+    setDocumentTitle(brandTitle(ui.notFound, lang));
+    setMetaDescription(seo.notFoundDescription);
+    return () => {
+      setDocumentTitle(seo.brand);
+    };
+  }, [lang, ui.notFound, seo]);
+  return (
+    <div className="not-found-page">
+      <h1>{ui.notFound}</h1>
+      <p className="empty-note">{ui.notFoundBody}</p>
+      <p>
+        <Link className="button" to={`/${lang}/`}>
+          {ui.home}
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 export function HomePage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
@@ -287,6 +311,7 @@ export function IssuePage() {
     };
   }, [pageTitle, lang, d?.summary]);
   if (!data?.ok) return <p>…</p>;
+  if (!issue) return <NotFoundPage />;
   return <IssueView issue={issue} lang={lang} ui={ui} />;
 }
 
@@ -556,7 +581,7 @@ export function MaterialPage({ kind }) {
     };
   }, [kind, m, title, d.summary, lang, ui.publisher]);
   if (!mat) return <p>…</p>;
-  if (!mat.ok || !m) return <p>Not found</p>;
+  if (!mat.ok || !m) return <NotFoundPage />;
   return (
     <article className="material">
       {adminPreview && m.status !== "published" ? (

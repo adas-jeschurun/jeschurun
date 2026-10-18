@@ -358,6 +358,9 @@ h1, h2, h3 { font-family: var(--font-display); color: var(--blue-dark); line-hei
 .home-latest { margin-top: 8px; padding-top: 8px; }
 .home-latest > h2 { margin-top: 0; }
 .empty-note { color: #5a6068; }
+.not-found-page { max-width: 36rem; }
+.not-found-page h1 { color: var(--blue); margin-bottom: .75rem; }
+.not-found-page .button { display: inline-block; margin-top: 1rem; }
 
 .skeleton-block {
   min-height: 180px;

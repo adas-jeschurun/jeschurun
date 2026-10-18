@@ -57,8 +57,11 @@ describe("ui gates", () => {
     expect(app).toMatch(/path="current"/);
     expect(app).toMatch(/path="current"\s+element=\{<RedirectLangHome/);
     expect(app).toMatch(/function LangLayout/);
-    expect(app).toMatch(/path="\*"\s+element=\{<RedirectLangHome/);
+    expect(app).toMatch(/path="\*"\s+element=\{<NotFoundPage/);
     expect(app).not.toMatch(/Navigate to="\."/);
+    const pagesNf = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pagesNf).toMatch(/export function NotFoundPage/);
+    expect(pagesNf).toMatch(/ui\.notFound/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).not.toMatch(/export function CurrentPage/);
     expect(pages).toMatch(/issue-card--home/);
@@ -149,7 +152,11 @@ describe("ui gates", () => {
       expect(seo.articlesDescription.length).toBeGreaterThan(20);
       expect(seo.askDescription.length).toBeGreaterThan(20);
       expect(seo.aboutDescription.length).toBeGreaterThan(20);
+      expect(seo.notFoundDescription.length).toBeGreaterThan(20);
+      expect(UI[lang].notFound.length).toBeGreaterThan(2);
+      expect(UI[lang].notFoundBody.length).toBeGreaterThan(10);
       expect(brandTitle(UI[lang].about, lang)).toMatch(/Jeschurun/);
+      expect(brandTitle(UI[lang].notFound, lang)).toMatch(/Jeschurun/);
       expect(brandTitle("", lang)).toBe("Jeschurun");
       expect(
         articlesListTitle({
@@ -170,6 +177,9 @@ describe("ui gates", () => {
     expect(pages).toMatch(/<h1>\{ui\.askSubmitTitle\}<\/h1>/);
     expect(pages).toMatch(/<h1>\{title\}<\/h1>/);
     expect(pages).toMatch(/issue-card-title/);
+    expect(pages).toMatch(/export function NotFoundPage/);
+    expect(pages).toMatch(/<h1>\{ui\.notFound\}<\/h1>/);
+    expect(pages).toMatch(/setMetaDescription\(seo\.notFoundDescription\)/);
   });
 
   it("search-corpus does not SELECT source_issue from bios", () => {
@@ -234,6 +244,29 @@ describe("ui gates", () => {
     expect(css).not.toMatch(/max-width:\s*100vw/);
     expect(jsx).toMatch(/className="hp-website"/);
     expect(css).toMatch(/\.visually-hidden/);
+  });
+
+  it("favicon.ico is a real static asset (not SPA HTML)", () => {
+    const ico = resolve(root, "apps/site/public/favicon.ico");
+    const buf = readFileSync(ico);
+    expect(buf.length).toBeGreaterThan(100);
+    // ICO magic: 00 00 01 00
+    expect(buf[0]).toBe(0);
+    expect(buf[1]).toBe(0);
+    expect(buf[2]).toBe(1);
+    expect(buf[3]).toBe(0);
+    const redirects = readFileSync(
+      resolve(root, "apps/site/public/_redirects"),
+      "utf8",
+    );
+    expect(redirects).toMatch(/\/favicon\.ico/);
+    expect(redirects).toMatch(/\/index\.html\s+200/);
+    const routes = JSON.parse(
+      readFileSync(resolve(root, "apps/site/public/_routes.json"), "utf8"),
+    );
+    expect(routes.exclude).toContain("/favicon.ico");
+    const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
+    expect(html).toMatch(/href="\/favicon\.ico"/);
   });
 
   it("noindex scoped to pages.dev; custom domain indexable", () => {

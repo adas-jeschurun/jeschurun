@@ -224,6 +224,8 @@ export const SEO = {
       "A biography published by Jeschurun.",
     issueFallbackDescription:
       "An issue of the Jeschurun Torah journal.",
+    notFoundDescription:
+      "The page you requested was not found on Jeschurun.",
   },
   he: {
     brand: "Jeschurun",
@@ -248,6 +250,7 @@ export const SEO = {
     answerFallbackDescription: "תשובה ממדור שאל את הרב ב־Jeschurun.",
     bioFallbackDescription: "ביוגרפיה בפרסום Jeschurun.",
     issueFallbackDescription: "גיליון של כתב העת התורני Jeschurun.",
+    notFoundDescription: "הדף שביקשת לא נמצא באתר Jeschurun.",
   },
   ru: {
     brand: "Jeschurun",
@@ -279,6 +282,7 @@ export const SEO = {
     answerFallbackDescription: "Ответ из раздела «Вопрос раввину» на Jeschurun.",
     bioFallbackDescription: "Биография в издании Jeschurun.",
     issueFallbackDescription: "Выпуск торанического журнала Jeschurun.",
+    notFoundDescription: "Запрашиваемая страница на сайте Jeschurun не найдена.",
   },
   de: {
     brand: "Jeschurun",
@@ -310,6 +314,8 @@ export const SEO = {
     answerFallbackDescription: "Eine Antwort aus «Frage an den Rabbiner» auf Jeschurun.",
     bioFallbackDescription: "Eine Biographie bei Jeschurun.",
     issueFallbackDescription: "Eine Ausgabe der Tora-Zeitschrift Jeschurun.",
+    notFoundDescription:
+      "Die angeforderte Seite wurde auf Jeschurun nicht gefunden.",
   },
   fr: {
     brand: "Jeschurun",
@@ -341,6 +347,8 @@ export const SEO = {
     answerFallbackDescription: "Une réponse de « Question au rabbin » sur Jeschurun.",
     bioFallbackDescription: "Une biographie publiée par Jeschurun.",
     issueFallbackDescription: "Un numéro de la revue de Torah Jeschurun.",
+    notFoundDescription:
+      "La page demandée est introuvable sur Jeschurun.",
   },
 };
 
@@ -406,6 +414,8 @@ export const UI = {
     searchButton: "Найти",
     searchResults: "Результаты поиска",
     searchNoResults: "Ничего не найдено.",
+    notFound: "Не найдено",
+    notFoundBody: "Запрашиваемая страница не найдена.",
     latestArticles: "Последние статьи",
     latestQuestions: "Вопрос раввину",
     latestBios: "Биографии",
@@ -482,6 +492,8 @@ export const UI = {
     searchButton: "חיפוש",
     searchResults: "תוצאות חיפוש",
     searchNoResults: "לא נמצאו תוצאות.",
+    notFound: "לא נמצא",
+    notFoundBody: "הדף שביקשת לא נמצא.",
     latestArticles: "מאמרים אחרונים",
     latestQuestions: "שאל את הרב",
     latestBios: "רבנים ואישים",
@@ -558,6 +570,8 @@ export const UI = {
     searchButton: "Search",
     searchResults: "Search results",
     searchNoResults: "Nothing found.",
+    notFound: "Not found",
+    notFoundBody: "The page you requested was not found.",
     latestArticles: "Latest articles",
     latestQuestions: "Ask the Rav",
     latestBios: "Biographies",
@@ -634,6 +648,8 @@ export const UI = {
     searchButton: "Suchen",
     searchResults: "Suchergebnisse",
     searchNoResults: "Keine Ergebnisse gefunden.",
+    notFound: "Nicht gefunden",
+    notFoundBody: "Die angeforderte Seite wurde nicht gefunden.",
     latestArticles: "Neueste Artikel",
     latestQuestions: "Frage an den Rabbiner",
     latestBios: "Biographien",
@@ -710,6 +726,8 @@ export const UI = {
     searchButton: "Rechercher",
     searchResults: "Résultats de recherche",
     searchNoResults: "Aucun résultat.",
+    notFound: "Introuvable",
+    notFoundBody: "La page demandée est introuvable.",
     latestArticles: "Derniers articles",
     latestQuestions: "Question au rabbin",
     latestBios: "Biographies",

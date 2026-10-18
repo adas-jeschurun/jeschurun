@@ -12,6 +12,7 @@ import {
   IssuePage,
   LegalPage,
   MaterialPage,
+  NotFoundPage,
   RedirectHome,
   SearchPage,
 } from "./pages.jsx";
@@ -65,8 +66,8 @@ export function App() {
             PUBLIC_BIOS ? <MaterialPage kind="bio" /> : <RedirectLangHome />
           }
         />
-        {/* Unknown section under /:lang → home (not a blank Outlet) */}
-        <Route path="*" element={<RedirectLangHome />} />
+        {/* Unknown section under /:lang → localized Not found */}
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );
