@@ -5,10 +5,33 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
 
 describe("ui gates", () => {
-  it("sticky mobile top bar CSS present", () => {
+  it("mobile hides top nav; bottom 3-dot menu only", () => {
     const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
-    expect(css).toMatch(/position:\s*fixed\s*!important/);
     expect(css).toMatch(/\.main-nav\.top-bar/);
+    expect(css).toMatch(/display:\s*none\s*!important/);
+    expect(css).toMatch(/\.mobile-nav-trigger/);
+    expect(css).toMatch(/bottom:\s*calc\(16px/);
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/id="main-content"/);
+    expect(layout).toMatch(/AccessibilityPanel/);
+    expect(layout).toMatch(/CandleLightingWidget/);
+    expect(layout).toMatch(/BackToTop/);
+  });
+
+  it("a11y bootstrap + geo candle APIs present", () => {
+    const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
+    expect(html).toMatch(/jes-a11y-bootstrap/);
+    expect(html).toMatch(/jes-a11y/);
+    const resolveGeo = readFileSync(
+      resolve(root, "packages/functions/site/api/geo/resolve.js"),
+      "utf8",
+    );
+    const searchGeo = readFileSync(
+      resolve(root, "packages/functions/site/api/geo/search.js"),
+      "utf8",
+    );
+    expect(resolveGeo).toMatch(/Jerusalem/);
+    expect(searchGeo).toMatch(/nominatim\.openstreetmap\.org/);
   });
 
   it("archive in footer not main nav", () => {
@@ -32,7 +55,10 @@ describe("ui gates", () => {
     const app = readFileSync(resolve(root, "apps/site/src/App.jsx"), "utf8");
     expect(app).not.toMatch(/CurrentPage/);
     expect(app).toMatch(/path="current"/);
-    expect(app).toMatch(/Navigate to="\.\."/);
+    expect(app).toMatch(/path="current"\s+element=\{<RedirectLangHome/);
+    expect(app).toMatch(/function LangLayout/);
+    expect(app).toMatch(/path="\*"\s+element=\{<RedirectLangHome/);
+    expect(app).not.toMatch(/Navigate to="\."/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).not.toMatch(/export function CurrentPage/);
     expect(pages).toMatch(/issue-card--home/);
@@ -60,6 +86,23 @@ describe("ui gates", () => {
     );
     expect(md).toMatch(/internal-link/);
     expect(md).toMatch(/article\|answer\|biography/);
+    expect(md).toMatch(/mailto:/);
+  });
+
+  it("About page uses full markdown bodies for five langs", () => {
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/ABOUT_MD/);
+    expect(pages).toMatch(/stripLeadingH1/);
+    expect(pages).toMatch(/markdownBlocks/);
+    for (const lang of ["he", "en", "ru", "de", "fr"]) {
+      const body = readFileSync(
+        resolve(root, `apps/site/src/content/about/${lang}.md`),
+        "utf8",
+      );
+      expect(body).toMatch(/^# /);
+      expect(body).toMatch(/Jeschurun/);
+      expect(body).toMatch(/ask@jeschurun\.org/);
+    }
   });
 
   it("hreflang canonical tag filter pagination archive", () => {
@@ -68,8 +111,9 @@ describe("ui gates", () => {
     expect(layout).toMatch(/x-default/);
     expect(layout).toMatch(/rel = "canonical"/);
     expect(layout).toMatch(/noindex, follow/);
-    expect(layout).toMatch(/document\.title/);
-    expect(layout).toMatch(/routeUiTitle/);
+    expect(layout).toMatch(/setDocumentTitle|brandTitle/);
+    expect(layout).toMatch(/setMetaDescription/);
+    expect(layout).toMatch(/routeSectionMeta/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/ARTICLES_PAGE_SIZE/);
     expect(pages).toMatch(/rankSearchCorpus/);
@@ -78,13 +122,54 @@ describe("ui gates", () => {
     expect(pages).toMatch(/currentIssue\?\.id/);
     expect(pages).toMatch(/iss\.id !== currentId/);
     expect(pages).toMatch(/\$\{iss\.hebrew_year\} · \$\{parasha\}/);
-    expect(pages).toMatch(/document\.title/);
+    expect(pages).toMatch(/articlesListTitle/);
+    expect(pages).toMatch(/setMetaDescription/);
     const mw = readFileSync(
       resolve(root, "packages/functions/site/_middleware.js"),
       "utf8",
     );
     expect(mw).toMatch(/archive/);
     expect(mw).toMatch(/noindex, follow/);
+  });
+
+  it("SEO titles descriptions in all five langs", async () => {
+    const {
+      LANGS,
+      SEO,
+      brandTitle,
+      articlesListTitle,
+      fillSeoTemplate,
+      seoFor,
+      UI,
+    } = await import(resolve(root, "packages/shared/src/index.js"));
+    for (const lang of LANGS) {
+      const seo = seoFor(lang);
+      expect(seo).toBe(SEO[lang]);
+      expect(seo.homeDescription.length).toBeGreaterThan(40);
+      expect(seo.articlesDescription.length).toBeGreaterThan(20);
+      expect(seo.askDescription.length).toBeGreaterThan(20);
+      expect(seo.aboutDescription.length).toBeGreaterThan(20);
+      expect(brandTitle(UI[lang].about, lang)).toMatch(/Jeschurun/);
+      expect(brandTitle("", lang)).toBe("Jeschurun");
+      expect(
+        articlesListTitle({
+          lang,
+          articlesLabel: UI[lang].articles,
+          page: 2,
+        }),
+      ).toMatch(/2/);
+      expect(
+        fillSeoTemplate(seo.articlesTagDescription, { tag: "Ethics" }),
+      ).toMatch(/Ethics/);
+    }
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/seoFor/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/<h1>\{ui\.articles\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{ui\.about\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{ui\.askSubmitTitle\}<\/h1>/);
+    expect(pages).toMatch(/<h1>\{title\}<\/h1>/);
+    expect(pages).toMatch(/issue-card-title/);
   });
 
   it("search-corpus does not SELECT source_issue from bios", () => {
@@ -110,9 +195,10 @@ describe("ui gates", () => {
 
   it("mobile nav clears header; menu not mid-viewport", () => {
     const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
-    expect(css).toMatch(/padding-top:\s*56px/);
+    expect(css).not.toMatch(/padding-top:\s*56px/);
     expect(css).not.toMatch(/top:\s*52%/);
-    expect(css).toMatch(/\.mobile-nav-trigger[\s\S]*?top:\s*12px/);
+    expect(css).toMatch(/\.mobile-nav-trigger[\s\S]*?top:\s*auto/);
+    expect(css).toMatch(/\.mobile-nav-panel\.open[\s\S]*?bottom:\s*calc\(72px/);
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
     expect(html).toMatch(/fonts\.googleapis\.com/);
     expect(html).toMatch(/preconnect/);

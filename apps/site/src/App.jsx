@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { LANGS } from "@jeschurun/shared";
 import { PUBLIC_BIOS } from "./features.js";
 import { Layout } from "./Layout.jsx";
@@ -23,14 +23,26 @@ function RedirectLangHome() {
   return <Navigate to={`/${lang}/`} replace />;
 }
 
+/** Unknown /:lang → rewrite to /en/… (keep path + query). */
+function LangLayout() {
+  const { lang: raw } = useParams();
+  const location = useLocation();
+  if (!LANGS.includes(raw)) {
+    const rest = location.pathname.replace(/^\/[^/]+/, "") || "/";
+    const path = rest.endsWith("/") ? rest : `${rest}/`;
+    return <Navigate to={`/en${path === "/" ? "/" : path}${location.search}`} replace />;
+  }
+  return <Layout />;
+}
+
 export function App() {
   return (
     <Routes>
       <Route path="/" element={<RedirectHome />} />
-      <Route path="/:lang" element={<Layout />}>
+      <Route path="/:lang" element={<LangLayout />}>
         <Route index element={<HomePage />} />
         {/* /current removed permanently — old URLs go home */}
-        <Route path="current" element={<Navigate to=".." replace />} />
+        <Route path="current" element={<RedirectLangHome />} />
         <Route path="archive" element={<ArchivePage />} />
         <Route path="articles" element={<ArticlesPage />} />
         <Route path="ask-rav" element={<AskRavPage />} />
@@ -53,7 +65,8 @@ export function App() {
             PUBLIC_BIOS ? <MaterialPage kind="bio" /> : <RedirectLangHome />
           }
         />
-        <Route path="*" element={<Navigate to="." replace />} />
+        {/* Unknown section under /:lang → home (not a blank Outlet) */}
+        <Route path="*" element={<RedirectLangHome />} />
       </Route>
     </Routes>
   );

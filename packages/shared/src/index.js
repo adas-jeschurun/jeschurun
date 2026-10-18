@@ -183,6 +183,209 @@ export function sortArticles(list, sort, lang) {
   return arr;
 }
 
+/**
+ * Per-language SEO copy for public pages.
+ * Titles use brandTitle(); description strings support {tag} / {q}.
+ */
+export const SEO = {
+  en: {
+    brand: "Jeschurun",
+    titleSep: " · ",
+    pageN: "page {n}",
+    homeTitle: "Jeschurun",
+    homeDescription:
+      "Torah journal of Adas Jeschurun in Haifa — teachings of Rabbi Samson Raphael Hirsch and those who continue his path.",
+    articlesDescription:
+      "Browse articles from the Jeschurun Torah journal by topic and date.",
+    articlesTagDescription:
+      "Articles on {tag} from Jeschurun, the Torah journal of Adas Jeschurun in Haifa.",
+    askDescription:
+      "Submit a question to the Rav. Editorial contact: ask@jeschurun.org.",
+    searchDescription:
+      "Search articles, answers, and materials across all languages on Jeschurun.",
+    searchQueryDescription: "Search results for “{q}” on Jeschurun.",
+    aboutDescription:
+      "Jeschurun is a Torah journal of Adas Jeschurun in Haifa, drawing on the teachings of Rabbi Samson Raphael Hirsch.",
+    archiveDescription:
+      "Past issues of the Jeschurun Torah journal from Adas Jeschurun in Haifa.",
+    biosDescription:
+      "Biographies of rabbis and figures in the Hirschian tradition, published by Jeschurun.",
+    termsDescription:
+      "Terms of use for the Jeschurun website and published materials.",
+    privacyDescription:
+      "How Jeschurun handles visitor data, the Ask the Rav form, and spam protection.",
+    cookiesDescription:
+      "Cookie and technical storage practices on the Jeschurun website.",
+    articleFallbackDescription:
+      "An article from the Jeschurun Torah journal of Adas Jeschurun in Haifa.",
+    answerFallbackDescription:
+      "An answer from Ask the Rav on Jeschurun.",
+    bioFallbackDescription:
+      "A biography published by Jeschurun.",
+    issueFallbackDescription:
+      "An issue of the Jeschurun Torah journal.",
+  },
+  he: {
+    brand: "Jeschurun",
+    titleSep: " · ",
+    pageN: "עמוד {n}",
+    homeTitle: "Jeschurun",
+    homeDescription:
+      "כתב עת תורני של עדת ישורון בחיפה — מתורתו של רש״ר הירש זצ״ל וממשיכי דרכו.",
+    articlesDescription: "מאמרים מכתב העת התורני Jeschurun — לפי נושא ותאריך.",
+    articlesTagDescription: "מאמרים בנושא {tag} ב־Jeschurun, כתב העת של עדת ישורון בחיפה.",
+    askDescription: "שליחת שאלה לרב. ליצירת קשר: ask@jeschurun.org.",
+    searchDescription: "חיפוש מאמרים, תשובות וחומרים בכל השפות באתר Jeschurun.",
+    searchQueryDescription: "תוצאות חיפוש עבור «{q}» ב־Jeschurun.",
+    aboutDescription:
+      "Jeschurun הוא כתב עת תורני של עדת ישורון בחיפה, הנשען על תורת רש״ר הירש זצ״ל.",
+    archiveDescription: "גיליונות קודמים של כתב העת התורני Jeschurun.",
+    biosDescription: "ביוגרפיות של רבנים ואישים במסורת הרש״ר, בפרסום Jeschurun.",
+    termsDescription: "תנאי השימוש באתר Jeschurun ובחומרים המפורסמים בו.",
+    privacyDescription: "כיצד Jeschurun מטפל בנתוני מבקרים, בטופס שאל את הרב ובהגנת ספאם.",
+    cookiesDescription: "מדיניות עוגיות ואחסון טכני באתר Jeschurun.",
+    articleFallbackDescription: "מאמר מכתב העת התורני Jeschurun של עדת ישורון בחיפה.",
+    answerFallbackDescription: "תשובה ממדור שאל את הרב ב־Jeschurun.",
+    bioFallbackDescription: "ביוגרפיה בפרסום Jeschurun.",
+    issueFallbackDescription: "גיליון של כתב העת התורני Jeschurun.",
+  },
+  ru: {
+    brand: "Jeschurun",
+    titleSep: " · ",
+    pageN: "стр. {n}",
+    homeTitle: "Jeschurun",
+    homeDescription:
+      "Торанический журнал общины Адас Йешурун в Хайфе — учение рава Шимшона Рафаэля Гирша и продолжателей его пути.",
+    articlesDescription:
+      "Статьи торанического журнала Jeschurun — по темам и дате.",
+    articlesTagDescription:
+      "Статьи на тему «{tag}» в журнале Jeschurun (Адас Йешурун, Хайфа).",
+    askDescription:
+      "Задать вопрос раввину. Связь с редакцией: ask@jeschurun.org.",
+    searchDescription:
+      "Поиск статей, ответов и материалов на всех языках сайта Jeschurun.",
+    searchQueryDescription: "Результаты поиска по запросу «{q}» на Jeschurun.",
+    aboutDescription:
+      "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе, опирающийся на учение рава Гирша.",
+    archiveDescription: "Архив выпусков торанического журнала Jeschurun.",
+    biosDescription:
+      "Биографии раввинов и деятелей гиршианской традиции в издании Jeschurun.",
+    termsDescription: "Условия использования сайта Jeschurun и опубликованных материалов.",
+    privacyDescription:
+      "Как Jeschurun обрабатывает данные посетителей, форму «Вопрос раввину» и защиту от спама.",
+    cookiesDescription: "Файлы cookie и технические механизмы на сайте Jeschurun.",
+    articleFallbackDescription:
+      "Статья торанического журнала Jeschurun общины Адас Йешурун в Хайфе.",
+    answerFallbackDescription: "Ответ из раздела «Вопрос раввину» на Jeschurun.",
+    bioFallbackDescription: "Биография в издании Jeschurun.",
+    issueFallbackDescription: "Выпуск торанического журнала Jeschurun.",
+  },
+  de: {
+    brand: "Jeschurun",
+    titleSep: " · ",
+    pageN: "Seite {n}",
+    homeTitle: "Jeschurun",
+    homeDescription:
+      "Tora-Zeitschrift von Adas Jeschurun in Haifa — Lehre Rabbiner Samson Raphael Hirschs und seiner Nachfolger.",
+    articlesDescription:
+      "Artikel der Tora-Zeitschrift Jeschurun — nach Thema und Datum.",
+    articlesTagDescription:
+      "Artikel zum Thema {tag} in Jeschurun, der Tora-Zeitschrift von Adas Jeschurun in Haifa.",
+    askDescription:
+      "Eine Frage an den Rabbiner senden. Redaktion: ask@jeschurun.org.",
+    searchDescription:
+      "Artikel, Antworten und Materialien auf Jeschurun in allen Sprachen durchsuchen.",
+    searchQueryDescription: "Suchergebnisse für „{q}“ auf Jeschurun.",
+    aboutDescription:
+      "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa in der Tradition Rabbiner Hirschs.",
+    archiveDescription: "Frühere Ausgaben der Tora-Zeitschrift Jeschurun.",
+    biosDescription:
+      "Biographien von Rabbinern und Persönlichkeiten der Hirsch-Tradition bei Jeschurun.",
+    termsDescription: "Nutzungsbedingungen der Website Jeschurun und ihrer Inhalte.",
+    privacyDescription:
+      "Umgang von Jeschurun mit Besucherdaten, dem Frageformular und Spamschutz.",
+    cookiesDescription: "Cookie- und technische Speicherpraxis auf Jeschurun.",
+    articleFallbackDescription:
+      "Ein Artikel der Tora-Zeitschrift Jeschurun von Adas Jeschurun in Haifa.",
+    answerFallbackDescription: "Eine Antwort aus «Frage an den Rabbiner» auf Jeschurun.",
+    bioFallbackDescription: "Eine Biographie bei Jeschurun.",
+    issueFallbackDescription: "Eine Ausgabe der Tora-Zeitschrift Jeschurun.",
+  },
+  fr: {
+    brand: "Jeschurun",
+    titleSep: " · ",
+    pageN: "page {n}",
+    homeTitle: "Jeschurun",
+    homeDescription:
+      "Revue de Torah d’Adas Jeschurun à Haïfa — enseignement du rabbin Samson Raphaël Hirsch et de ses continuateurs.",
+    articlesDescription:
+      "Articles de la revue de Torah Jeschurun — par sujet et par date.",
+    articlesTagDescription:
+      "Articles sur {tag} dans Jeschurun, revue de Torah d’Adas Jeschurun à Haïfa.",
+    askDescription:
+      "Poser une question au rabbin. Rédaction : ask@jeschurun.org.",
+    searchDescription:
+      "Rechercher articles, réponses et textes sur Jeschurun dans toutes les langues.",
+    searchQueryDescription: "Résultats de recherche pour « {q} » sur Jeschurun.",
+    aboutDescription:
+      "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa, dans la tradition du rabbin Hirsch.",
+    archiveDescription: "Anciens numéros de la revue de Torah Jeschurun.",
+    biosDescription:
+      "Biographies de rabbins et figures de la tradition hirschienne publiées par Jeschurun.",
+    termsDescription: "Conditions d’utilisation du site Jeschurun et de ses contenus.",
+    privacyDescription:
+      "Traitement des données, formulaire « Question au rabbin » et antispam sur Jeschurun.",
+    cookiesDescription: "Cookies et stockage technique sur le site Jeschurun.",
+    articleFallbackDescription:
+      "Un article de la revue de Torah Jeschurun d’Adas Jeschurun à Haïfa.",
+    answerFallbackDescription: "Une réponse de « Question au rabbin » sur Jeschurun.",
+    bioFallbackDescription: "Une biographie publiée par Jeschurun.",
+    issueFallbackDescription: "Un numéro de la revue de Torah Jeschurun.",
+  },
+};
+
+/** @param {string} lang */
+export function seoFor(lang) {
+  return SEO[lang] || SEO.en;
+}
+
+/**
+ * Document title: page purpose + brand, or brand alone for home.
+ * @param {string | null | undefined} pageTitle
+ * @param {string} lang
+ */
+export function brandTitle(pageTitle, lang) {
+  const seo = seoFor(lang);
+  const t = String(pageTitle || "").trim();
+  if (!t || t === seo.brand) return seo.brand;
+  return `${t}${seo.titleSep}${seo.brand}`;
+}
+
+/**
+ * Articles list title with optional tag + pagination.
+ * @param {{ lang: string, articlesLabel: string, page?: number, tagLabel?: string }} opts
+ */
+export function articlesListTitle({ lang, articlesLabel, page = 1, tagLabel = "" }) {
+  const seo = seoFor(lang);
+  let base = articlesLabel;
+  const tag = String(tagLabel || "").trim();
+  if (tag) base = `${base} — ${tag}`;
+  if (page >= 2) {
+    base = `${base} — ${seo.pageN.replace("{n}", String(page))}`;
+  }
+  return brandTitle(base, lang);
+}
+
+/**
+ * @param {string} template
+ * @param {Record<string, string>} vars
+ */
+export function fillSeoTemplate(template, vars) {
+  return String(template || "").replace(/\{(\w+)\}/g, (_, k) =>
+    vars[k] != null ? String(vars[k]) : "",
+  );
+}
+
 export const UI = {
   ru: {
     askSubmit: "Задать вопрос",
@@ -211,6 +414,27 @@ export const UI = {
     tags: "Темы",
     more: "Смотреть всё",
     home: "Главная",
+    menu: "Меню",
+    backToTop: "Наверх",
+    a11yTitle: "Доступность",
+    a11yOpen: "Настройки доступности",
+    a11yFont: "Размер текста",
+    a11yLine: "Межстрочный интервал",
+    a11ySpacing: "Межбуквенный интервал",
+    a11yContrast: "Высокий контраст",
+    a11yMono: "Оттенки серого",
+    a11yLinks: "Подчёркивать ссылки",
+    a11yHeadings: "Выделять заголовки",
+    a11yMotion: "Меньше анимации",
+    a11yCursor: "Крупный курсор",
+    a11yReadable: "Читаемый шрифт",
+    a11yColorBlind: "Цветовой фильтр",
+    a11yNone: "Нет",
+    a11yReset: "Сбросить",
+    a11yClose: "Закрыть",
+    candleTitle: "Зажигание свечей",
+    candleChooseCity: "Выбрать город",
+    candleSearchPlaceholder: "Поиск города…",
     current: "Текущий выпуск",
     archive: "Архив",
     articles: "Статьи",
@@ -266,6 +490,27 @@ export const UI = {
     tags: "נושאים",
     more: "לכל החומרים",
     home: "דף הבית",
+    menu: "תפריט",
+    backToTop: "לראש העמוד",
+    a11yTitle: "נגישות",
+    a11yOpen: "הגדרות נגישות",
+    a11yFont: "גודל טקסט",
+    a11yLine: "ריווח שורות",
+    a11ySpacing: "ריווח אותיות",
+    a11yContrast: "ניגודיות גבוהה",
+    a11yMono: "גווני אפור",
+    a11yLinks: "הדגשת קישורים",
+    a11yHeadings: "הדגשת כותרות",
+    a11yMotion: "הפחתת אנימציה",
+    a11yCursor: "סמן גדול",
+    a11yReadable: "גופן קריא",
+    a11yColorBlind: "מסנן צבע",
+    a11yNone: "ללא",
+    a11yReset: "איפוס",
+    a11yClose: "סגירה",
+    candleTitle: "הדלקת נרות",
+    candleChooseCity: "בחירת עיר",
+    candleSearchPlaceholder: "חיפוש עיר…",
     current: "הגיליון הנוכחי",
     archive: "ארכיון",
     articles: "מאמרים",
@@ -321,6 +566,27 @@ export const UI = {
     tags: "Topics",
     more: "View all",
     home: "Home",
+    menu: "Menu",
+    backToTop: "Back to top",
+    a11yTitle: "Accessibility",
+    a11yOpen: "Accessibility settings",
+    a11yFont: "Text size",
+    a11yLine: "Line height",
+    a11ySpacing: "Letter spacing",
+    a11yContrast: "High contrast",
+    a11yMono: "Grayscale",
+    a11yLinks: "Underline links",
+    a11yHeadings: "Highlight headings",
+    a11yMotion: "Reduce motion",
+    a11yCursor: "Large cursor",
+    a11yReadable: "Readable font",
+    a11yColorBlind: "Color filter",
+    a11yNone: "None",
+    a11yReset: "Reset",
+    a11yClose: "Close",
+    candleTitle: "Candle lighting",
+    candleChooseCity: "Choose city",
+    candleSearchPlaceholder: "Search city…",
     current: "Current Issue",
     archive: "Archive",
     articles: "Articles",
@@ -376,6 +642,27 @@ export const UI = {
     tags: "Themen",
     more: "Alle anzeigen",
     home: "Startseite",
+    menu: "Menü",
+    backToTop: "Nach oben",
+    a11yTitle: "Barrierefreiheit",
+    a11yOpen: "Einstellungen zur Barrierefreiheit",
+    a11yFont: "Textgröße",
+    a11yLine: "Zeilenabstand",
+    a11ySpacing: "Zeichenabstand",
+    a11yContrast: "Hoher Kontrast",
+    a11yMono: "Graustufen",
+    a11yLinks: "Links unterstreichen",
+    a11yHeadings: "Überschriften hervorheben",
+    a11yMotion: "Weniger Bewegung",
+    a11yCursor: "Großer Cursor",
+    a11yReadable: "Lesbare Schrift",
+    a11yColorBlind: "Farbfilter",
+    a11yNone: "Keine",
+    a11yReset: "Zurücksetzen",
+    a11yClose: "Schließen",
+    candleTitle: "Kerzenanzünden",
+    candleChooseCity: "Stadt wählen",
+    candleSearchPlaceholder: "Stadt suchen…",
     current: "Aktuelle Ausgabe",
     archive: "Archiv",
     articles: "Artikel",
@@ -431,6 +718,27 @@ export const UI = {
     tags: "Sujets",
     more: "Voir tout",
     home: "Accueil",
+    menu: "Menu",
+    backToTop: "Haut de page",
+    a11yTitle: "Accessibilité",
+    a11yOpen: "Paramètres d’accessibilité",
+    a11yFont: "Taille du texte",
+    a11yLine: "Interligne",
+    a11ySpacing: "Espacement des lettres",
+    a11yContrast: "Contraste élevé",
+    a11yMono: "Niveaux de gris",
+    a11yLinks: "Souligner les liens",
+    a11yHeadings: "Mettre en évidence les titres",
+    a11yMotion: "Réduire les animations",
+    a11yCursor: "Grand curseur",
+    a11yReadable: "Police lisible",
+    a11yColorBlind: "Filtre de couleur",
+    a11yNone: "Aucun",
+    a11yReset: "Réinitialiser",
+    a11yClose: "Fermer",
+    candleTitle: "Allumage des bougies",
+    candleChooseCity: "Choisir une ville",
+    candleSearchPlaceholder: "Rechercher une ville…",
     current: "Numéro actuel",
     archive: "Archives",
     articles: "Articles",

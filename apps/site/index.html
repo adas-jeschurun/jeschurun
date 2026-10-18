@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Jeschurun</title>
+    <meta
+      name="description"
+      content="Torah journal of Adas Jeschurun in Haifa — teachings of Rabbi Samson Raphael Hirsch and those who continue his path."
+    />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="icon" type="image/png" href="/favicon.png" />
@@ -16,6 +20,63 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
     />
+    <script id="jes-a11y-bootstrap">
+      (function () {
+        try {
+          var a = localStorage.getItem("jes-a11y");
+          if (!a) return;
+          var s = JSON.parse(a),
+            r = document.documentElement,
+            f = [
+              "a11y-font--2",
+              "a11y-font--1",
+              "",
+              "a11y-font-1",
+              "a11y-font-2",
+              "a11y-font-3",
+              "a11y-font-4",
+            ],
+            cb = ["protanopia", "deuteranopia", "tritanopia"],
+            fs = Math.round(Number(s.fontScale) || 0);
+          if (fs < -2) fs = -2;
+          if (fs > 4) fs = 4;
+          var lh = Math.round(Number(s.lineHeight) || 0);
+          if (lh < 0) lh = 0;
+          if (lh > 3) lh = 3;
+          var ls = Math.round(Number(s.letterSpacing) || 0);
+          if (ls < 0) ls = 0;
+          if (ls > 3) ls = 3;
+          f.filter(Boolean).forEach(function (c) {
+            r.classList.remove(c);
+          });
+          if (fs) {
+            var fc = f[fs + 2];
+            if (fc) r.classList.add(fc);
+          }
+          ["a11y-line-1", "a11y-line-2", "a11y-line-3"].forEach(function (c) {
+            r.classList.remove(c);
+          });
+          if (lh > 0) r.classList.add("a11y-line-" + lh);
+          ["a11y-spacing-1", "a11y-spacing-2", "a11y-spacing-3"].forEach(
+            function (c) {
+              r.classList.remove(c);
+            },
+          );
+          if (ls > 0) r.classList.add("a11y-spacing-" + ls);
+          r.classList.toggle("a11y-high-contrast", !!s.highContrast);
+          r.classList.toggle("a11y-monochrome", !!s.monochrome);
+          r.classList.toggle("a11y-highlight-links", !!s.highlightLinks);
+          r.classList.toggle("a11y-highlight-headings", !!s.highlightHeadings);
+          r.classList.toggle("a11y-pause-animations", !!s.pauseAnimations);
+          r.classList.toggle("a11y-big-cursor", !!s.bigCursor);
+          r.classList.toggle("a11y-readable-font", !!s.readableFont);
+          cb.forEach(function (c) {
+            r.classList.remove("a11y-" + c);
+          });
+          if (cb.indexOf(s.colorBlind) >= 0) r.classList.add("a11y-" + s.colorBlind);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

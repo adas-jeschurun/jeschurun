@@ -6,8 +6,20 @@ import {
   useLocation,
   useParams,
 } from "react-router-dom";
-import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
+import {
+  HEADER_SUBTITLE,
+  LANGS,
+  LANG_LABEL,
+  UI,
+  brandTitle,
+  fillSeoTemplate,
+  seoFor,
+} from "@jeschurun/shared";
+import { AccessibilityPanel } from "./components/AccessibilityPanel.jsx";
+import { BackToTop } from "./components/BackToTop.jsx";
+import { CandleLightingWidget } from "./components/CandleLightingWidget.jsx";
 import { PUBLIC_BIOS } from "./features.js";
+import { setDocumentTitle, setMetaDescription } from "./seo.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
 const CONTACT_EMAIL = "ask@jeschurun.org";
@@ -33,17 +45,76 @@ function langHref(targetLang, pathname, search) {
   return qs ? `${path}?${qs}` : path;
 }
 
-function routeUiTitle(rest, ui) {
-  if (rest === "/" || rest === "") return null;
-  if (rest === "/articles/" || rest === "/articles") return ui.articles;
-  if (rest === "/ask-rav/" || rest === "/ask-rav") return ui.ask;
-  if (rest === "/biographies/" || rest === "/biographies") return ui.bios;
-  if (rest === "/about/" || rest === "/about") return ui.about;
-  if (rest === "/archive/" || rest === "/archive") return ui.archive;
-  if (rest === "/search/" || rest === "/search") return ui.search;
-  if (rest === "/terms/" || rest === "/terms") return ui.terms;
-  if (rest === "/privacy/" || rest === "/privacy") return ui.privacy;
-  if (rest === "/cookies/" || rest === "/cookies") return ui.cookies;
+/**
+ * Title + description for section routes.
+ * Articles list (tag/page) and material/issue pages own title via their pages.
+ */
+function routeSectionMeta(rest, lang, ui, seo, search) {
+  const params = new URLSearchParams(search);
+  if (rest === "/" || rest === "") {
+    return {
+      title: brandTitle(seo.homeTitle, lang),
+      description: seo.homeDescription,
+    };
+  }
+  if (rest === "/articles/" || rest === "/articles") {
+    return { pageOwns: true };
+  }
+  if (rest === "/ask-rav/" || rest === "/ask-rav") {
+    return {
+      title: brandTitle(ui.askSubmitTitle, lang),
+      description: seo.askDescription,
+    };
+  }
+  if (rest === "/biographies/" || rest === "/biographies") {
+    return {
+      title: brandTitle(ui.bios, lang),
+      description: seo.biosDescription,
+    };
+  }
+  if (rest === "/about/" || rest === "/about") {
+    return {
+      title: brandTitle(ui.about, lang),
+      description: seo.aboutDescription,
+    };
+  }
+  if (rest === "/archive/" || rest === "/archive") {
+    return {
+      title: brandTitle(ui.archive, lang),
+      description: seo.archiveDescription,
+    };
+  }
+  if (rest === "/search/" || rest === "/search") {
+    const q = (params.get("q") || "").trim();
+    if (q) {
+      return {
+        title: brandTitle(`${ui.search}: ${q}`, lang),
+        description: fillSeoTemplate(seo.searchQueryDescription, { q }),
+      };
+    }
+    return {
+      title: brandTitle(ui.search, lang),
+      description: seo.searchDescription,
+    };
+  }
+  if (rest === "/terms/" || rest === "/terms") {
+    return {
+      title: brandTitle(ui.terms, lang),
+      description: seo.termsDescription,
+    };
+  }
+  if (rest === "/privacy/" || rest === "/privacy") {
+    return {
+      title: brandTitle(ui.privacy, lang),
+      description: seo.privacyDescription,
+    };
+  }
+  if (rest === "/cookies/" || rest === "/cookies") {
+    return {
+      title: brandTitle(ui.cookies, lang),
+      description: seo.cookiesDescription,
+    };
+  }
   return null;
 }
 
@@ -68,16 +139,20 @@ function useSeoHead(lang) {
     const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
     const isArticles = rest === "/articles/" || rest === "/articles";
     const isArchive = /^\/archive(\/|$)/.test(rest);
+    const seo = seoFor(lang);
 
     const hrefParams = new URLSearchParams(location.search);
     hrefParams.delete("page");
     const altQs = hrefParams.toString();
 
-    // Section routes set title here; article/answer/bio/issue pages own document.title.
-    const section = routeUiTitle(rest, ui);
-    const pageOwnsTitle = /^\/(article|answer|biography|issue)(\/|$)/.test(rest);
+    // Section routes set title/description here; articles/material/issue own theirs.
+    const section = routeSectionMeta(rest, lang, ui, seo, location.search);
+    const pageOwnsTitle =
+      section?.pageOwns ||
+      /^\/(article|answer|biography|issue)(\/|$)/.test(rest);
     if (!pageOwnsTitle) {
-      document.title = section ? `${section} · Jeschurun` : "Jeschurun";
+      setDocumentTitle(section?.title || seo.brand);
+      if (section?.description) setMetaDescription(section.description);
     }
 
     document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
@@ -177,6 +252,15 @@ export function Layout() {
     setMenuOpen(false);
   }, [location.pathname, location.search]);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   const nav = [
     ["", ui.home],
     ["articles", ui.articles],
@@ -240,7 +324,9 @@ export function Layout() {
         <button
           type="button"
           className="mobile-nav-trigger"
-          aria-label="Menu"
+          aria-label={ui.menu || "Menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-panel"
           onClick={() => setMenuOpen((v) => !v)}
         >
           <span />
@@ -248,8 +334,11 @@ export function Layout() {
           <span />
         </button>
         <div
+          id="mobile-nav-panel"
           className={`mobile-nav-panel${menuOpen ? " open" : ""}`}
           hidden={!menuOpen}
+          role="navigation"
+          aria-label={ui.menu || "Menu"}
         >
           {nav.map(([r, t]) => (
             <Link
@@ -265,9 +354,13 @@ export function Layout() {
           </Link>
         </div>
 
-        <main className="page-main">
+        <main id="main-content" className="page-main" tabIndex={-1}>
           <Outlet context={{ lang, ui }} />
         </main>
+
+        <CandleLightingWidget lang={lang} ui={ui} />
+        <AccessibilityPanel ui={ui} />
+        <BackToTop label={ui.backToTop || "Back to top"} />
 
         <footer className="site-footer">
           <img
