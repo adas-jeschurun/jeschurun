@@ -123,12 +123,31 @@ describe("ui gates", () => {
   });
 
   it("ask-rav honeypot does not expand RTL scrollWidth", () => {
-    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
-    // left:-9999px blows document scrollWidth (~10k) and squeezes HE mobile
-    expect(css).not.toMatch(/left:\s*-9999px/);
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8").replace(
+      /\/\*[\s\S]*?\*\//g,
+      "",
+    );
+    // Large negative left blows document scrollWidth (~10k) and squeezes HE mobile
+    expect(css).not.toMatch(/left:\s*-\d{2,}px/);
     expect(css).toMatch(/\.hp-website[\s\S]*?clip-path:\s*inset\(50%\)/);
+    expect(css).toMatch(/\.hp-website[\s\S]*?position:\s*fixed/);
     expect(css).toMatch(/\.ask-form[\s\S]*?overflow:\s*hidden/);
     expect(css).toMatch(/html\s*\{[\s\S]*?overflow-x:\s*hidden/);
+  });
+
+  it("sitewide CSS has no off-screen honeypot / negative-left traps", () => {
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8").replace(
+      /\/\*[\s\S]*?\*\//g,
+      "",
+    );
+    const jsx = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    // Class of bug: absolute + large negative left/right expands scrollWidth in LTR+RTL
+    expect(css).not.toMatch(/left:\s*-\d{2,}px/);
+    expect(css).not.toMatch(/right:\s*-\d{2,}px/);
+    expect(css).not.toMatch(/text-indent:\s*-\d+/);
+    expect(css).not.toMatch(/max-width:\s*100vw/);
+    expect(jsx).toMatch(/className="hp-website"/);
+    expect(css).toMatch(/\.visually-hidden/);
   });
 
   it("noindex scoped to pages.dev; custom domain indexable", () => {
