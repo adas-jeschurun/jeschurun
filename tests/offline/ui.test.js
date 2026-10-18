@@ -5,10 +5,33 @@ import { resolve } from "node:path";
 const root = resolve(import.meta.dirname, "../..");
 
 describe("ui gates", () => {
-  it("sticky mobile top bar CSS present", () => {
+  it("mobile hides top nav; bottom 3-dot menu only", () => {
     const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
-    expect(css).toMatch(/position:\s*fixed\s*!important/);
     expect(css).toMatch(/\.main-nav\.top-bar/);
+    expect(css).toMatch(/display:\s*none\s*!important/);
+    expect(css).toMatch(/\.mobile-nav-trigger/);
+    expect(css).toMatch(/bottom:\s*calc\(16px/);
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/id="main-content"/);
+    expect(layout).toMatch(/AccessibilityPanel/);
+    expect(layout).toMatch(/CandleLightingWidget/);
+    expect(layout).toMatch(/BackToTop/);
+  });
+
+  it("a11y bootstrap + geo candle APIs present", () => {
+    const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
+    expect(html).toMatch(/jes-a11y-bootstrap/);
+    expect(html).toMatch(/jes-a11y/);
+    const resolveGeo = readFileSync(
+      resolve(root, "packages/functions/site/api/geo/resolve.js"),
+      "utf8",
+    );
+    const searchGeo = readFileSync(
+      resolve(root, "packages/functions/site/api/geo/search.js"),
+      "utf8",
+    );
+    expect(resolveGeo).toMatch(/Jerusalem/);
+    expect(searchGeo).toMatch(/nominatim\.openstreetmap\.org/);
   });
 
   it("archive in footer not main nav", () => {
@@ -110,9 +133,10 @@ describe("ui gates", () => {
 
   it("mobile nav clears header; menu not mid-viewport", () => {
     const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
-    expect(css).toMatch(/padding-top:\s*56px/);
+    expect(css).not.toMatch(/padding-top:\s*56px/);
     expect(css).not.toMatch(/top:\s*52%/);
-    expect(css).toMatch(/\.mobile-nav-trigger[\s\S]*?top:\s*12px/);
+    expect(css).toMatch(/\.mobile-nav-trigger[\s\S]*?top:\s*auto/);
+    expect(css).toMatch(/\.mobile-nav-panel\.open[\s\S]*?bottom:\s*calc\(72px/);
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
     expect(html).toMatch(/fonts\.googleapis\.com/);
     expect(html).toMatch(/preconnect/);

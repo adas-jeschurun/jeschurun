@@ -7,6 +7,9 @@ import {
   useParams,
 } from "react-router-dom";
 import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
+import { AccessibilityPanel } from "./components/AccessibilityPanel.jsx";
+import { BackToTop } from "./components/BackToTop.jsx";
+import { CandleLightingWidget } from "./components/CandleLightingWidget.jsx";
 import { PUBLIC_BIOS } from "./features.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
@@ -279,9 +282,13 @@ export function Layout() {
           </Link>
         </div>
 
-        <main className="page-main">
+        <main id="main-content" className="page-main" tabIndex={-1}>
           <Outlet context={{ lang, ui }} />
         </main>
+
+        <CandleLightingWidget lang={lang} ui={ui} />
+        <AccessibilityPanel ui={ui} />
+        <BackToTop label={ui.backToTop || "Back to top"} />
 
         <footer className="site-footer">
           <img
