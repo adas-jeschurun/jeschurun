@@ -493,8 +493,11 @@ a.content-card:focus-visible h3,
 .copyright-line { opacity: .7; font-size: .85rem; margin: 0; }
 .legal-page p { max-width: 42rem; line-height: 1.55; }
 .about-eeat { max-width: 42rem; }
-.about-eeat p { line-height: 1.55; }
-.about-eeat .about-meta { opacity: .85; font-size: .95rem; }
+.about-eeat h1 { color: var(--blue); margin-bottom: .75rem; }
+.about-eeat .article-body { color: var(--ink, #1a1a1a); }
+.about-eeat .article-body p { line-height: 1.65; margin: 0 0 1rem; }
+.about-eeat .article-body a { color: var(--blue); }
+.about-eeat .article-body strong { font-weight: 650; }
 body.rtl .footer-columns { text-align: start; }
 @media (max-width: 640px) {
   .footer-columns {

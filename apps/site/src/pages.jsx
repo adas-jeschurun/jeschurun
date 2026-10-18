@@ -18,6 +18,8 @@ import {
 } from "./api.js";
 import { PUBLIC_BIOS } from "./features.js";
 import { langData, useCatalog } from "./hooks.js";
+import { ABOUT_MD, stripLeadingH1 } from "./content/about/index.js";
+import { markdownBlocks } from "../../../packages/functions/_lib/markdown.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
 const CONTACT_EMAIL = "ask@jeschurun.org";
@@ -664,54 +666,15 @@ export function BiosPage() {
 
 export function AboutPage() {
   const { lang, ui } = useOutletContext();
-  const copy = {
-    he: {
-      lead: "Jeschurun הוא כתב עת תורני של עדת ישורון בחיפה.",
-      tradition:
-        "החומרים נשענים על תורתו של מורינו הרב שמשון רפאל הירש זצ״ל ועל ממשיכי דרכו.",
-      publisher: "המוציא לאור: עדת ישורון, חיפה.",
-      contactLabel: "ליצירת קשר עם המערכת:",
-    },
-    en: {
-      lead: "Jeschurun is a Torah journal of Adas Jeschurun in Haifa.",
-      tradition:
-        "Its materials draw on the teachings of Rabbi Samson Raphael Hirsch, of blessed memory, and of those who continue in his path.",
-      publisher: "Publisher: Adas Jeschurun, Haifa.",
-      contactLabel: "Editorial contact:",
-    },
-    ru: {
-      lead: "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе.",
-      tradition:
-        "Материалы опираются на учение рава Шимшона Рафаэля Гирша, благословенной памяти, и продолжателей его пути.",
-      publisher: "Издатель: Адас Йешурун, Хайфа.",
-      contactLabel: "Связь с редакцией:",
-    },
-    de: {
-      lead: "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa.",
-      tradition:
-        "Die Beiträge stützen sich auf die Lehre Rabbiner Samson Raphael Hirschs sel. A. und derer, die seinen Weg fortführen.",
-      publisher: "Herausgeber: Adas Jeschurun, Haifa.",
-      contactLabel: "Redaktion:",
-    },
-    fr: {
-      lead: "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa.",
-      tradition:
-        "Les textes s’appuient sur l’enseignement du rabbin Samson Raphaël Hirsch, de mémoire bénie, et de ceux qui poursuivent sa voie.",
-      publisher: "Éditeur : Adas Jeschurun, Haïfa.",
-      contactLabel: "Rédaction :",
-    },
-  };
-  const t = copy[lang] || copy.en;
+  const md = ABOUT_MD[lang] || ABOUT_MD.en;
+  const body = useMemo(
+    () => markdownBlocks(stripLeadingH1(md), ""),
+    [md],
+  );
   return (
     <div className="about-eeat">
       <h1>{ui.about}</h1>
-      <p>{t.lead}</p>
-      <p>{t.tradition}</p>
-      <p className="about-meta">{t.publisher}</p>
-      <p className="about-meta">
-        {t.contactLabel}{" "}
-        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
-      </p>
+      <Blocks body={body} />
     </div>
   );
 }

@@ -18,6 +18,11 @@ function inlineMd(s) {
     /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
     '<a href="$2" target="_blank" rel="noopener">$1</a>',
   );
+  // mailto
+  x = x.replace(
+    /\[([^\]]+)\]\((mailto:[^\s)]+)\)/g,
+    '<a href="$2">$1</a>',
+  );
   // Other root-relative paths
   x = x.replace(
     /\[([^\]]+)\]\((\/[^)\s]+)\)/g,
