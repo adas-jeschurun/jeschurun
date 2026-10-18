@@ -7,6 +7,9 @@ import {
   useParams,
 } from "react-router-dom";
 import { HEADER_SUBTITLE, LANGS, LANG_LABEL, UI } from "@jeschurun/shared";
+import { AccessibilityPanel } from "./components/AccessibilityPanel.jsx";
+import { BackToTop } from "./components/BackToTop.jsx";
+import { CandleLightingWidget } from "./components/CandleLightingWidget.jsx";
 import { PUBLIC_BIOS } from "./features.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
@@ -177,6 +180,15 @@ export function Layout() {
     setMenuOpen(false);
   }, [location.pathname, location.search]);
 
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
   const nav = [
     ["", ui.home],
     ["articles", ui.articles],
@@ -240,7 +252,9 @@ export function Layout() {
         <button
           type="button"
           className="mobile-nav-trigger"
-          aria-label="Menu"
+          aria-label={ui.menu || "Menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-nav-panel"
           onClick={() => setMenuOpen((v) => !v)}
         >
           <span />
@@ -248,8 +262,11 @@ export function Layout() {
           <span />
         </button>
         <div
+          id="mobile-nav-panel"
           className={`mobile-nav-panel${menuOpen ? " open" : ""}`}
           hidden={!menuOpen}
+          role="navigation"
+          aria-label={ui.menu || "Menu"}
         >
           {nav.map(([r, t]) => (
             <Link
@@ -265,9 +282,13 @@ export function Layout() {
           </Link>
         </div>
 
-        <main className="page-main">
+        <main id="main-content" className="page-main" tabIndex={-1}>
           <Outlet context={{ lang, ui }} />
         </main>
+
+        <CandleLightingWidget lang={lang} ui={ui} />
+        <AccessibilityPanel ui={ui} />
+        <BackToTop label={ui.backToTop || "Back to top"} />
 
         <footer className="site-footer">
           <img
