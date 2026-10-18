@@ -32,7 +32,10 @@ describe("ui gates", () => {
     const app = readFileSync(resolve(root, "apps/site/src/App.jsx"), "utf8");
     expect(app).not.toMatch(/CurrentPage/);
     expect(app).toMatch(/path="current"/);
-    expect(app).toMatch(/Navigate to="\.\."/);
+    expect(app).toMatch(/path="current"\s+element=\{<RedirectLangHome/);
+    expect(app).toMatch(/function LangLayout/);
+    expect(app).toMatch(/path="\*"\s+element=\{<RedirectLangHome/);
+    expect(app).not.toMatch(/Navigate to="\."/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).not.toMatch(/export function CurrentPage/);
     expect(pages).toMatch(/issue-card--home/);
