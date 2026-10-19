@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { LANGS } from "@jeschurun/shared";
 import { PUBLIC_BIOS } from "./features.js";
 import { Layout } from "./Layout.jsx";
@@ -13,6 +13,7 @@ import {
   LegalPage,
   MaterialPage,
   NotFoundPage,
+  PrintArticlePage,
   RedirectHome,
   SearchPage,
 } from "./pages.jsx";
@@ -33,7 +34,7 @@ function LangLayout() {
     const path = rest.endsWith("/") ? rest : `${rest}/`;
     return <Navigate to={`/en${path === "/" ? "/" : path}${location.search}`} replace />;
   }
-  return <Layout />;
+  return <Outlet />;
 }
 
 export function App() {
@@ -41,6 +42,7 @@ export function App() {
     <Routes>
       <Route path="/" element={<RedirectHome />} />
       <Route path="/:lang" element={<LangLayout />}>
+        <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         {/* /current removed permanently — old URLs go home */}
         <Route path="current" element={<RedirectLangHome />} />
@@ -68,6 +70,8 @@ export function App() {
         />
         {/* Unknown section under /:lang → localized Not found */}
         <Route path="*" element={<NotFoundPage />} />
+        </Route>
+        <Route path="article/:slug/print" element={<PrintArticlePage />} />
       </Route>
     </Routes>
   );

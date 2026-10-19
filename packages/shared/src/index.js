@@ -192,163 +192,251 @@ export const SEO = {
     brand: "Jeschurun",
     titleSep: " · ",
     pageN: "page {n}",
-    homeTitle: "Jeschurun",
+    homeTitle: "Weekly Torah journal from Haifa",
     homeDescription:
-      "Torah journal of Adas Jeschurun in Haifa — teachings of Rabbi Samson Raphael Hirsch and those who continue his path.",
+      "Jeschurun is the weekly Torah journal of Adas Jeschurun in Haifa: essays on the portion in the path of Rabbi Samson Raphael Hirsch and his students.",
+    articlesTitle: "Torah articles by topic and date",
     articlesDescription:
-      "Browse articles from the Jeschurun Torah journal by topic and date.",
+      "Read Jeschurun articles on the weekly portion, faith, and community life — arranged by topic and date, in Hebrew, English, Russian, German, and French.",
     articlesTagDescription:
-      "Articles on {tag} from Jeschurun, the Torah journal of Adas Jeschurun in Haifa.",
+      "Jeschurun articles on {tag}: Torah essays from Adas Jeschurun in Haifa, in the path of Rabbi Samson Raphael Hirsch.",
+    askTitle: "Ask the Rav a Torah question",
     askDescription:
-      "Submit a question to the Rav. Editorial contact: ask@jeschurun.org.",
+      "Send a question to the Rav of Adas Jeschurun. The editorial desk answers at ask@jeschurun.org; a published answer never includes your name or email.",
+    searchTitle: "Search the Torah journal",
     searchDescription:
-      "Search articles, answers, and materials across all languages on Jeschurun.",
-    searchQueryDescription: "Search results for “{q}” on Jeschurun.",
+      "Search Jeschurun across every language for articles, Rav answers, and issue materials from the Adas Jeschurun journal in Haifa.",
+    searchQueryDescription:
+      "Jeschurun search results for “{q}”: articles and Rav answers from the Haifa Torah journal.",
+    aboutTitle: "About this Haifa Torah journal",
     aboutDescription:
-      "Jeschurun is a Torah journal of Adas Jeschurun in Haifa, drawing on the teachings of Rabbi Samson Raphael Hirsch.",
+      "Jeschurun is published by Adas Jeschurun in Haifa. The journal teaches the weekly portion in the tradition of Rabbi Samson Raphael Hirsch.",
+    archiveTitle: "Past issues of the Torah journal",
     archiveDescription:
-      "Past issues of the Jeschurun Torah journal from Adas Jeschurun in Haifa.",
+      "Earlier published issues of Jeschurun, the Haifa Torah journal, with the PDF and EPUB of each issue in the language you are reading.",
+    biosTitle: "Biographies in the Hirsch tradition",
     biosDescription:
-      "Biographies of rabbis and figures in the Hirschian tradition, published by Jeschurun.",
+      "Life stories of rabbis and teachers in the Hirschian path, as published by the Jeschurun Torah journal of Adas Jeschurun in Haifa.",
+    termsTitle: "Terms of use for journal content",
     termsDescription:
-      "Terms of use for the Jeschurun website and published materials.",
+      "Terms for reading Jeschurun online: personal study is welcome; reprinting or commercial use of the journal needs permission from the editors.",
+    privacyTitle: "Privacy for readers and questions",
     privacyDescription:
-      "How Jeschurun handles visitor data, the Ask the Rav form, and spam protection.",
+      "How Jeschurun handles a visit to the site, the Ask the Rav form, and spam protection — without publishing your name or email address.",
+    cookiesTitle: "Cookies and technical site storage",
     cookiesDescription:
-      "Cookie and technical storage practices on the Jeschurun website.",
+      "What Jeschurun stores in the browser: language, accessibility choices, and the technical cookies needed to show the journal and its forms.",
     articleFallbackDescription:
-      "An article from the Jeschurun Torah journal of Adas Jeschurun in Haifa.",
+      "An article from Jeschurun, the weekly Torah journal of Adas Jeschurun in Haifa, in the path of Rabbi Samson Raphael Hirsch.",
     answerFallbackDescription:
-      "An answer from Ask the Rav on Jeschurun.",
+      "A reply from Ask the Rav on Jeschurun, the Torah journal of Adas Jeschurun in Haifa.",
     bioFallbackDescription:
-      "A biography published by Jeschurun.",
+      "A biography published by Jeschurun, the Haifa Torah journal in the tradition of Rabbi Samson Raphael Hirsch.",
     issueFallbackDescription:
-      "An issue of the Jeschurun Torah journal.",
+      "An issue of Jeschurun, the weekly Torah journal of Adas Jeschurun in Haifa.",
+    notFoundTitle: "This page was not found",
     notFoundDescription:
-      "The page you requested was not found on Jeschurun.",
+      "That address is not a page of Jeschurun. Return to the Haifa Torah journal, its articles, or the current issue.",
   },
   he: {
     brand: "Jeschurun",
     titleSep: " · ",
     pageN: "עמוד {n}",
-    homeTitle: "Jeschurun",
+    homeTitle: "כתב עת תורני שבועי מחיפה",
     homeDescription:
-      "כתב עת תורני של עדת ישורון בחיפה — מתורתו של רש״ר הירש זצ״ל וממשיכי דרכו.",
-    articlesDescription: "מאמרים מכתב העת התורני Jeschurun — לפי נושא ותאריך.",
-    articlesTagDescription: "מאמרים בנושא {tag} ב־Jeschurun, כתב העת של עדת ישורון בחיפה.",
-    askDescription: "שליחת שאלה לרב. ליצירת קשר: ask@jeschurun.org.",
-    searchDescription: "חיפוש מאמרים, תשובות וחומרים בכל השפות באתר Jeschurun.",
-    searchQueryDescription: "תוצאות חיפוש עבור «{q}» ב־Jeschurun.",
+      "Jeschurun הוא כתב העת התורני השבועי של עדת ישורון בחיפה: מאמרים על הפרשה בדרך רש״ר הירש זצ״ל וממשיכי דרכו.",
+    articlesTitle: "מאמרי תורה לפי נושא ותאריך",
+    articlesDescription:
+      "מאמרי Jeschurun על הפרשה, האמונה וחיי הקהילה — לפי נושא ולפי תאריך, בעברית, אנגלית, רוסית, גרמנית וצרפתית.",
+    articlesTagDescription:
+      "מאמרי Jeschurun בנושא {tag}: דברי תורה של עדת ישורון בחיפה, בדרך רש״ר הירש זצ״ל.",
+    askTitle: "שליחת שאלה תורנית לרב",
+    askDescription:
+      "שליחת שאלה לרב של עדת ישורון. המערכת עונה ב־ask@jeschurun.org, ותשובה שתפורסם לא תכלול את שמכם או את הדוא״ל.",
+    searchTitle: "חיפוש בכתב העת",
+    searchDescription:
+      "חיפוש ב־Jeschurun בכל השפות: מאמרים, תשובות הרב וחומרי הגיליון של כתב העת התורני של עדת ישורון בחיפה.",
+    searchQueryDescription:
+      "תוצאות חיפוש ב־Jeschurun עבור «{q}»: מאמרים ותשובות הרב מכתב העת התורני בחיפה.",
+    aboutTitle: "על כתב העת התורני מחיפה",
     aboutDescription:
-      "Jeschurun הוא כתב עת תורני של עדת ישורון בחיפה, הנשען על תורת רש״ר הירש זצ״ל.",
-    archiveDescription: "גיליונות קודמים של כתב העת התורני Jeschurun.",
-    biosDescription: "ביוגרפיות של רבנים ואישים במסורת הרש״ר, בפרסום Jeschurun.",
-    termsDescription: "תנאי השימוש באתר Jeschurun ובחומרים המפורסמים בו.",
-    privacyDescription: "כיצד Jeschurun מטפל בנתוני מבקרים, בטופס שאל את הרב ובהגנת ספאם.",
-    cookiesDescription: "מדיניות עוגיות ואחסון טכני באתר Jeschurun.",
-    articleFallbackDescription: "מאמר מכתב העת התורני Jeschurun של עדת ישורון בחיפה.",
-    answerFallbackDescription: "תשובה ממדור שאל את הרב ב־Jeschurun.",
-    bioFallbackDescription: "ביוגרפיה בפרסום Jeschurun.",
-    issueFallbackDescription: "גיליון של כתב העת התורני Jeschurun.",
-    notFoundDescription: "הדף שביקשת לא נמצא באתר Jeschurun.",
+      "Jeschurun יוצא לאור על ידי עדת ישורון בחיפה. כתב העת מלמד את פרשת השבוע במסורת רש״ר הירש זצ״ל.",
+    archiveTitle: "גיליונות קודמים של כתב העת",
+    archiveDescription:
+      "גיליונות Jeschurun שכבר פורסמו, כתב העת התורני מחיפה, עם קובץ PDF ו־EPUB של כל גיליון בשפה שבה אתם קוראים.",
+    biosTitle: "ביוגרפיות במסורת הרש״ר",
+    biosDescription:
+      "סיפורי חיים של רבנים ומורים בדרך הרש״ר, כפי שפורסמו בכתב העת התורני Jeschurun של עדת ישורון בחיפה.",
+    termsTitle: "תנאי השימוש בכתב העת",
+    termsDescription:
+      "תנאי הקריאה ב־Jeschurun: לימוד אישי מותר; הדפסה מחדש או שימוש מסחרי בחומר טעונים רשות של המערכת.",
+    privacyTitle: "פרטיות הקוראים והשאלות",
+    privacyDescription:
+      "כיצד Jeschurun מטפל בביקור באתר, בטופס שאל את הרב ובהגנת ספאם — בלי לפרסם את שמכם או את כתובת הדוא״ל.",
+    cookiesTitle: "עוגיות ואחסון טכני באתר",
+    cookiesDescription:
+      "מה Jeschurun שומר בדפדפן: שפה, בחירות נגישות, והעוגיות הטכניות הדרושות להצגת כתב העת והטפסים.",
+    articleFallbackDescription:
+      "מאמר מ־Jeschurun, כתב העת התורני השבועי של עדת ישורון בחיפה, בדרך רש״ר הירש זצ״ל.",
+    answerFallbackDescription:
+      "תשובה ממדור שאל את הרב ב־Jeschurun, כתב העת התורני של עדת ישורון בחיפה.",
+    bioFallbackDescription:
+      "ביוגרפיה שפורסמה ב־Jeschurun, כתב העת התורני מחיפה במסורת רש״ר הירש זצ״ל.",
+    issueFallbackDescription:
+      "גיליון של Jeschurun, כתב העת התורני השבועי של עדת ישורון בחיפה.",
+    notFoundTitle: "הדף המבוקש לא נמצא",
+    notFoundDescription:
+      "הכתובת הזו אינה דף ב־Jeschurun. אפשר לחזור לכתב העת התורני מחיפה, למאמרים או לגיליון הנוכחי.",
   },
   ru: {
     brand: "Jeschurun",
     titleSep: " · ",
     pageN: "стр. {n}",
-    homeTitle: "Jeschurun",
+    homeTitle: "Еженедельный журнал Торы из Хайфы",
     homeDescription:
-      "Торанический журнал общины Адас Йешурун в Хайфе — учение рава Шимшона Рафаэля Гирша и продолжателей его пути.",
+      "Jeschurun — еженедельный торанический журнал общины Адас Йешурун в Хайфе: очерки о главе недели по пути рава Шимшона Рафаэля Гирша и его учеников.",
+    articlesTitle: "Статьи Торы по теме и дате",
     articlesDescription:
-      "Статьи торанического журнала Jeschurun — по темам и дате.",
+      "Статьи Jeschurun о недельной главе, вере и жизни общины — по теме и по дате, на иврите, английском, русском, немецком и французском.",
     articlesTagDescription:
-      "Статьи на тему «{tag}» в журнале Jeschurun (Адас Йешурун, Хайфа).",
+      "Статьи Jeschurun на тему «{tag}»: очерки Торы общины Адас Йешурун в Хайфе, по пути рава Гирша.",
+    askTitle: "Задать раввину вопрос по Торе",
     askDescription:
-      "Задать вопрос раввину. Связь с редакцией: ask@jeschurun.org.",
+      "Отправьте вопрос раввину Адас Йешурун. Редакция отвечает на ask@jeschurun.org; в опубликованном ответе не будет вашего имени и почты.",
+    searchTitle: "Поиск по журналу Торы",
     searchDescription:
-      "Поиск статей, ответов и материалов на всех языках сайта Jeschurun.",
-    searchQueryDescription: "Результаты поиска по запросу «{q}» на Jeschurun.",
+      "Поиск по Jeschurun на всех языках: статьи, ответы раввина и материалы выпусков торанического журнала Адас Йешурун в Хайфе.",
+    searchQueryDescription:
+      "Результаты поиска Jeschurun по запросу «{q}»: статьи и ответы раввина хайфского журнала Торы.",
+    aboutTitle: "О тораническом журнале из Хайфы",
     aboutDescription:
-      "Jeschurun — торанический журнал общины Адас Йешурун в Хайфе, опирающийся на учение рава Гирша.",
-    archiveDescription: "Архив выпусков торанического журнала Jeschurun.",
+      "Jeschurun издаёт община Адас Йешурун в Хайфе. Журнал разбирает недельную главу в традиции рава Шимшона Рафаэля Гирша.",
+    archiveTitle: "Прошлые выпуски журнала Торы",
+    archiveDescription:
+      "Уже вышедшие выпуски Jeschurun, хайфского журнала Торы, с файлами PDF и EPUB каждого выпуска на языке, который вы читаете.",
+    biosTitle: "Биографии традиции рава Гирша",
     biosDescription:
-      "Биографии раввинов и деятелей гиршианской традиции в издании Jeschurun.",
-    termsDescription: "Условия использования сайта Jeschurun и опубликованных материалов.",
+      "Жизнеописания раввинов и учителей гиршианского пути, опубликованные журналом Jeschurun общины Адас Йешурун в Хайфе.",
+    termsTitle: "Условия использования журнала",
+    termsDescription:
+      "Условия чтения Jeschurun: личное изучение разрешено; перепечатка и коммерческое использование текстов требуют разрешения редакции.",
+    privacyTitle: "Конфиденциальность читателей и вопросов",
     privacyDescription:
-      "Как Jeschurun обрабатывает данные посетителей, форму «Вопрос раввину» и защиту от спама.",
-    cookiesDescription: "Файлы cookie и технические механизмы на сайте Jeschurun.",
+      "Как Jeschurun обрабатывает визит на сайт, форму «Вопрос раввину» и защиту от спама — не публикуя ваше имя и адрес почты.",
+    cookiesTitle: "Файлы cookie и техническое хранение",
+    cookiesDescription:
+      "Что Jeschurun хранит в браузере: язык, настройки доступности и технические cookie, без которых журнал и формы не открываются.",
     articleFallbackDescription:
-      "Статья торанического журнала Jeschurun общины Адас Йешурун в Хайфе.",
-    answerFallbackDescription: "Ответ из раздела «Вопрос раввину» на Jeschurun.",
-    bioFallbackDescription: "Биография в издании Jeschurun.",
-    issueFallbackDescription: "Выпуск торанического журнала Jeschurun.",
-    notFoundDescription: "Запрашиваемая страница на сайте Jeschurun не найдена.",
+      "Статья Jeschurun, еженедельного торанического журнала общины Адас Йешурун в Хайфе, по пути рава Гирша.",
+    answerFallbackDescription:
+      "Ответ из раздела «Вопрос раввину» на Jeschurun, тораническом журнале общины Адас Йешурун в Хайфе.",
+    bioFallbackDescription:
+      "Биография в издании Jeschurun, хайфском журнале Торы в традиции рава Шимшона Рафаэля Гирша.",
+    issueFallbackDescription:
+      "Выпуск Jeschurun, еженедельного торанического журнала общины Адас Йешурун в Хайфе.",
+    notFoundTitle: "Страница не найдена",
+    notFoundDescription:
+      "Такого адреса на Jeschurun нет. Вернитесь к хайфскому журналу Торы, к статьям или к текущему выпуску.",
   },
   de: {
     brand: "Jeschurun",
     titleSep: " · ",
     pageN: "Seite {n}",
-    homeTitle: "Jeschurun",
+    homeTitle: "Wöchentliche Tora-Zeitschrift aus Haifa",
     homeDescription:
-      "Tora-Zeitschrift von Adas Jeschurun in Haifa — Lehre Rabbiner Samson Raphael Hirschs und seiner Nachfolger.",
+      "Jeschurun ist die wöchentliche Tora-Zeitschrift von Adas Jeschurun in Haifa: Essays zum Wochenabschnitt auf dem Weg Rabbiner Samson Raphael Hirschs und seiner Schüler.",
+    articlesTitle: "Tora-Artikel nach Thema und Datum",
     articlesDescription:
-      "Artikel der Tora-Zeitschrift Jeschurun — nach Thema und Datum.",
+      "Artikel von Jeschurun zum Wochenabschnitt, zum Glauben und zum Gemeindeleben — nach Thema und Datum, auf Hebräisch, Englisch, Russisch, Deutsch und Französisch.",
     articlesTagDescription:
-      "Artikel zum Thema {tag} in Jeschurun, der Tora-Zeitschrift von Adas Jeschurun in Haifa.",
+      "Jeschurun-Artikel zum Thema {tag}: Tora-Essays von Adas Jeschurun in Haifa, auf dem Weg Rabbiner Hirschs.",
+    askTitle: "Eine Tora-Frage an den Rabbiner",
     askDescription:
-      "Eine Frage an den Rabbiner senden. Redaktion: ask@jeschurun.org.",
+      "Senden Sie eine Frage an den Rabbiner von Adas Jeschurun. Die Redaktion antwortet unter ask@jeschurun.org; ein veröffentlichter Text nennt weder Namen noch E-Mail.",
+    searchTitle: "Die Tora-Zeitschrift durchsuchen",
     searchDescription:
-      "Artikel, Antworten und Materialien auf Jeschurun in allen Sprachen durchsuchen.",
-    searchQueryDescription: "Suchergebnisse für „{q}“ auf Jeschurun.",
+      "Suche in Jeschurun in allen Sprachen: Artikel, Antworten des Rabbiners und Materialien der Haifaer Tora-Zeitschrift Adas Jeschurun.",
+    searchQueryDescription:
+      "Jeschurun-Suchergebnisse für „{q}“: Artikel und Antworten des Rabbiners aus der Haifaer Tora-Zeitschrift.",
+    aboutTitle: "Über die Tora-Zeitschrift aus Haifa",
     aboutDescription:
-      "Jeschurun ist eine Tora-Zeitschrift von Adas Jeschurun in Haifa in der Tradition Rabbiner Hirschs.",
-    archiveDescription: "Frühere Ausgaben der Tora-Zeitschrift Jeschurun.",
+      "Jeschurun erscheint bei Adas Jeschurun in Haifa. Die Zeitschrift legt den Wochenabschnitt in der Tradition Rabbiner Samson Raphael Hirschs aus.",
+    archiveTitle: "Frühere Ausgaben der Tora-Zeitschrift",
+    archiveDescription:
+      "Bereits erschienene Ausgaben von Jeschurun, der Haifaer Tora-Zeitschrift, mit PDF und EPUB jeder Ausgabe in der Sprache, die Sie lesen.",
+    biosTitle: "Biographien der Hirsch-Tradition",
     biosDescription:
-      "Biographien von Rabbinern und Persönlichkeiten der Hirsch-Tradition bei Jeschurun.",
-    termsDescription: "Nutzungsbedingungen der Website Jeschurun und ihrer Inhalte.",
+      "Lebensbilder von Rabbinern und Lehrern auf dem Hirschschen Weg, veröffentlicht von der Tora-Zeitschrift Jeschurun der Adas Jeschurun in Haifa.",
+    termsTitle: "Nutzungsbedingungen der Zeitschrift",
+    termsDescription:
+      "Bedingungen für Jeschurun: persönliches Studium ist willkommen; Nachdruck oder gewerbliche Nutzung braucht die Erlaubnis der Redaktion.",
+    privacyTitle: "Datenschutz für Leser und Fragen",
     privacyDescription:
-      "Umgang von Jeschurun mit Besucherdaten, dem Frageformular und Spamschutz.",
-    cookiesDescription: "Cookie- und technische Speicherpraxis auf Jeschurun.",
+      "Wie Jeschurun einen Besuch, das Formular «Frage an den Rabbiner» und den Spamschutz handhabt — ohne Ihren Namen oder Ihre E-Mail zu veröffentlichen.",
+    cookiesTitle: "Cookies und technischer Speicher",
+    cookiesDescription:
+      "Was Jeschurun im Browser speichert: Sprache, Barrierefreiheit und die technischen Cookies, ohne die Zeitschrift und Formulare nicht laden.",
     articleFallbackDescription:
-      "Ein Artikel der Tora-Zeitschrift Jeschurun von Adas Jeschurun in Haifa.",
-    answerFallbackDescription: "Eine Antwort aus «Frage an den Rabbiner» auf Jeschurun.",
-    bioFallbackDescription: "Eine Biographie bei Jeschurun.",
-    issueFallbackDescription: "Eine Ausgabe der Tora-Zeitschrift Jeschurun.",
+      "Ein Artikel aus Jeschurun, der wöchentlichen Tora-Zeitschrift von Adas Jeschurun in Haifa, auf dem Weg Rabbiner Hirschs.",
+    answerFallbackDescription:
+      "Eine Antwort aus «Frage an den Rabbiner» auf Jeschurun, der Tora-Zeitschrift von Adas Jeschurun in Haifa.",
+    bioFallbackDescription:
+      "Eine Biographie bei Jeschurun, der Haifaer Tora-Zeitschrift in der Tradition Rabbiner Samson Raphael Hirschs.",
+    issueFallbackDescription:
+      "Eine Ausgabe von Jeschurun, der wöchentlichen Tora-Zeitschrift von Adas Jeschurun in Haifa.",
+    notFoundTitle: "Seite wurde nicht gefunden",
     notFoundDescription:
-      "Die angeforderte Seite wurde auf Jeschurun nicht gefunden.",
+      "Diese Adresse ist keine Seite von Jeschurun. Zurück zur Haifaer Tora-Zeitschrift, zu den Artikeln oder zur aktuellen Ausgabe.",
   },
   fr: {
     brand: "Jeschurun",
     titleSep: " · ",
     pageN: "page {n}",
-    homeTitle: "Jeschurun",
+    homeTitle: "Revue de Torah hebdomadaire à Haïfa",
     homeDescription:
-      "Revue de Torah d’Adas Jeschurun à Haïfa — enseignement du rabbin Samson Raphaël Hirsch et de ses continuateurs.",
+      "Jeschurun est la revue de Torah hebdomadaire d’Adas Jeschurun à Haïfa : essais sur la parachah dans la voie du rabbin Samson Raphaël Hirsch et de ses élèves.",
+    articlesTitle: "Articles de Torah par sujet et date",
     articlesDescription:
-      "Articles de la revue de Torah Jeschurun — par sujet et par date.",
+      "Articles de Jeschurun sur la parachah, la foi et la vie de la communauté — par sujet et par date, en hébreu, anglais, russe, allemand et français.",
     articlesTagDescription:
-      "Articles sur {tag} dans Jeschurun, revue de Torah d’Adas Jeschurun à Haïfa.",
+      "Articles Jeschurun sur {tag} : essais de Torah d’Adas Jeschurun à Haïfa, dans la voie du rabbin Hirsch.",
+    askTitle: "Poser une question de Torah au rabbin",
     askDescription:
-      "Poser une question au rabbin. Rédaction : ask@jeschurun.org.",
+      "Envoyez une question au rabbin d’Adas Jeschurun. La rédaction répond à ask@jeschurun.org ; une réponse publiée n’indique ni votre nom ni votre e-mail.",
+    searchTitle: "Chercher dans la revue de Torah",
     searchDescription:
-      "Rechercher articles, réponses et textes sur Jeschurun dans toutes les langues.",
-    searchQueryDescription: "Résultats de recherche pour « {q} » sur Jeschurun.",
+      "Recherchez dans Jeschurun, dans toutes les langues : articles, réponses du rabbin et textes des numéros de la revue de Torah d’Adas Jeschurun à Haïfa.",
+    searchQueryDescription:
+      "Résultats Jeschurun pour « {q} » : articles et réponses du rabbin de la revue de Torah de Haïfa.",
+    aboutTitle: "À propos de la revue de Torah",
     aboutDescription:
-      "Jeschurun est une revue de Torah d’Adas Jeschurun à Haïfa, dans la tradition du rabbin Hirsch.",
-    archiveDescription: "Anciens numéros de la revue de Torah Jeschurun.",
+      "Jeschurun est publié par Adas Jeschurun à Haïfa. La revue commente la parachah de la semaine dans la tradition du rabbin Samson Raphaël Hirsch.",
+    archiveTitle: "Anciens numéros de la revue de Torah",
+    archiveDescription:
+      "Numéros déjà parus de Jeschurun, la revue de Torah de Haïfa, avec le PDF et l’EPUB de chaque numéro dans la langue que vous lisez.",
+    biosTitle: "Biographies de la tradition Hirsch",
     biosDescription:
-      "Biographies de rabbins et figures de la tradition hirschienne publiées par Jeschurun.",
-    termsDescription: "Conditions d’utilisation du site Jeschurun et de ses contenus.",
+      "Vies de rabbins et de maîtres dans la voie hirschienne, publiées par la revue de Torah Jeschurun d’Adas Jeschurun à Haïfa.",
+    termsTitle: "Conditions d’utilisation de la revue",
+    termsDescription:
+      "Conditions de lecture de Jeschurun : l’étude personnelle est libre ; une réimpression ou un usage commercial exige l’accord de la rédaction.",
+    privacyTitle: "Confidentialité des lecteurs et questions",
     privacyDescription:
-      "Traitement des données, formulaire « Question au rabbin » et antispam sur Jeschurun.",
-    cookiesDescription: "Cookies et stockage technique sur le site Jeschurun.",
+      "Comment Jeschurun traite une visite, le formulaire « Question au rabbin » et l’antispam — sans publier votre nom ni votre e-mail.",
+    cookiesTitle: "Cookies et stockage technique",
+    cookiesDescription:
+      "Ce que Jeschurun garde dans le navigateur : langue, accessibilité, et les cookies techniques sans lesquels la revue et les formulaires ne s’affichent pas.",
     articleFallbackDescription:
-      "Un article de la revue de Torah Jeschurun d’Adas Jeschurun à Haïfa.",
-    answerFallbackDescription: "Une réponse de « Question au rabbin » sur Jeschurun.",
-    bioFallbackDescription: "Une biographie publiée par Jeschurun.",
-    issueFallbackDescription: "Un numéro de la revue de Torah Jeschurun.",
+      "Un article de Jeschurun, revue de Torah hebdomadaire d’Adas Jeschurun à Haïfa, dans la voie du rabbin Hirsch.",
+    answerFallbackDescription:
+      "Une réponse de « Question au rabbin » sur Jeschurun, la revue de Torah d’Adas Jeschurun à Haïfa.",
+    bioFallbackDescription:
+      "Une biographie publiée par Jeschurun, la revue de Torah de Haïfa dans la tradition du rabbin Samson Raphaël Hirsch.",
+    issueFallbackDescription:
+      "Un numéro de Jeschurun, la revue de Torah hebdomadaire d’Adas Jeschurun à Haïfa.",
+    notFoundTitle: "Page introuvable",
     notFoundDescription:
-      "La page demandée est introuvable sur Jeschurun.",
+      "Cette adresse n’est pas une page de Jeschurun. Revenez à la revue de Torah de Haïfa, aux articles ou au numéro en cours.",
   },
 };
 
@@ -392,6 +480,63 @@ export function fillSeoTemplate(template, vars) {
   return String(template || "").replace(/\{(\w+)\}/g, (_, k) =>
     vars[k] != null ? String(vars[k]) : "",
   );
+}
+
+const PUBLIC_PAGE_KEYS = {
+  home: ["homeTitle", "homeDescription"],
+  articles: ["articlesTitle", "articlesDescription"],
+  ask: ["askTitle", "askDescription"],
+  about: ["aboutTitle", "aboutDescription"],
+  archive: ["archiveTitle", "archiveDescription"],
+  search: ["searchTitle", "searchDescription"],
+  bios: ["biosTitle", "biosDescription"],
+  terms: ["termsTitle", "termsDescription"],
+  privacy: ["privacyTitle", "privacyDescription"],
+  cookies: ["cookiesTitle", "cookiesDescription"],
+  notFound: ["notFoundTitle", "notFoundDescription"],
+};
+
+/**
+ * Title + description for a public template. Article/issue titles use the
+ * content title; section pages use the editorial title in SEO.
+ * @param {string} lang
+ * @param {string} page
+ * @param {{ title?: string, summary?: string, question?: string, page?: number, tagLabel?: string, q?: string }} [opts]
+ */
+export function publicPageSeo(lang, page, opts = {}) {
+  const seo = seoFor(lang);
+  if (page === "article" || page === "answer" || page === "bio" || page === "issue") {
+    const fallback =
+      page === "answer"
+        ? seo.answerFallbackDescription
+        : page === "bio"
+          ? seo.bioFallbackDescription
+          : page === "issue"
+            ? seo.issueFallbackDescription
+            : seo.articleFallbackDescription;
+    const description = String(opts.summary || opts.question || fallback || "").trim();
+    return { title: brandTitle(opts.title, lang), description };
+  }
+  const [titleKey, descKey] = PUBLIC_PAGE_KEYS[page] || PUBLIC_PAGE_KEYS.home;
+  let title = brandTitle(seo[titleKey] || seo.brand, lang);
+  let description = seo[descKey] || "";
+  if (page === "articles") {
+    title = articlesListTitle({
+      lang,
+      articlesLabel: seo.articlesTitle || seo.brand,
+      page: opts.page || 1,
+      tagLabel: opts.tagLabel || "",
+    });
+    if (opts.tagLabel) {
+      description = fillSeoTemplate(seo.articlesTagDescription, { tag: opts.tagLabel });
+    }
+  }
+  if (page === "search" && String(opts.q || "").trim()) {
+    const q = String(opts.q).trim();
+    title = brandTitle(`${seo.searchTitle}: ${q}`, lang);
+    description = fillSeoTemplate(seo.searchQueryDescription, { q });
+  }
+  return { title, description };
 }
 
 export const UI = {
@@ -456,6 +601,9 @@ export const UI = {
     readAnswer: "Читать ответ",
     inIssue: "В выпуске",
     download: "Выпуск для скачивания",
+    updated: "Обновлено:",
+    print: "Печать",
+    printPage: "Печать",
     noIssue: "Опубликованный текущий выпуск пока не выбран.",
     sort: "Сортировка",
     sortDateDesc: "Сначала новые",
@@ -534,6 +682,9 @@ export const UI = {
     readAnswer: "לקריאת התשובה",
     inIssue: "בגיליון",
     download: "הגיליון להורדה",
+    updated: "עודכן:",
+    print: "הדפסה",
+    printPage: "הדפסה",
     noIssue: "עדיין לא נבחר גיליון נוכחי שפורסם.",
     sort: "מיון",
     sortDateDesc: "חדשים תחילה",
@@ -612,6 +763,9 @@ export const UI = {
     readAnswer: "Read answer",
     inIssue: "In this issue",
     download: "Download issue",
+    updated: "Updated:",
+    print: "Print",
+    printPage: "Print",
     noIssue: "No published current issue has been selected yet.",
     sort: "Sort",
     sortDateDesc: "Newest first",
@@ -690,6 +844,9 @@ export const UI = {
     readAnswer: "Antwort lesen",
     inIssue: "In dieser Ausgabe",
     download: "Ausgabe herunterladen",
+    updated: "Aktualisiert:",
+    print: "Drucken",
+    printPage: "Drucken",
     noIssue: "Noch keine veröffentlichte aktuelle Ausgabe ausgewählt.",
     sort: "Sortierung",
     sortDateDesc: "Neueste zuerst",
@@ -768,6 +925,9 @@ export const UI = {
     readAnswer: "Lire la réponse",
     inIssue: "Dans ce numéro",
     download: "Télécharger le numéro",
+    updated: "Mis à jour :",
+    print: "Imprimer",
+    printPage: "Imprimer",
     noIssue: "Aucun numéro actuel publié n’a encore été sélectionné.",
     sort: "Tri",
     sortDateDesc: "Plus récents",

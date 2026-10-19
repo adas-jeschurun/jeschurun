@@ -926,3 +926,53 @@ html.a11y-pause-animations *::after {
   margin: 6px 0 0;
   font-size: 0.8rem;
 }
+
+.material-tools {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.25rem;
+}
+.print-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--blue-dark);
+  text-decoration: none;
+}
+.print-icon { display: block; }
+[dir="rtl"] .print-icon,
+.rtl .print-icon { transform: scaleX(-1); }
+.updated-line {
+  margin: 0.35rem 0 1rem;
+  color: #5c564c;
+  font-size: 0.95rem;
+}
+.archive-row h3 { margin: 0 0 0.35rem; }
+.archive-files {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+}
+.print-sheet {
+  max-width: 42rem;
+  margin: 1.5rem auto;
+  padding: 1rem 1.25rem 2rem;
+  background: #fff;
+}
+.print-seal { width: 72px; height: auto; }
+.print-source { margin: 0.75rem 0; word-break: break-all; }
+.print-action { margin-top: 1.5rem; }
+@media print {
+  .print-action,
+  .site-header,
+  .site-footer,
+  .mobile-nav-trigger,
+  .mobile-nav-panel,
+  .back-to-top,
+  .a11y-fab,
+  .a11y-panel,
+  .a11y-scrim,
+  .chrome-fab,
+  .related-block,
+  .material-tools { display: none !important; }
+  .print-sheet { margin: 0; max-width: none; }
+}

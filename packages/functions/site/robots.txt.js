@@ -8,7 +8,7 @@ export async function onRequest(context) {
   const preview = isPagesDevHost(host);
   const body = preview
     ? "User-agent: *\nDisallow: /\n"
-    : "User-agent: *\nAllow: /\n";
+    : "User-agent: *\nAllow: /\nDisallow: /*/article/*/print/\n";
   const headers = {
     "content-type": "text/plain; charset=utf-8",
   };

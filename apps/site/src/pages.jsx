@@ -4,14 +4,22 @@ import {
   ARTICLES_PAGE_SIZE,
   LANGS,
   LEGAL,
+  UI,
   articlesListTitle,
   brandTitle,
-  fillSeoTemplate,
+  publicPageSeo,
   rankSearchCorpus,
   seoFor,
   sortArticles,
   normalizeSort,
 } from "@jeschurun/shared";
+import {
+  articlePrintPath,
+  articlePublicUrl,
+  issueDownloadLinks,
+  pastPublishedIssues,
+  updatedDateLine,
+} from "./article-meta.js";
 import {
   fetchMaterial,
   fetchPopular,
@@ -28,6 +36,17 @@ import { setDocumentTitle, setMetaDescription } from "./seo.js";
 
 const SITE_ORIGIN = "https://jeschurun.org";
 const CONTACT_EMAIL = "ask@jeschurun.org";
+
+function PrinterIcon() {
+  return (
+    <svg className="print-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M7 3h10v4H7V3zm-3 6h16a2 2 0 0 1 2 2v6h-4v4H6v-4H2v-6a2 2 0 0 1 2-2zm2 8h12v-4H6v4zm11-6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"
+      />
+    </svg>
+  );
+}
 
 function formatPublishedAt(publishedAt, lang) {
   if (!publishedAt) return null;
@@ -92,7 +111,7 @@ export function NotFoundPage() {
   const { lang, ui } = useOutletContext();
   const seo = seoFor(lang);
   useEffect(() => {
-    setDocumentTitle(brandTitle(ui.notFound, lang));
+    setDocumentTitle(publicPageSeo(lang, "notFound").title);
     setMetaDescription(seo.notFoundDescription);
     return () => {
       setDocumentTitle(seo.brand);
@@ -259,7 +278,9 @@ export function ArchivePage() {
   const { data } = useCatalog();
   if (!data?.ok) return <p>…</p>;
   const currentId = data.currentIssue?.id;
-  const archived = (data.issues || []).filter((iss) => iss.id !== currentId);
+  const archived = pastPublishedIssues(data.issues, data.currentIssue).filter(
+    (iss) => iss.id !== currentId,
+  );
   return (
     <div>
       <h1>{ui.archive}</h1>
@@ -270,17 +291,25 @@ export function ArchivePage() {
           const heading = iss.hebrew_year
             ? `${iss.hebrew_year} · ${parasha}`
             : parasha;
+          const title = d.title || heading;
+          const files = issueDownloadLinks(iss, lang);
           return (
-            <Link
-              key={iss.id}
-              to={`/${lang}/issue/${iss.hebrew_year}/${iss.slug}/`}
-              className="content-card"
-            >
-              <h3>{heading}</h3>
-              {d.kicker ? (
-                <span className="content-card-kicker">{d.kicker}</span>
+            <div key={iss.id} className="archive-row content-card">
+              <h3>
+                <Link to={`/${lang}/issue/${iss.hebrew_year}/${iss.slug}/`}>
+                  {title}
+                </Link>
+              </h3>
+              {files.length ? (
+                <p className="archive-files">
+                  {files.map((file) => (
+                    <a key={file.kind} className="issue-card-dl" href={file.href}>
+                      {file.label}
+                    </a>
+                  ))}
+                </p>
               ) : null}
-            </Link>
+            </div>
           );
         })}
       </div>
@@ -303,9 +332,12 @@ export function IssuePage() {
     : "";
   useEffect(() => {
     if (!pageTitle) return;
-    const seo = seoFor(lang);
-    setDocumentTitle(brandTitle(pageTitle, lang));
-    setMetaDescription(d?.summary || seo.issueFallbackDescription);
+    const pack = publicPageSeo(lang, "issue", {
+      title: pageTitle,
+      summary: d?.summary,
+    });
+    setDocumentTitle(pack.title);
+    setMetaDescription(pack.description);
     return () => {
       setDocumentTitle(seoFor(lang).brand);
     };
@@ -373,19 +405,16 @@ export function ArticlesPage() {
   useEffect(() => {
     if (!data?.ok) return;
     const seo = seoFor(lang);
+    const pack = publicPageSeo(lang, "articles", { page, tagLabel });
     setDocumentTitle(
       articlesListTitle({
         lang,
-        articlesLabel: ui.articles,
+        articlesLabel: seo.articlesTitle,
         page,
         tagLabel,
       }),
     );
-    setMetaDescription(
-      tagLabel
-        ? fillSeoTemplate(seo.articlesTagDescription, { tag: tagLabel })
-        : seo.articlesDescription,
-    );
+    setMetaDescription(pack.description);
   }, [data?.ok, lang, ui.articles, page, tagLabel]);
 
   if (!data?.ok) return <p>…</p>;
@@ -527,17 +556,19 @@ export function MaterialPage({ kind }) {
   const m = mat?.ok ? mat.material : null;
   const d = m ? langData(m.languages, lang) : {};
   const title = m ? d.title || d.name || m.slug : "";
+  const updated =
+    kind === "article" && m ? updatedDateLine(m, lang, ui.updated) : "";
   useEffect(() => {
     if (!title) return;
-    const seo = seoFor(lang);
-    setDocumentTitle(brandTitle(title, lang));
-    const fallback =
-      kind === "answer"
-        ? seo.answerFallbackDescription
-        : kind === "bio"
-          ? seo.bioFallbackDescription
-          : seo.articleFallbackDescription;
-    setMetaDescription(d.summary || d.question || fallback);
+    const page =
+      kind === "answer" ? "answer" : kind === "bio" ? "bio" : "article";
+    const pack = publicPageSeo(lang, page, {
+      title,
+      summary: d.summary,
+      question: d.question,
+    });
+    setDocumentTitle(pack.title);
+    setMetaDescription(pack.description);
     return () => {
       setDocumentTitle(seoFor(lang).brand);
     };
@@ -587,6 +618,18 @@ export function MaterialPage({ kind }) {
       {adminPreview && m.status !== "published" ? (
         <p className="meta">Preview draft · {m.status}</p>
       ) : null}
+      {kind === "article" ? (
+        <p className="material-tools">
+          <a
+            className="print-link"
+            href={articlePrintPath(lang, m.slug)}
+            rel="nofollow"
+          >
+            <PrinterIcon />
+            <span className="visually-hidden">{ui.print}</span>
+          </a>
+        </p>
+      ) : null}
       <h1>{title}</h1>
       {d.question ? <p className="question">{d.question}</p> : null}
       {d.summary ? <p className="summary">{d.summary}</p> : null}
@@ -604,6 +647,7 @@ export function MaterialPage({ kind }) {
           ))}
         </p>
       ) : null}
+      {updated ? <p className="updated-line">{updated}</p> : null}
       <Blocks body={d.body} />
       {m.related?.length ? (
         <section className="related-block" data-related>
@@ -615,6 +659,62 @@ export function MaterialPage({ kind }) {
           </div>
         </section>
       ) : null}
+    </article>
+  );
+}
+
+export function PrintArticlePage() {
+  const { lang: raw, slug } = useParams();
+  const lang = LANGS.includes(raw) ? raw : "en";
+  const ui = UI[lang] || UI.en;
+  const rtl = lang === "he";
+  const [mat, setMat] = useState(null);
+  useEffect(() => {
+    fetchMaterial("article", slug).then(setMat);
+  }, [slug]);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.documentElement.dir = rtl ? "rtl" : "ltr";
+    document.body.classList.toggle("rtl", rtl);
+  }, [lang, rtl]);
+  const m = mat?.ok ? mat.material : null;
+  const d = m ? langData(m.languages, lang) : {};
+  const title = m ? d.title || d.name || m.slug : "";
+  const articleUrl = articlePublicUrl(lang, slug);
+  const updated = m ? updatedDateLine(m, lang, ui.updated) : "";
+  useEffect(() => {
+    document.querySelectorAll("[data-seo=jes],[data-seo=print]").forEach((el) => el.remove());
+    if (title) setDocumentTitle(brandTitle(title, lang));
+    const robots = document.createElement("meta");
+    robots.setAttribute("data-seo", "print");
+    robots.name = "robots";
+    robots.content = "noindex, nofollow";
+    document.head.appendChild(robots);
+    const can = document.createElement("link");
+    can.setAttribute("data-seo", "print");
+    can.rel = "canonical";
+    can.href = articleUrl;
+    document.head.appendChild(can);
+    return () => {
+      document.querySelectorAll("[data-seo=print]").forEach((el) => el.remove());
+    };
+  }, [title, lang, articleUrl]);
+  if (!mat) return <p className="print-sheet">…</p>;
+  if (!m) return <p className="print-sheet">{ui.notFound}</p>;
+  return (
+    <article className="print-sheet" dir={rtl ? "rtl" : "ltr"}>
+      <img className="print-seal" src="/assets/publisher-seal.png" alt="" />
+      <p className="print-source">
+        <a href={articleUrl}>{articleUrl}</a>
+      </p>
+      <h1>{title}</h1>
+      {updated ? <p className="updated-line">{updated}</p> : null}
+      <Blocks body={d.body} />
+      <p className="print-action">
+        <button type="button" className="button" onClick={() => window.print()}>
+          {ui.printPage}
+        </button>
+      </p>
     </article>
   );
 }

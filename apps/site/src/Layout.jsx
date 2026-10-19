@@ -11,8 +11,7 @@ import {
   LANGS,
   LANG_LABEL,
   UI,
-  brandTitle,
-  fillSeoTemplate,
+  publicPageSeo,
   seoFor,
 } from "@jeschurun/shared";
 import { AccessibilityPanel } from "./components/AccessibilityPanel.jsx";
@@ -49,72 +48,20 @@ function langHref(targetLang, pathname, search) {
  * Title + description for section routes.
  * Articles list (tag/page) and material/issue pages own title via their pages.
  */
-function routeSectionMeta(rest, lang, ui, seo, search) {
+function routeSectionMeta(rest, lang, search) {
   const params = new URLSearchParams(search);
-  if (rest === "/" || rest === "") {
-    return {
-      title: brandTitle(seo.homeTitle, lang),
-      description: seo.homeDescription,
-    };
-  }
-  if (rest === "/articles/" || rest === "/articles") {
-    return { pageOwns: true };
-  }
-  if (rest === "/ask-rav/" || rest === "/ask-rav") {
-    return {
-      title: brandTitle(ui.askSubmitTitle, lang),
-      description: seo.askDescription,
-    };
-  }
-  if (rest === "/biographies/" || rest === "/biographies") {
-    return {
-      title: brandTitle(ui.bios, lang),
-      description: seo.biosDescription,
-    };
-  }
-  if (rest === "/about/" || rest === "/about") {
-    return {
-      title: brandTitle(ui.about, lang),
-      description: seo.aboutDescription,
-    };
-  }
-  if (rest === "/archive/" || rest === "/archive") {
-    return {
-      title: brandTitle(ui.archive, lang),
-      description: seo.archiveDescription,
-    };
-  }
+  if (rest === "/" || rest === "") return publicPageSeo(lang, "home");
+  if (rest === "/articles/" || rest === "/articles") return { pageOwns: true };
+  if (rest === "/ask-rav/" || rest === "/ask-rav") return publicPageSeo(lang, "ask");
+  if (rest === "/biographies/" || rest === "/biographies") return publicPageSeo(lang, "bios");
+  if (rest === "/about/" || rest === "/about") return publicPageSeo(lang, "about");
+  if (rest === "/archive/" || rest === "/archive") return publicPageSeo(lang, "archive");
   if (rest === "/search/" || rest === "/search") {
-    const q = (params.get("q") || "").trim();
-    if (q) {
-      return {
-        title: brandTitle(`${ui.search}: ${q}`, lang),
-        description: fillSeoTemplate(seo.searchQueryDescription, { q }),
-      };
-    }
-    return {
-      title: brandTitle(ui.search, lang),
-      description: seo.searchDescription,
-    };
+    return publicPageSeo(lang, "search", { q: (params.get("q") || "").trim() });
   }
-  if (rest === "/terms/" || rest === "/terms") {
-    return {
-      title: brandTitle(ui.terms, lang),
-      description: seo.termsDescription,
-    };
-  }
-  if (rest === "/privacy/" || rest === "/privacy") {
-    return {
-      title: brandTitle(ui.privacy, lang),
-      description: seo.privacyDescription,
-    };
-  }
-  if (rest === "/cookies/" || rest === "/cookies") {
-    return {
-      title: brandTitle(ui.cookies, lang),
-      description: seo.cookiesDescription,
-    };
-  }
+  if (rest === "/terms/" || rest === "/terms") return publicPageSeo(lang, "terms");
+  if (rest === "/privacy/" || rest === "/privacy") return publicPageSeo(lang, "privacy");
+  if (rest === "/cookies/" || rest === "/cookies") return publicPageSeo(lang, "cookies");
   // Unknown section / material miss → NotFoundPage owns title + description
   return { pageOwns: true };
 }
@@ -147,7 +94,7 @@ function useSeoHead(lang) {
     const altQs = hrefParams.toString();
 
     // Section routes set title/description here; articles/material/issue own theirs.
-    const section = routeSectionMeta(rest, lang, ui, seo, location.search);
+    const section = routeSectionMeta(rest, lang, location.search);
     const pageOwnsTitle =
       section?.pageOwns ||
       /^\/(article|answer|biography|issue)(\/|$)/.test(rest);
@@ -157,6 +104,23 @@ function useSeoHead(lang) {
     }
 
     document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
+
+    const printMatch = rest.match(/^\/article\/([^/]+)\/print\/?$/);
+    if (printMatch) {
+      const robots = document.createElement("meta");
+      robots.setAttribute("data-seo", "jes");
+      robots.name = "robots";
+      robots.content = "noindex, nofollow";
+      document.head.appendChild(robots);
+      const can = document.createElement("link");
+      can.setAttribute("data-seo", "jes");
+      can.rel = "canonical";
+      can.href = `${SITE_ORIGIN}/${lang}/article/${printMatch[1]}/`;
+      document.head.appendChild(can);
+      return () => {
+        document.querySelectorAll("[data-seo=jes]").forEach((el) => el.remove());
+      };
+    }
 
     for (const l of LANGS) {
       const link = document.createElement("link");

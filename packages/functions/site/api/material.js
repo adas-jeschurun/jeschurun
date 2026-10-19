@@ -137,6 +137,7 @@ export async function onRequestGet({ request, env }) {
       status: row.status,
       source_issue: row.source_issue || "",
       published_at: row.published_at || "",
+      updated_at: row.updated_at || "",
       years: row.years || "",
       lead_image: row.lead_image || "",
       languages,
