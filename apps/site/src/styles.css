@@ -489,8 +489,16 @@ a.content-card:focus-visible h3,
 }
 
 .site-footer {
-  margin-top: 48px; padding: 28px 8px 16px; border-top: 1px solid var(--line);
+  margin-top: 48px;
+  padding: 28px 8px 16px;
+  border-top: 1px solid var(--line);
   text-align: center;
+}
+@media (max-width: 760px) {
+  .site-footer {
+    /* clear bottom 3-dot FAB + home indicator */
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+  }
 }
 .publisher-seal { width: 72px; height: auto; opacity: .9; margin-bottom: 8px; }
 .footer-columns {
@@ -824,33 +832,20 @@ html.a11y-pause-animations *::after {
   animation: none !important;
 }
 
-/* —— Candle lighting widget —— */
+/* —— Candle lighting widget (static footer block; not sticky/FAB) —— */
 .candle-widget {
-  position: fixed;
-  z-index: 68;
-  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(280px, calc(100vw - 120px));
+  position: static;
+  display: block;
+  width: min(420px, 100%);
+  margin: 0 auto 18px;
   background: var(--blue-dark);
   color: #f7f4ef;
   border: 1px solid var(--gold);
   border-radius: 12px;
-  padding: 8px 10px;
-  box-shadow: 0 6px 18px rgba(22, 54, 83, 0.22);
+  padding: 10px 12px;
   font-size: 0.78rem;
-}
-@media (min-width: 761px) {
-  .candle-widget {
-    left: auto;
-    right: 16px;
-    transform: none;
-    bottom: 16px;
-  }
-  body.rtl .candle-widget {
-    right: auto;
-    left: 16px;
-  }
+  text-align: start;
+  box-shadow: none;
 }
 .candle-widget-main {
   display: flex;
@@ -930,10 +925,4 @@ html.a11y-pause-animations *::after {
 .candle-picker-status {
   margin: 6px 0 0;
   font-size: 0.8rem;
-}
-
-@media (max-width: 760px) {
-  .page-main {
-    padding-bottom: 140px; /* FAB + candle clear */
-  }
 }

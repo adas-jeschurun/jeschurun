@@ -18,6 +18,23 @@ describe("ui gates", () => {
     expect(layout).toMatch(/BackToTop/);
   });
 
+  it("candle widget is static footer content, not sticky/FAB", () => {
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    const footerIdx = layout.indexOf('className="site-footer"');
+    const candleIdx = layout.indexOf("<CandleLightingWidget");
+    expect(footerIdx).toBeGreaterThan(-1);
+    expect(candleIdx).toBeGreaterThan(footerIdx);
+    const afterFooter = layout.slice(footerIdx);
+    const footerClose = afterFooter.indexOf("</footer>");
+    expect(afterFooter.slice(0, footerClose)).toMatch(/CandleLightingWidget/);
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
+    const candleBlock = css.slice(css.indexOf(".candle-widget {"));
+    const candleRule = candleBlock.slice(0, candleBlock.indexOf(".candle-widget-main"));
+    expect(candleRule).toMatch(/position:\s*static/);
+    expect(candleRule).not.toMatch(/position:\s*fixed/);
+    expect(candleRule).not.toMatch(/position:\s*sticky/);
+  });
+
   it("a11y bootstrap + geo candle APIs present", () => {
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
     expect(html).toMatch(/jes-a11y-bootstrap/);

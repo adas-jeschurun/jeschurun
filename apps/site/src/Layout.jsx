@@ -359,11 +359,11 @@ export function Layout() {
           <Outlet context={{ lang, ui }} />
         </main>
 
-        <CandleLightingWidget lang={lang} ui={ui} />
         <AccessibilityPanel ui={ui} />
         <BackToTop label={ui.backToTop || "Back to top"} />
 
         <footer className="site-footer">
+          <CandleLightingWidget lang={lang} ui={ui} />
           <img
             className="publisher-seal"
             src="/assets/publisher-seal.png"
