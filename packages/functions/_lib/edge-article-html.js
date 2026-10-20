@@ -84,3 +84,15 @@ export function matchMaterialPath(pathname) {
   const kind = m[2].toLowerCase() === "biography" ? "bio" : m[2].toLowerCase();
   return { lang: m[1].toLowerCase(), kind, slug: m[3] };
 }
+
+/** Inline catalog JSON so home/list routes skip the /api/content gate. */
+export function buildCatalogBootstrapScript(catalog) {
+  if (!catalog?.ok) return "";
+  return `<script type="application/json" id="jes-catalog-bootstrap">${safeJson(catalog)}</script>`;
+}
+
+/**
+ * Minimal shell CSS for every route (not only articles) so Layout paints
+ * before the JS-bundled stylesheet arrives.
+ */
+export const SITE_SHELL_CSS = `<style id="jes-shell-css">:root{--ink:#1a1f26;--blue:#1a3d67;--blue-dark:#163653;--gold:#d8bb63;--line:#d5dde6;--paper:#f7f4ef;--paper-2:#efe8dc;--font-display:Georgia,"Times New Roman",serif;--font-body:"Segoe UI",system-ui,sans-serif}*{box-sizing:border-box}html,body,#root{margin:0;min-height:100%}body{font-family:var(--font-body);color:var(--ink);background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 100%)}.site{padding:0 0 48px}.site-body{max-width:980px;margin:0 auto;padding:0 16px}.site-header{background:var(--blue);color:#f7f4ed;text-align:center;padding:10px 16px 12px;border-bottom:3px solid var(--gold)}.page-main{min-height:40vh;padding:8px 0 24px}.main-nav.top-bar{display:flex;gap:4px;padding:8px;background:rgba(247,244,239,.96);border:1px solid var(--line);border-radius:8px;justify-content:center;flex-wrap:wrap}.skeleton-line{height:14px;margin:8px 0;border-radius:4px;background:linear-gradient(90deg,#e8e2d6 25%,#f3eee4 50%,#e8e2d6 75%);background-size:200% 100%}.skeleton-line--title{height:28px;width:70%}.skeleton-line--sub{width:45%}.skeleton-line--short{width:35%}.skeleton-card{padding:12px 0;border-bottom:1px solid var(--line)}</style>`;

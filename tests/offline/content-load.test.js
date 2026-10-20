@@ -5,16 +5,23 @@ import { describe, expect, it } from "vitest";
 const root = resolve(import.meta.dirname, "../..");
 
 describe("content load path", () => {
-  it("catalog keeps Cache API + HTML preload", () => {
+  it("catalog keeps Cache API + HTML preload + shared loader", () => {
     const content = readFileSync(
       resolve(root, "packages/functions/site/api/content.js"),
       "utf8",
     );
-    expect(content).toMatch(/catalog-v3/);
-    expect(content).toMatch(/x-jes-catalog-cache/);
-    expect(content).toMatch(/stale-while-revalidate/);
+    const lib = readFileSync(
+      resolve(root, "packages/functions/site/_lib/load-catalog.js"),
+      "utf8",
+    );
+    expect(lib).toMatch(/catalog-v3/);
+    expect(lib).toMatch(/resolveCatalog/);
+    expect(content).toMatch(/load-catalog/);
+    expect(content).toMatch(/x-jes-catalog-cache|CATALOG_CACHE/);
+    expect(lib).toMatch(/stale-while-revalidate/);
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
     expect(html).toMatch(/rel="preload"[^>]+\/api\/content/);
+    expect(html).toMatch(/jes-shell-css/);
     expect(html).toMatch(/\/api\/material\?kind=/);
     expect(html).toMatch(/media="print"/);
   });
@@ -82,5 +89,30 @@ describe("content load path", () => {
     expect(mw).toMatch(/edgeCss/);
     const hooks = readFileSync(resolve(root, "apps/site/src/hooks.js"), "utf8");
     expect(hooks).toMatch(/requestIdleCallback|isMaterialPath/);
+  });
+
+  it("edge embeds catalog bootstrap site-wide + client seeds sync", () => {
+    const mw = readFileSync(
+      resolve(root, "packages/functions/site/_middleware.js"),
+      "utf8",
+    );
+    expect(mw).toMatch(/resolveCatalog/);
+    expect(mw).toMatch(/jes-catalog-bootstrap|buildCatalogBootstrapScript/);
+    expect(mw).toMatch(/x-jes-catalog-boot/);
+    expect(mw).toMatch(/SITE_SHELL_CSS|jes-shell-css/);
+    const edge = readFileSync(
+      resolve(root, "packages/functions/site/_lib/edge-article-html.js"),
+      "utf8",
+    );
+    expect(edge).toMatch(/jes-catalog-bootstrap/);
+    expect(edge).toMatch(/jes-shell-css/);
+    const hooks = readFileSync(resolve(root, "apps/site/src/hooks.js"), "utf8");
+    expect(hooks).toMatch(/ingestCatalogBootstrap/);
+    expect(hooks).toMatch(/jes-catalog-bootstrap/);
+    expect(hooks).toMatch(/sessionStorage/);
+    expect(hooks).toMatch(/jes-catalog-v3/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/ListSkeleton/);
+    expect(pages).not.toMatch(/if \(!data\?\.ok\) return <p>…<\/p>/);
   });
 });
