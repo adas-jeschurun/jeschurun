@@ -227,9 +227,9 @@ export function Layout() {
   }, [menuOpen]);
 
   const nav = [
-    ["archive", ui.archive],
     ["", ui.home],
     ["articles", ui.articles],
+    ["archive", ui.archive],
     ["ask-rav", ui.ask],
     ...(PUBLIC_BIOS ? [["biographies", ui.bios]] : []),
     ["about", ui.about],
