@@ -52,7 +52,8 @@ function rewriteHtml(html, pathMatch, inject) {
   }
   out = out.replace(/<html\s+lang="[^"]*"/i, `<html lang="${pathMatch.lang}"`);
   if (out.includes("</head>")) {
-    out = out.replace("</head>", `${inject.bootScript}</head>`);
+    const headBits = `${inject.edgeCss || ""}${inject.bootScript}`;
+    out = out.replace("</head>", `${headBits}</head>`);
   }
   if (out.includes('<div id="root"></div>')) {
     out = out.replace(
