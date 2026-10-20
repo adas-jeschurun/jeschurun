@@ -1158,7 +1158,7 @@ export function SearchPage() {
           ) : !corpus ? (
             <p aria-busy="true">…</p>
           ) : results.length ? (
-            <div className="content-list search-results">
+            <div className="search-results">
               {results.map((r) => (
                 <SearchHit
                   key={`${r.kind}-${r.item.id}-${r.displayLang}`}
