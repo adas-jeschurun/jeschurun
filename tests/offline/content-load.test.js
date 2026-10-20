@@ -34,10 +34,19 @@ describe("content load path", () => {
 
   it("client reuses preload and starts material early", () => {
     const api = readFileSync(resolve(root, "apps/site/src/api.js"), "utf8");
-    expect(api).toMatch(/credentials:\s*"omit"/);
+    // Same-origin anonymous preload ↔ fetch credentials:same-origin (not omit).
+    expect(api).toMatch(
+      /fetch\("\/api\/content",\s*\{\s*credentials:\s*"same-origin"\s*\}\)/,
+    );
+    expect(api).toMatch(
+      /fetch\(`\/api\/material\?\$\{q\}`,\s*\{\s*credentials:\s*"same-origin"\s*\}\)/,
+    );
     expect(api).toMatch(/kickMaterialFromLocation/);
     expect(api).toMatch(/ensureMaterial/);
     expect(api).toMatch(/q\.set\("lang"/);
+    const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
+    expect(html).toMatch(/crossorigin="anonymous"/);
+    expect(html).toMatch(/link\.crossOrigin\s*=\s*"anonymous"/);
     const main = readFileSync(resolve(root, "apps/site/src/main.jsx"), "utf8");
     expect(main).toMatch(/import "\.\/api\.js"/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");

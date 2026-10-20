@@ -1,7 +1,7 @@
 export async function fetchCatalog() {
-  // credentials:omit matches <link rel=preload as=fetch crossorigin> so the
-  // early preload can be reused instead of issuing a second request.
-  const r = await fetch("/api/content", { credentials: "omit" });
+  // Same-origin + crossorigin=anonymous preload uses credentials mode
+  // "same-origin" (HTML/Chrome), not "omit". Must match or the preload is discarded.
+  const r = await fetch("/api/content", { credentials: "same-origin" });
   return r.json();
 }
 
@@ -23,7 +23,7 @@ export function ensureMaterial(kind, slug, opts = {}) {
   const q = new URLSearchParams({ kind, slug });
   if (lang) q.set("lang", lang);
   if (adminPreview) q.set("admin_preview", adminPreview);
-  const p = fetch(`/api/material?${q}`, { credentials: "omit" })
+  const p = fetch(`/api/material?${q}`, { credentials: "same-origin" })
     .then((r) => r.json())
     .then((d) => {
       materialCache.set(key, d);
