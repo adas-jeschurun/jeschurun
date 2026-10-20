@@ -51,14 +51,15 @@ describe("ui gates", () => {
     expect(searchGeo).toMatch(/nominatim\.openstreetmap\.org/);
   });
 
-  it("archive in footer not main nav", () => {
+  it("archive first in main nav and still in footer", () => {
     const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
     expect(layout).toMatch(/footer-columns/);
     expect(layout).toMatch(/footer-nav/);
     const navStart = layout.indexOf("const nav = [");
     const navEnd = layout.indexOf("];", navStart);
     const navBlock = layout.slice(navStart, navEnd);
-    expect(navBlock).not.toMatch(/archive/);
+    expect(navBlock).toMatch(/\["archive",\s*ui\.archive\]/);
+    expect(navBlock.indexOf("archive")).toBeLessThan(navBlock.indexOf('ui.home'));
     expect(navBlock).not.toMatch(/current/);
     expect(layout).toMatch(/\/\$\{lang\}\/archive\//);
     expect(layout).not.toMatch(/\/\$\{lang\}\/current\//);
