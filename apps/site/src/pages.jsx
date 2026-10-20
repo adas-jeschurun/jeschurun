@@ -1,5 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useOutletContext,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   ARTICLES_PAGE_SIZE,
   LANGS,
@@ -23,6 +29,7 @@ import {
 import {
   fetchMaterial,
   peekMaterial,
+  prefetchMaterial,
   fetchPopular,
   fetchQuestionConfig,
   fetchSearchCorpus,
@@ -60,9 +67,36 @@ function formatPublishedAt(publishedAt, lang) {
   }
 }
 
+function materialKind(kind) {
+  return kind === "biography" ? "bio" : kind;
+}
+
+/** Warm material cache before SPA click lands on MaterialPage. */
+function warmMaterial(lang, item, kind) {
+  if (!item?.slug) return;
+  prefetchMaterial(materialKind(kind), item.slug, { lang });
+}
+
+/** Idle-warm visible list so SPA article open often hits sync peek. */
+function useWarmMaterials(lang, items, kind = "article") {
+  useEffect(() => {
+    if (!items?.length) return undefined;
+    const run = () => {
+      for (const item of items) warmMaterial(lang, item, kind);
+    };
+    if (typeof requestIdleCallback === "function") {
+      const id = requestIdleCallback(run, { timeout: 1200 });
+      return () => cancelIdleCallback(id);
+    }
+    const t = setTimeout(run, 200);
+    return () => clearTimeout(t);
+  }, [lang, items, kind]);
+}
+
 function Card({ lang, item, kind, label }) {
   const d = langData(item.languages, lang);
   const title = d.title || d.name || item.slug;
+  const summary = d.summary || d.question || "";
   const publishedLabel = formatPublishedAt(item.published_at, lang);
   const href =
     kind === "article"
@@ -70,8 +104,24 @@ function Card({ lang, item, kind, label }) {
       : kind === "answer"
         ? `/${lang}/answer/${item.slug}/`
         : `/${lang}/biography/${item.slug}/`;
+  const mk = materialKind(kind);
+  const warm = () => warmMaterial(lang, item, kind);
   return (
-    <Link to={href} className="content-card">
+    <Link
+      to={href}
+      className="content-card"
+      state={{ title, summary }}
+      onPointerDown={warm}
+      onFocus={warm}
+      onMouseEnter={warm}
+      onClick={(e) => {
+        // Cache hit → SPA with sync body. Miss → hard load so edge HTML paints text (no …).
+        if (peekMaterial(mk, item.slug, { lang })?.ok) return;
+        warm();
+        e.preventDefault();
+        window.location.assign(href);
+      }}
+    >
       {label ? <span className="content-card-kicker">{label}</span> : null}
       <h3>{title}</h3>
       {publishedLabel ? (
@@ -80,6 +130,25 @@ function Card({ lang, item, kind, label }) {
         </time>
       ) : null}
     </Link>
+  );
+}
+
+/** SPA wait state — title/summary from Link state; never bare "…". */
+function MaterialPending({ title, summary }) {
+  return (
+    <article className="material material--pending" aria-busy="true">
+      {title ? <h1>{title}</h1> : <div className="skeleton-line skeleton-line--title" />}
+      {summary ? <p className="summary">{summary}</p> : (
+        <div className="skeleton-line skeleton-line--sub" aria-hidden="true" />
+      )}
+      <div className="article-body" aria-hidden="true">
+        <div className="skeleton-line" />
+        <div className="skeleton-line" />
+        <div className="skeleton-line skeleton-line--short" />
+        <div className="skeleton-line" />
+        <div className="skeleton-line skeleton-line--short" />
+      </div>
+    </article>
   );
 }
 
@@ -182,6 +251,11 @@ export function HomePage() {
       cancelled = true;
     };
   }, [lang, data]);
+  const homeArticles = useMemo(
+    () => (data?.ok ? (data.articles || []).slice(0, 6) : []),
+    [data],
+  );
+  useWarmMaterials(lang, homeArticles, "article");
   if (!data?.ok) return <HomeSkeleton ui={ui} />;
   const issue = data.currentIssue;
   return (
@@ -197,7 +271,7 @@ export function HomePage() {
       <section className="home-latest">
         <h2>{ui.latestArticles}</h2>
         <div className="content-list">
-          {(data.articles || []).slice(0, 6).map((a) => (
+          {homeArticles.map((a) => (
             <Card key={a.id} lang={lang} item={a} kind="article" />
           ))}
         </div>
@@ -406,6 +480,7 @@ export function ArticlesPage() {
     (page - 1) * ARTICLES_PAGE_SIZE,
     page * ARTICLES_PAGE_SIZE,
   );
+  useWarmMaterials(lang, slice, "article");
 
   function patchParams(mutate) {
     const next = new URLSearchParams(sp);
@@ -581,20 +656,20 @@ function releaseEdgeArticle() {
 export function MaterialPage({ kind }) {
   const { lang, ui } = useOutletContext();
   const { slug } = useParams();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const adminPreview = searchParams.get("admin_preview") || "";
-  // Sync first paint from edge bootstrap / eager cache (no useEffect gap).
+  const navHint = location.state && typeof location.state === "object" ? location.state : null;
+  // Sync first paint from edge bootstrap / session / prefetch (no useEffect gap).
   const [mat, setMat] = useState(() =>
     adminPreview
       ? null
       : peekMaterial(kind, slug, { lang }) || null,
   );
-  useEffect(() => {
+  // Start network before paint when cache miss (SPA) — useLayout, not useEffect.
+  useLayoutEffect(() => {
     let cancelled = false;
-    // Bootstrap already seeded — keep showing it; refresh in background.
-    const peeked = adminPreview
-      ? null
-      : peekMaterial(kind, slug, { lang });
+    const peeked = adminPreview ? null : peekMaterial(kind, slug, { lang });
     if (peeked?.ok) {
       setMat((prev) => (prev?.ok ? prev : peeked));
     }
@@ -608,7 +683,7 @@ export function MaterialPage({ kind }) {
       cancelled = true;
     };
   }, [kind, slug, lang, adminPreview]);
-  // Keep #jes-edge-content until React has real article text (avoids … blank).
+  // Keep #jes-edge-content until React has real article text (avoids blank gap).
   useLayoutEffect(() => {
     if (mat?.ok) releaseEdgeArticle();
   }, [mat]);
@@ -681,14 +756,19 @@ export function MaterialPage({ kind }) {
       document.getElementById(id)?.remove();
     };
   }, [kind, m, title, d.summary, lang, ui.publisher]);
-  // Edge HTML / bootstrap is the visible body — never flash … on article routes.
+  // Edge HTML / bootstrap / session / prefetch — never flash bare "…" on article routes.
   if (!mat) {
     if (typeof document !== "undefined") {
       if (edgeArticleStillOnPage()) return null;
       // Bootstrap JSON still present (edge may be mid-handoff) — keep waiting, no ….
       if (!adminPreview && document.getElementById("jes-bootstrap")) return null;
     }
-    return <p>…</p>;
+    return (
+      <MaterialPending
+        title={typeof navHint?.title === "string" ? navHint.title : ""}
+        summary={typeof navHint?.summary === "string" ? navHint.summary : ""}
+      />
+    );
   }
   if (!mat.ok || !m) return <NotFoundPage />;
   return (

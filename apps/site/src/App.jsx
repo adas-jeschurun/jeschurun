@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { LANGS } from "@jeschurun/shared";
 import { kickMaterialFromLocation } from "./api.js";
@@ -20,10 +20,10 @@ import {
   SearchPage,
 } from "./pages.jsx";
 
-/** Start material fetch on SPA navigations (module kick only runs once). */
+/** Start material fetch on SPA navigations before paint (module kick only runs once). */
 function MaterialRouteKick() {
   const { pathname } = useLocation();
-  useEffect(() => {
+  useLayoutEffect(() => {
     kickMaterialFromLocation(pathname);
   }, [pathname]);
   return null;

@@ -7,14 +7,41 @@ export async function fetchCatalog() {
 
 const materialCache = new Map();
 const materialInflight = new Map();
+const SESSION_PREFIX = "jes-mat-v1:";
 
 function materialKey(kind, slug, lang, adminPreview) {
   return `${kind}:${slug}:${lang || "all"}:${adminPreview || ""}`;
 }
 
+function sessionKey(kind, slug, lang) {
+  return `${SESSION_PREFIX}${kind}:${slug}:${lang || "all"}`;
+}
+
+function persistMaterial(kind, slug, lang, payload) {
+  if (!payload?.ok || typeof sessionStorage === "undefined") return;
+  try {
+    sessionStorage.setItem(sessionKey(kind, slug, lang), JSON.stringify(payload));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+function readSessionMaterial(kind, slug, lang) {
+  if (typeof sessionStorage === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(sessionKey(kind, slug, lang));
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    return data?.ok ? data : null;
+  } catch {
+    return null;
+  }
+}
+
 function seedMaterial(kind, slug, lang, payload) {
   if (!payload?.ok) return;
   materialCache.set(materialKey(kind, slug, lang, ""), payload);
+  persistMaterial(kind, slug, lang, payload);
 }
 
 /** Edge middleware embeds #jes-bootstrap so article body paints before JS. */
@@ -33,7 +60,7 @@ export function ingestEdgeBootstrap() {
   return null;
 }
 
-/** Sync peek — re-ingest edge bootstrap on miss so first paint never waits on fetch. */
+/** Sync peek — edge bootstrap, memory, then session (SPA revisit without …). */
 export function peekMaterial(kind, slug, opts = {}) {
   const lang = opts.lang || "";
   const adminPreview = opts.adminPreview || "";
@@ -49,6 +76,11 @@ export function peekMaterial(kind, slug, opts = {}) {
   ) {
     return materialCache.get(key) || boot.payload;
   }
+  const fromSession = readSessionMaterial(kind, slug, lang);
+  if (fromSession?.ok) {
+    materialCache.set(key, fromSession);
+    return fromSession;
+  }
   return null;
 }
 
@@ -58,6 +90,13 @@ export function ensureMaterial(kind, slug, opts = {}) {
   const adminPreview = opts.adminPreview || "";
   const key = materialKey(kind, slug, lang, adminPreview);
   if (materialCache.has(key)) return Promise.resolve(materialCache.get(key));
+  if (!adminPreview) {
+    const fromSession = readSessionMaterial(kind, slug, lang);
+    if (fromSession?.ok) {
+      materialCache.set(key, fromSession);
+      return Promise.resolve(fromSession);
+    }
+  }
   if (materialInflight.has(key)) return materialInflight.get(key);
 
   const q = new URLSearchParams({ kind, slug });
@@ -67,6 +106,7 @@ export function ensureMaterial(kind, slug, opts = {}) {
     .then((r) => r.json())
     .then((d) => {
       materialCache.set(key, d);
+      if (d?.ok && !adminPreview) persistMaterial(kind, slug, lang, d);
       materialInflight.delete(key);
       return d;
     })
@@ -76,6 +116,11 @@ export function ensureMaterial(kind, slug, opts = {}) {
     });
   materialInflight.set(key, p);
   return p;
+}
+
+/** Prefetch for cards / idle list warm — same as ensureMaterial. */
+export function prefetchMaterial(kind, slug, opts = {}) {
+  return ensureMaterial(kind, slug, opts).catch(() => null);
 }
 
 export async function fetchMaterial(kind, slug, opts = {}) {
@@ -92,7 +137,8 @@ export function kickMaterialFromLocation(pathname = location.pathname) {
   const kind = m[2] === "biography" ? "bio" : m[2];
   const lang = m[1];
   const slug = m[3];
-  // Bootstrap already has this article — skip a redundant network fetch.
+  // Memory/session already has body — no network. Edge bootstrap: skip too.
+  if (peekMaterial(kind, slug, { lang })?.ok) return;
   if (boot?.kind === kind && boot?.slug === slug && boot?.lang === lang) return;
   ensureMaterial(kind, slug, { lang }).catch(() => {});
 }

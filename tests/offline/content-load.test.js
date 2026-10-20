@@ -54,7 +54,10 @@ describe("content load path", () => {
     );
     expect(api).toMatch(/kickMaterialFromLocation/);
     expect(api).toMatch(/ensureMaterial/);
+    expect(api).toMatch(/prefetchMaterial/);
     expect(api).toMatch(/peekMaterial/);
+    expect(api).toMatch(/jes-mat-v1/);
+    expect(api).toMatch(/sessionStorage/);
     expect(api).toMatch(/jes-bootstrap/);
     expect(api).toMatch(/q\.set\("lang"/);
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
@@ -118,6 +121,11 @@ describe("content load path", () => {
     expect(pages).toMatch(/ListSkeleton/);
     expect(pages).not.toMatch(/if \(!data\?\.ok\) return <p>…<\/p>/);
     expect(pages).toMatch(/jes-bootstrap/);
+    expect(pages).toMatch(/MaterialPending/);
+    expect(pages).not.toMatch(/return <p>…<\/p>/);
+    expect(pages).toMatch(/window\.location\.assign/);
+    expect(pages).toMatch(/useWarmMaterials/);
+    expect(pages).toMatch(/prefetchMaterial/);
   });
 
   it("article template paints edge before React root", () => {
@@ -134,5 +142,7 @@ describe("content load path", () => {
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/edgeArticleStillOnPage/);
     expect(pages).toMatch(/releaseEdgeArticle/);
+    const app = readFileSync(resolve(root, "apps/site/src/App.jsx"), "utf8");
+    expect(app).toMatch(/useLayoutEffect/);
   });
 });
