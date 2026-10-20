@@ -24,12 +24,16 @@ describe("content load path", () => {
       resolve(root, "packages/functions/site/api/material.js"),
       "utf8",
     );
-    expect(material).toMatch(/material-v1/);
+    const lib = readFileSync(
+      resolve(root, "packages/functions/site/_lib/load-material.js"),
+      "utf8",
+    );
+    expect(lib).toMatch(/material-v1/);
     expect(material).toMatch(/x-jes-material-cache/);
     expect(material).toMatch(/langFilter/);
-    expect(material).toMatch(/loadRelated/);
-    expect(material).toMatch(/Promise\.all/);
-    expect(material).not.toMatch(/for \(const r of rel\.results/);
+    expect(lib).toMatch(/loadRelated/);
+    expect(lib).toMatch(/Promise\.all/);
+    expect(lib).not.toMatch(/for \(const r of rel\.results/);
   });
 
   it("client reuses preload and starts material early", () => {
@@ -43,6 +47,8 @@ describe("content load path", () => {
     );
     expect(api).toMatch(/kickMaterialFromLocation/);
     expect(api).toMatch(/ensureMaterial/);
+    expect(api).toMatch(/peekMaterial/);
+    expect(api).toMatch(/jes-bootstrap/);
     expect(api).toMatch(/q\.set\("lang"/);
     const html = readFileSync(resolve(root, "apps/site/index.html"), "utf8");
     expect(html).toMatch(/crossorigin="anonymous"/);
@@ -50,6 +56,25 @@ describe("content load path", () => {
     const main = readFileSync(resolve(root, "apps/site/src/main.jsx"), "utf8");
     expect(main).toMatch(/import "\.\/api\.js"/);
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
-    expect(pages).toMatch(/fetchMaterial\(kind, slug, \{\s*lang,/);
+    expect(pages).toMatch(/peekMaterial\(kind, slug/);
+    expect(pages).toMatch(/jes-edge-content/);
+  });
+
+  it("edge middleware injects article HTML before JS", () => {
+    const mw = readFileSync(
+      resolve(root, "packages/functions/site/_middleware.js"),
+      "utf8",
+    );
+    expect(mw).toMatch(/resolveMaterial/);
+    expect(mw).toMatch(/buildEdgeArticleInject/);
+    expect(mw).toMatch(/x-jes-edge-article/);
+    const edge = readFileSync(
+      resolve(root, "packages/functions/site/_lib/edge-article-html.js"),
+      "utf8",
+    );
+    expect(edge).toMatch(/jes-edge-content/);
+    expect(edge).toMatch(/jes-bootstrap/);
+    const hooks = readFileSync(resolve(root, "apps/site/src/hooks.js"), "utf8");
+    expect(hooks).toMatch(/requestIdleCallback|isMaterialPath/);
   });
 });
