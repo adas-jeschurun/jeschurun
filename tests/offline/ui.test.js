@@ -251,9 +251,15 @@ describe("ui gates", () => {
     expect(pages).toMatch(/articlesById/);
     // h4 (not h3-under-h3) for lang section titles
     expect(pages).toMatch(/<h4 className="search-lang-heading">/);
+    // Outer results must NOT be .content-list (grid + min-height:100% blows cards up)
+    expect(pages).toMatch(/className="search-results"/);
+    expect(pages).not.toMatch(/content-list search-results/);
     const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
     expect(css).toMatch(/\.search-hit/);
     expect(css).toMatch(/\.search-lang-group/);
+    expect(css).toMatch(/\.search-results\s*\{/);
+    expect(css).toMatch(/\.search-hit\s*>\s*\.content-card[\s\S]*?min-height:\s*0/);
+    expect(css).toMatch(/\.search-lang-group\s+\.content-list[\s\S]*?align-items:\s*start/);
     const shared = readFileSync(resolve(root, "packages/shared/src/index.js"), "utf8");
     expect(shared.match(/searchAlsoAvailable:/g)?.length).toBe(5);
   });
