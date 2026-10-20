@@ -51,11 +51,11 @@ describe("print archive dates seo favicon", () => {
       "utf8",
     );
     expect(mw).toMatch(/noindex, nofollow/);
-    const material = readFileSync(
-      resolve(root, "packages/functions/site/api/material.js"),
+    const materialLib = readFileSync(
+      resolve(root, "packages/functions/site/_lib/load-material.js"),
       "utf8",
     );
-    expect(material).toMatch(/updated_at: row\.updated_at/);
+    expect(materialLib).toMatch(/updated_at: row\.updated_at/);
   });
 
   it("archive lists only past issues and omits a missing file", () => {

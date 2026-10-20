@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import {
   ARTICLES_PAGE_SIZE,
@@ -22,6 +22,7 @@ import {
 } from "./article-meta.js";
 import {
   fetchMaterial,
+  peekMaterial,
   fetchPopular,
   fetchQuestionConfig,
   fetchSearchCorpus,
@@ -538,7 +539,12 @@ export function MaterialPage({ kind }) {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const adminPreview = searchParams.get("admin_preview") || "";
-  const [mat, setMat] = useState(null);
+  // Sync first paint from edge bootstrap / eager cache (no useEffect gap).
+  const [mat, setMat] = useState(() =>
+    adminPreview
+      ? null
+      : peekMaterial(kind, slug, { lang }) || null,
+  );
   useEffect(() => {
     let cancelled = false;
     fetchMaterial(kind, slug, {
@@ -551,6 +557,10 @@ export function MaterialPage({ kind }) {
       cancelled = true;
     };
   }, [kind, slug, lang, adminPreview]);
+  // Drop edge SSR sibling once React owns the article (avoids duplicate text).
+  useLayoutEffect(() => {
+    if (mat?.ok) document.getElementById("jes-edge-content")?.remove();
+  }, [mat]);
   useEffect(() => {
     if (mat?.material?.id && !adminPreview) {
       trackEvent({

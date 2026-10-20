@@ -5,7 +5,7 @@ let cache = null;
 let inflight = null;
 
 /** Start catalog fetch as soon as the module evaluates (overlaps React boot). */
-function ensureCatalog() {
+export function ensureCatalog() {
   if (cache) return Promise.resolve(cache);
   if (!inflight) {
     inflight = fetchCatalog()
@@ -22,8 +22,22 @@ function ensureCatalog() {
   return inflight;
 }
 
-// Kick off immediately when the JS bundle runs — before first paint of Outlet.
-ensureCatalog().catch(() => {});
+function isMaterialPath(pathname = location.pathname) {
+  return /^\/(he|en|ru|de|fr)\/(article|answer|biography)\//.test(pathname);
+}
+
+// Article routes: defer catalog — edge HTML already has the body; catalog
+// (~80KB) only steals bandwidth from the JS bundle on the critical path.
+if (isMaterialPath()) {
+  const defer = () => ensureCatalog().catch(() => {});
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(defer, { timeout: 2500 });
+  } else {
+    setTimeout(defer, 1200);
+  }
+} else {
+  ensureCatalog().catch(() => {});
+}
 
 export function useCatalog() {
   const [data, setData] = useState(cache);

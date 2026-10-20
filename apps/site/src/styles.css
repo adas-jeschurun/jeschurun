@@ -212,6 +212,22 @@ body {
 }
 
 .page-main { padding: 24px 0 40px; min-height: 50vh; }
+
+/* Edge-injected article: visible before JS; removed when React hydrates. */
+.jes-edge-content {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+  min-width: 0;
+  width: 100%;
+}
+.jes-edge-content h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 4vw, 1.85rem);
+  line-height: 1.25;
+  margin: 0 0 0.75rem;
+  color: var(--blue-dark);
+}
 h1, h2, h3 { font-family: var(--font-display); color: var(--blue-dark); line-height: 1.25; }
 .section-hero h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: .2rem; }
 .button {

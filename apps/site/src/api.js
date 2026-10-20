@@ -12,7 +12,34 @@ function materialKey(kind, slug, lang, adminPreview) {
   return `${kind}:${slug}:${lang || "all"}:${adminPreview || ""}`;
 }
 
-/** Shared material fetch — reuses preload / module-eager requests. */
+/** Sync peek — used for first React paint without waiting on useEffect. */
+export function peekMaterial(kind, slug, opts = {}) {
+  const key = materialKey(kind, slug, opts.lang || "", opts.adminPreview || "");
+  return materialCache.get(key) || null;
+}
+
+function seedMaterial(kind, slug, lang, payload) {
+  if (!payload?.ok) return;
+  materialCache.set(materialKey(kind, slug, lang, ""), payload);
+}
+
+/** Edge middleware embeds #jes-bootstrap so article body paints before JS. */
+function ingestEdgeBootstrap() {
+  const el = document.getElementById("jes-bootstrap");
+  if (!el) return null;
+  try {
+    const boot = JSON.parse(el.textContent || "");
+    if (boot?.kind && boot?.slug && boot?.payload) {
+      seedMaterial(boot.kind, boot.slug, boot.lang || "", boot.payload);
+      return boot;
+    }
+  } catch {
+    /* ignore bad bootstrap */
+  }
+  return null;
+}
+
+/** Shared material fetch — reuses preload / module-eager / edge bootstrap. */
 export function ensureMaterial(kind, slug, opts = {}) {
   const lang = opts.lang || "";
   const adminPreview = opts.adminPreview || "";
@@ -44,12 +71,17 @@ export async function fetchMaterial(kind, slug, opts = {}) {
 
 /** Start material fetch from the current URL as soon as JS evaluates. */
 export function kickMaterialFromLocation(pathname = location.pathname) {
+  const boot = ingestEdgeBootstrap();
   const m = String(pathname).match(
     /^\/(he|en|ru|de|fr)\/(article|answer|biography)\/([^/]+)/,
   );
   if (!m) return;
   const kind = m[2] === "biography" ? "bio" : m[2];
-  ensureMaterial(kind, m[3], { lang: m[1] }).catch(() => {});
+  const lang = m[1];
+  const slug = m[3];
+  // Bootstrap already has this article — skip a redundant network fetch.
+  if (boot?.kind === kind && boot?.slug === slug && boot?.lang === lang) return;
+  ensureMaterial(kind, slug, { lang }).catch(() => {});
 }
 
 kickMaterialFromLocation();
