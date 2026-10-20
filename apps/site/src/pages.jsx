@@ -9,6 +9,7 @@ import {
 import {
   ARTICLES_PAGE_SIZE,
   LANGS,
+  LANG_LABEL,
   LEGAL,
   UI,
   articlesListTitle,
@@ -1031,6 +1032,65 @@ export function LegalPage({ kind }) {
   );
 }
 
+/** Lang sections under an article hit: same-slug locales + related resolved from corpus. */
+function searchLangGroups(item, uiLang, articlesById) {
+  const relatedItems = (item.related || [])
+    .map((ref) => articlesById.get(ref.id))
+    .filter(Boolean);
+  const groups = [];
+  for (const L of LANGS) {
+    const cards = [];
+    if (L !== uiLang && item.languages?.[L]) {
+      cards.push({ key: `self-${item.id}`, item });
+    }
+    for (const rel of relatedItems) {
+      if (rel.languages?.[L]) {
+        cards.push({ key: `rel-${rel.id}`, item: rel });
+      }
+    }
+    if (cards.length) groups.push({ lang: L, cards });
+  }
+  return groups;
+}
+
+function SearchHit({ result, uiLang, articlesById, ui }) {
+  const { item, kind, displayLang } = result;
+  const showGroups = kind === "article" && !!item.languages?.[uiLang];
+  const cardLang = showGroups ? uiLang : displayLang;
+  const groups = showGroups ? searchLangGroups(item, uiLang, articlesById) : [];
+
+  if (!showGroups || !groups.length) {
+    return (
+      <Card
+        lang={cardLang}
+        item={item}
+        kind={kind}
+      />
+    );
+  }
+
+  return (
+    <div className="search-hit">
+      <Card lang={uiLang} item={item} kind="article" />
+      <div className="search-hit-langs">
+        {ui.searchAlsoAvailable ? (
+          <p className="search-also-label">{ui.searchAlsoAvailable}</p>
+        ) : null}
+        {groups.map((g) => (
+          <div key={g.lang} className="search-lang-group" data-lang={g.lang}>
+            <h4 className="search-lang-heading">{LANG_LABEL[g.lang]}</h4>
+            <div className="content-list">
+              {g.cards.map((c) => (
+                <Card key={c.key} lang={g.lang} item={c.item} kind="article" />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function SearchPage() {
   const { lang, ui } = useOutletContext();
   const [sp, setSp] = useSearchParams();
@@ -1050,6 +1110,11 @@ export function SearchPage() {
       cancelled = true;
     };
   }, []);
+  const articlesById = useMemo(() => {
+    const m = new Map();
+    for (const a of corpus?.articles || []) m.set(a.id, a);
+    return m;
+  }, [corpus]);
   const results = useMemo(() => {
     if (!corpus?.ok || !q.trim()) return [];
     const pool = [
@@ -1093,13 +1158,14 @@ export function SearchPage() {
           ) : !corpus ? (
             <p aria-busy="true">…</p>
           ) : results.length ? (
-            <div className="content-list">
+            <div className="content-list search-results">
               {results.map((r) => (
-                <Card
+                <SearchHit
                   key={`${r.kind}-${r.item.id}-${r.displayLang}`}
-                  lang={r.displayLang}
-                  item={r.item}
-                  kind={r.kind}
+                  result={r}
+                  uiLang={lang}
+                  articlesById={articlesById}
+                  ui={ui}
                 />
               ))}
             </div>

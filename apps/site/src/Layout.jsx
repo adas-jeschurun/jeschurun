@@ -86,12 +86,14 @@ function useSeoHead(lang) {
     const params = new URLSearchParams(location.search);
     const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
     const isArticles = rest === "/articles/" || rest === "/articles";
+    const isSearch = rest === "/search/" || rest === "/search";
     const isArchive = /^\/archive(\/|$)/.test(rest);
     const seo = seoFor(lang);
 
     const hrefParams = new URLSearchParams(location.search);
     hrefParams.delete("page");
-    const altQs = hrefParams.toString();
+    // Search canonical/hreflang drop ?q=; lang switcher (langHref) keeps it.
+    const altQs = isSearch ? "" : hrefParams.toString();
 
     // Section routes set title/description here; articles/material/issue own theirs.
     const section = routeSectionMeta(rest, lang, location.search);
@@ -143,7 +145,9 @@ function useSeoHead(lang) {
     const can = document.createElement("link");
     can.setAttribute("data-seo", "jes");
     can.rel = "canonical";
-    if (isArticles && page >= 2) {
+    if (isSearch) {
+      can.href = `${SITE_ORIGIN}/${lang}/search/`;
+    } else if (isArticles && page >= 2) {
       can.href = `${SITE_ORIGIN}/${lang}/articles/`;
     } else {
       const selfPath = `/${lang}${rest === "/" ? "/" : rest}`;

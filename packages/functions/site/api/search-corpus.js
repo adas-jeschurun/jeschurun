@@ -1,9 +1,10 @@
 import { json } from "../_lib/json.js";
 
-const CACHE_KEY = new Request("https://jeschurun.internal/search-corpus-v2");
+const CACHE_KEY = new Request("https://jeschurun.internal/search-corpus-v3");
 const CACHE_CONTROL = "public, max-age=300, stale-while-revalidate=86400";
 /** Keep enough body text for ranking without shipping full articles (~700KB → ~200KB). */
 const BODY_CHARS = 2000;
+const RELATED_LIMIT = 8;
 
 function clipBody(text) {
   const s = String(text || "");
@@ -70,12 +71,40 @@ async function loadBucket(db, kind, table, bucket) {
   return { bucket, items };
 }
 
+/** Attach top related article refs (id+slug only); client resolves titles from corpus. */
+async function attachRelated(db, articles) {
+  if (!articles.length) return;
+  const byId = new Map(articles.map((a) => [a.id, a]));
+  for (const a of articles) a.related = [];
+
+  const ids = articles.map((a) => a.id);
+  const placeholders = ids.map((_, i) => `?${i + 1}`).join(",");
+  const rel = await db
+    .prepare(
+      `SELECT article_id, related_id, score FROM related_articles WHERE article_id IN (${placeholders}) ORDER BY score DESC`,
+    )
+    .bind(...ids)
+    .all();
+
+  const counts = new Map();
+  for (const r of rel.results || []) {
+    const n = counts.get(r.article_id) || 0;
+    if (n >= RELATED_LIMIT) continue;
+    const parent = byId.get(r.article_id);
+    const related = byId.get(r.related_id);
+    if (!parent || !related) continue;
+    parent.related.push({ id: related.id, slug: related.slug });
+    counts.set(r.article_id, n + 1);
+  }
+}
+
 async function buildCorpus(db) {
   const [articles, answers, biographies] = await Promise.all([
     loadBucket(db, "article", "articles", "articles"),
     loadBucket(db, "answer", "answers", "answers"),
     loadBucket(db, "bio", "bios", "biographies"),
   ]);
+  await attachRelated(db, articles.items);
   return {
     ok: true,
     articles: articles.items,

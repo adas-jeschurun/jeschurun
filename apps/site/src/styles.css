@@ -647,6 +647,40 @@ body.rtl .footer-columns { text-align: start; }
   flex: 1 1 12rem; min-width: 0; padding: 10px;
   border: 1px solid var(--line); border-radius: 6px;
 }
+.search-results > .search-hit {
+  grid-column: 1 / -1;
+}
+.search-hit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.search-hit-langs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0 8px;
+  border-top: 1px solid var(--line);
+}
+.search-also-label {
+  margin: 0;
+  font-size: 0.92rem;
+  color: #5a6570;
+}
+.search-lang-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.search-lang-heading {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+}
+.search-lang-group .content-list {
+  margin-top: 8px;
+}
 .article-body img { max-width: 100%; height: auto; }
 .article-body figure { margin: 1.2rem 0; }
 .downloads a { margin-inline-end: 10px; }

@@ -220,10 +220,42 @@ describe("ui gates", () => {
     expect(bioSelect).toMatch(/FROM \$\{table\}/);
     // Edge Cache API + batched translations + clipped body (payload budget)
     expect(src).toMatch(/caches\.default/);
-    expect(src).toMatch(/search-corpus-v2/);
+    expect(src).toMatch(/search-corpus-v3/);
     expect(src).toMatch(/Promise\.all/);
     expect(src).toMatch(/BODY_CHARS/);
     expect(src).toMatch(/parent_id IN/);
+    expect(src).toMatch(/attachRelated|related_articles/);
+    expect(src).toMatch(/related\.push\(\{\s*id:/);
+  });
+
+  it("search canonical drops q; hreflang clean; langHref keeps q", () => {
+    const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
+    expect(layout).toMatch(/isSearch/);
+    expect(layout).toMatch(/altQs = isSearch \? ""/);
+    expect(layout).toMatch(/\$\{SITE_ORIGIN\}\/\$\{lang\}\/search\//);
+    // langHref still builds qs from search (keeps ?q=)
+    expect(layout).toMatch(/function langHref/);
+    expect(layout).toMatch(/params\.delete\("page"\)/);
+    expect(layout).toMatch(/const qs = params\.toString\(\)/);
+    // SearchAction keeps q={search_term_string}
+    expect(layout).toMatch(/search\/\?q=\{search_term_string\}/);
+  });
+
+  it("search hit lang groups resolve related from corpus", () => {
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/search-hit/);
+    expect(pages).toMatch(/search-lang-group/);
+    expect(pages).toMatch(/searchLangGroups/);
+    expect(pages).toMatch(/LANG_LABEL/);
+    expect(pages).toMatch(/searchAlsoAvailable/);
+    expect(pages).toMatch(/articlesById/);
+    // h4 (not h3-under-h3) for lang section titles
+    expect(pages).toMatch(/<h4 className="search-lang-heading">/);
+    const css = readFileSync(resolve(root, "apps/site/src/styles.css"), "utf8");
+    expect(css).toMatch(/\.search-hit/);
+    expect(css).toMatch(/\.search-lang-group/);
+    const shared = readFileSync(resolve(root, "packages/shared/src/index.js"), "utf8");
+    expect(shared.match(/searchAlsoAvailable:/g)?.length).toBe(5);
   });
 
   it("mobile nav clears header; menu not mid-viewport", () => {
