@@ -12,19 +12,13 @@ function materialKey(kind, slug, lang, adminPreview) {
   return `${kind}:${slug}:${lang || "all"}:${adminPreview || ""}`;
 }
 
-/** Sync peek — used for first React paint without waiting on useEffect. */
-export function peekMaterial(kind, slug, opts = {}) {
-  const key = materialKey(kind, slug, opts.lang || "", opts.adminPreview || "");
-  return materialCache.get(key) || null;
-}
-
 function seedMaterial(kind, slug, lang, payload) {
   if (!payload?.ok) return;
   materialCache.set(materialKey(kind, slug, lang, ""), payload);
 }
 
 /** Edge middleware embeds #jes-bootstrap so article body paints before JS. */
-function ingestEdgeBootstrap() {
+export function ingestEdgeBootstrap() {
   const el = document.getElementById("jes-bootstrap");
   if (!el) return null;
   try {
@@ -35,6 +29,25 @@ function ingestEdgeBootstrap() {
     }
   } catch {
     /* ignore bad bootstrap */
+  }
+  return null;
+}
+
+/** Sync peek — re-ingest edge bootstrap on miss so first paint never waits on fetch. */
+export function peekMaterial(kind, slug, opts = {}) {
+  const lang = opts.lang || "";
+  const adminPreview = opts.adminPreview || "";
+  const key = materialKey(kind, slug, lang, adminPreview);
+  if (materialCache.has(key)) return materialCache.get(key);
+  if (adminPreview) return null;
+  const boot = ingestEdgeBootstrap();
+  if (
+    boot?.kind === kind &&
+    boot?.slug === slug &&
+    (boot.lang || "") === lang &&
+    boot.payload?.ok
+  ) {
+    return materialCache.get(key) || boot.payload;
   }
   return null;
 }

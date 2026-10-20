@@ -58,6 +58,10 @@ describe("content load path", () => {
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/peekMaterial\(kind, slug/);
     expect(pages).toMatch(/jes-edge-content/);
+    expect(pages).toMatch(/releaseEdgeArticle|edgeArticleStillOnPage/);
+    expect(api).toMatch(/ingestEdgeBootstrap/);
+    const app = readFileSync(resolve(root, "apps/site/src/App.jsx"), "utf8");
+    expect(app).toMatch(/kickMaterialFromLocation/);
   });
 
   it("edge middleware injects article HTML before JS", () => {
@@ -74,6 +78,8 @@ describe("content load path", () => {
     );
     expect(edge).toMatch(/jes-edge-content/);
     expect(edge).toMatch(/jes-bootstrap/);
+    expect(edge).toMatch(/jes-edge-css/);
+    expect(mw).toMatch(/edgeCss/);
     const hooks = readFileSync(resolve(root, "apps/site/src/hooks.js"), "utf8");
     expect(hooks).toMatch(/requestIdleCallback|isMaterialPath/);
   });

@@ -213,13 +213,16 @@ body {
 
 .page-main { padding: 24px 0 40px; min-height: 50vh; }
 
-/* Edge-injected article: visible before JS; removed when React hydrates. */
+/* Edge-injected article: visible before JS; kept until React body is ready. */
 .jes-edge-content {
   max-width: 980px;
   margin: 0 auto;
   padding: 24px 16px 40px;
   min-width: 0;
   width: 100%;
+}
+.jes-edge-content[hidden] {
+  display: none !important;
 }
 .jes-edge-content h1 {
   font-family: var(--font-display);

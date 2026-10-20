@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom";
 import { LANGS } from "@jeschurun/shared";
+import { kickMaterialFromLocation } from "./api.js";
 import { PUBLIC_BIOS } from "./features.js";
 import { Layout } from "./Layout.jsx";
 import {
@@ -17,6 +19,15 @@ import {
   RedirectHome,
   SearchPage,
 } from "./pages.jsx";
+
+/** Start material fetch on SPA navigations (module kick only runs once). */
+function MaterialRouteKick() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    kickMaterialFromLocation(pathname);
+  }, [pathname]);
+  return null;
+}
 
 /** Client redirect to /:lang/ (same pattern as former /current). */
 function RedirectLangHome() {
@@ -39,7 +50,9 @@ function LangLayout() {
 
 export function App() {
   return (
-    <Routes>
+    <>
+      <MaterialRouteKick />
+      <Routes>
       <Route path="/" element={<RedirectHome />} />
       <Route path="/:lang" element={<LangLayout />}>
         <Route element={<Layout />}>
@@ -74,5 +87,6 @@ export function App() {
         <Route path="article/:slug/print" element={<PrintArticlePage />} />
       </Route>
     </Routes>
+    </>
   );
 }

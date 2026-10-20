@@ -534,6 +534,32 @@ function Blocks({ body }) {
   );
 }
 
+function edgeArticleStillOnPage() {
+  return !!document.getElementById("jes-edge-content");
+}
+
+/** Drop edge HTML only after React article body is committed (no blank gap). */
+function releaseEdgeArticle() {
+  const edge = document.getElementById("jes-edge-content");
+  if (!edge) return;
+  const reactBody = document.querySelector("#root .material .article-body");
+  if (!reactBody || !reactBody.textContent?.trim()) return;
+  edge.setAttribute("hidden", "");
+  edge.setAttribute("aria-hidden", "true");
+  // Remove after paint so a failed React frame can still show edge.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const still = document.getElementById("jes-edge-content");
+      const body = document.querySelector("#root .material .article-body");
+      if (still && body?.textContent?.trim()) still.remove();
+      else if (still) {
+        still.removeAttribute("hidden");
+        still.removeAttribute("aria-hidden");
+      }
+    });
+  });
+}
+
 export function MaterialPage({ kind }) {
   const { lang, ui } = useOutletContext();
   const { slug } = useParams();
@@ -547,6 +573,13 @@ export function MaterialPage({ kind }) {
   );
   useEffect(() => {
     let cancelled = false;
+    // Bootstrap already seeded — keep showing it; refresh in background.
+    const peeked = adminPreview
+      ? null
+      : peekMaterial(kind, slug, { lang });
+    if (peeked?.ok) {
+      setMat((prev) => (prev?.ok ? prev : peeked));
+    }
     fetchMaterial(kind, slug, {
       lang,
       adminPreview: adminPreview || undefined,
@@ -557,9 +590,9 @@ export function MaterialPage({ kind }) {
       cancelled = true;
     };
   }, [kind, slug, lang, adminPreview]);
-  // Drop edge SSR sibling once React owns the article (avoids duplicate text).
+  // Keep #jes-edge-content until React has real article text (avoids … blank).
   useLayoutEffect(() => {
-    if (mat?.ok) document.getElementById("jes-edge-content")?.remove();
+    if (mat?.ok) releaseEdgeArticle();
   }, [mat]);
   useEffect(() => {
     if (mat?.material?.id && !adminPreview) {
@@ -630,7 +663,11 @@ export function MaterialPage({ kind }) {
       document.getElementById(id)?.remove();
     };
   }, [kind, m, title, d.summary, lang, ui.publisher]);
-  if (!mat) return <p>…</p>;
+  // Edge HTML is the visible body until bootstrap/cache is ready — never flash ….
+  if (!mat) {
+    if (typeof document !== "undefined" && edgeArticleStillOnPage()) return null;
+    return <p>…</p>;
+  }
   if (!mat.ok || !m) return <NotFoundPage />;
   return (
     <article className="material">
