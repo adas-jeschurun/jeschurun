@@ -107,6 +107,23 @@ function HomeSkeleton({ ui }) {
   );
 }
 
+/** Shared list placeholder — never flash a bare "…" on catalog wait. */
+function ListSkeleton({ title }) {
+  return (
+    <div className="list-skeleton" aria-busy="true" aria-live="polite">
+      {title ? <h1>{title}</h1> : null}
+      <div className="content-list">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="content-card skeleton-card" aria-hidden="true">
+            <div className="skeleton-line skeleton-line--card" />
+            <div className="skeleton-line skeleton-line--short" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** Localized 404 for unknown routes and missing materials/issues. */
 export function NotFoundPage() {
   const { lang, ui } = useOutletContext();
@@ -277,7 +294,7 @@ function IssueView({ issue, lang, ui, featured = false }) {
 export function ArchivePage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
-  if (!data?.ok) return <p>…</p>;
+  if (!data?.ok) return <ListSkeleton title={ui.archive} />;
   const currentId = data.currentIssue?.id;
   const archived = pastPublishedIssues(data.issues, data.currentIssue).filter(
     (iss) => iss.id !== currentId,
@@ -343,7 +360,7 @@ export function IssuePage() {
       setDocumentTitle(seoFor(lang).brand);
     };
   }, [pageTitle, lang, d?.summary]);
-  if (!data?.ok) return <p>…</p>;
+  if (!data?.ok) return <ListSkeleton />;
   if (!issue) return <NotFoundPage />;
   return <IssueView issue={issue} lang={lang} ui={ui} />;
 }
@@ -418,7 +435,7 @@ export function ArticlesPage() {
     setMetaDescription(pack.description);
   }, [data?.ok, lang, ui.articles, page, tagLabel]);
 
-  if (!data?.ok) return <p>…</p>;
+  if (!data?.ok) return <ListSkeleton title={ui.articles} />;
 
   return (
     <div>
@@ -877,7 +894,7 @@ export function AskRavPage() {
 export function BiosPage() {
   const { lang, ui } = useOutletContext();
   const { data } = useCatalog();
-  if (!data?.ok) return <p>…</p>;
+  if (!data?.ok) return <ListSkeleton title={ui.bios} />;
   const bios = data.biographies || [];
   return (
     <div>
