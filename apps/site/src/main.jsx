@@ -1,3 +1,6 @@
+// Eager material/catalog side-effects before React boot (overlaps parse).
+import "./api.js";
+import "./hooks.js";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";

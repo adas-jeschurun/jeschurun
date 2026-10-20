@@ -5,12 +5,54 @@ export async function fetchCatalog() {
   return r.json();
 }
 
-export async function fetchMaterial(kind, slug, opts = {}) {
-  const q = new URLSearchParams({ kind, slug });
-  if (opts.adminPreview) q.set("admin_preview", opts.adminPreview);
-  const r = await fetch(`/api/material?${q}`);
-  return r.json();
+const materialCache = new Map();
+const materialInflight = new Map();
+
+function materialKey(kind, slug, lang, adminPreview) {
+  return `${kind}:${slug}:${lang || "all"}:${adminPreview || ""}`;
 }
+
+/** Shared material fetch — reuses preload / module-eager requests. */
+export function ensureMaterial(kind, slug, opts = {}) {
+  const lang = opts.lang || "";
+  const adminPreview = opts.adminPreview || "";
+  const key = materialKey(kind, slug, lang, adminPreview);
+  if (materialCache.has(key)) return Promise.resolve(materialCache.get(key));
+  if (materialInflight.has(key)) return materialInflight.get(key);
+
+  const q = new URLSearchParams({ kind, slug });
+  if (lang) q.set("lang", lang);
+  if (adminPreview) q.set("admin_preview", adminPreview);
+  const p = fetch(`/api/material?${q}`, { credentials: "omit" })
+    .then((r) => r.json())
+    .then((d) => {
+      materialCache.set(key, d);
+      materialInflight.delete(key);
+      return d;
+    })
+    .catch((e) => {
+      materialInflight.delete(key);
+      throw e;
+    });
+  materialInflight.set(key, p);
+  return p;
+}
+
+export async function fetchMaterial(kind, slug, opts = {}) {
+  return ensureMaterial(kind, slug, opts);
+}
+
+/** Start material fetch from the current URL as soon as JS evaluates. */
+export function kickMaterialFromLocation(pathname = location.pathname) {
+  const m = String(pathname).match(
+    /^\/(he|en|ru|de|fr)\/(article|answer|biography)\/([^/]+)/,
+  );
+  if (!m) return;
+  const kind = m[2] === "biography" ? "bio" : m[2];
+  ensureMaterial(kind, m[3], { lang: m[1] }).catch(() => {});
+}
+
+kickMaterialFromLocation();
 
 /** Module-level corpus cache — search page only; avoid refetch on lang switch. */
 let searchCorpusCache = null;

@@ -540,8 +540,17 @@ export function MaterialPage({ kind }) {
   const adminPreview = searchParams.get("admin_preview") || "";
   const [mat, setMat] = useState(null);
   useEffect(() => {
-    fetchMaterial(kind, slug, { adminPreview: adminPreview || undefined }).then(setMat);
-  }, [kind, slug, adminPreview]);
+    let cancelled = false;
+    fetchMaterial(kind, slug, {
+      lang,
+      adminPreview: adminPreview || undefined,
+    }).then((d) => {
+      if (!cancelled) setMat(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [kind, slug, lang, adminPreview]);
   useEffect(() => {
     if (mat?.material?.id && !adminPreview) {
       trackEvent({
@@ -670,8 +679,14 @@ export function PrintArticlePage() {
   const rtl = lang === "he";
   const [mat, setMat] = useState(null);
   useEffect(() => {
-    fetchMaterial("article", slug).then(setMat);
-  }, [slug]);
+    let cancelled = false;
+    fetchMaterial("article", slug, { lang }).then((d) => {
+      if (!cancelled) setMat(d);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, lang]);
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
