@@ -867,7 +867,11 @@ export function PrintArticlePage() {
   if (!m) return <p className="print-sheet">{ui.notFound}</p>;
   return (
     <article className="print-sheet" dir={rtl ? "rtl" : "ltr"}>
-      <img className="print-seal" src="/assets/publisher-seal.png" alt="" />
+      <img
+        className="print-masthead"
+        src={`/assets/masthead-${lang}.png`}
+        alt="Jeschurun"
+      />
       <p className="print-source">
         <a href={articleUrl}>{articleUrl}</a>
       </p>

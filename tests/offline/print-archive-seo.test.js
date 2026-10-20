@@ -28,7 +28,9 @@ describe("print archive dates seo favicon", () => {
       pages.indexOf("export function PrintArticlePage"),
       pages.indexOf("export function AskRavPage"),
     );
-    expect(printFn).toMatch(/publisher-seal\.png/);
+    expect(printFn).toMatch(/masthead-\$\{lang\}\.png/);
+    expect(printFn).toMatch(/print-masthead/);
+    expect(printFn).not.toMatch(/publisher-seal\.png/);
     expect(printFn).toMatch(/articlePublicUrl/);
     expect(printFn).toMatch(/<Blocks body=\{d\.body\}/);
     expect(printFn).toMatch(/noindex, nofollow/);
@@ -39,6 +41,14 @@ describe("print archive dates seo favicon", () => {
     expect(articlePublicUrl("ru", "courage")).toBe(
       "https://jeschurun.org/ru/article/courage/",
     );
+    expect(articlePublicUrl("he", "courage")).not.toMatch(/^\/https?:/);
+    for (const lang of LANGS) {
+      const url = articlePublicUrl(lang, "courage-of-a-minority");
+      expect(url).toBe(
+        `https://jeschurun.org/${lang}/article/courage-of-a-minority/`,
+      );
+      expect(url.startsWith("https://")).toBe(true);
+    }
     const robots = readFileSync(resolve(root, "apps/site/public/robots.txt"), "utf8");
     expect(robots).toMatch(/Disallow: \/\*\/article\/\*\/print\//);
     const robotsFn = readFileSync(
