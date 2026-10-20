@@ -51,7 +51,7 @@ describe("ui gates", () => {
     expect(searchGeo).toMatch(/nominatim\.openstreetmap\.org/);
   });
 
-  it("archive first in main nav and still in footer", () => {
+  it("archive third in main nav and still in footer", () => {
     const layout = readFileSync(resolve(root, "apps/site/src/Layout.jsx"), "utf8");
     expect(layout).toMatch(/footer-columns/);
     expect(layout).toMatch(/footer-nav/);
@@ -59,7 +59,12 @@ describe("ui gates", () => {
     const navEnd = layout.indexOf("];", navStart);
     const navBlock = layout.slice(navStart, navEnd);
     expect(navBlock).toMatch(/\["archive",\s*ui\.archive\]/);
-    expect(navBlock.indexOf("archive")).toBeLessThan(navBlock.indexOf('ui.home'));
+    const homeAt = navBlock.indexOf('ui.home');
+    const articlesAt = navBlock.indexOf("articles");
+    const archiveAt = navBlock.indexOf("archive");
+    expect(homeAt).toBeGreaterThan(-1);
+    expect(articlesAt).toBeGreaterThan(homeAt);
+    expect(archiveAt).toBeGreaterThan(articlesAt);
     expect(navBlock).not.toMatch(/current/);
     expect(layout).toMatch(/\/\$\{lang\}\/archive\//);
     expect(layout).not.toMatch(/\/\$\{lang\}\/current\//);
