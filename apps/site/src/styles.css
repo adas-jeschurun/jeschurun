@@ -981,8 +981,22 @@ html.a11y-pause-animations *::after {
   padding: 1rem 1.25rem 2rem;
   background: #fff;
 }
-.print-seal { width: 72px; height: auto; }
+.print-masthead {
+  display: block;
+  width: auto;
+  height: clamp(56px, 14vw, 88px);
+  max-width: min(72vw, 360px);
+  margin: 0 0 0.5rem;
+  object-fit: contain;
+}
 .print-source { margin: 0.75rem 0; word-break: break-all; }
+.print-source a {
+  color: inherit;
+  text-decoration: underline;
+  /* Keep absolute URL readable; never show a leading slash before https:// */
+  unicode-bidi: isolate;
+  direction: ltr;
+}
 .print-action { margin-top: 1.5rem; }
 @media print {
   .print-action,
