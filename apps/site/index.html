@@ -15,12 +15,41 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <!-- Start catalog fetch in parallel with JS parse/boot (SPA still needs it). -->
     <link rel="preload" href="/api/content" as="fetch" crossorigin="anonymous" />
+    <script>
+      (function () {
+        var m = location.pathname.match(
+          /^\/(he|en|ru|de|fr)\/(article|answer|biography)\/([^/]+)/,
+        );
+        if (!m) return;
+        var kind = m[2] === "biography" ? "bio" : m[2];
+        var link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "fetch";
+        link.crossOrigin = "anonymous";
+        link.href =
+          "/api/material?kind=" +
+          encodeURIComponent(kind) +
+          "&slug=" +
+          encodeURIComponent(m[3]) +
+          "&lang=" +
+          encodeURIComponent(m[1]);
+        document.head.appendChild(link);
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap"
+      />
+    </noscript>
     <script id="jes-a11y-bootstrap">
       (function () {
         try {
