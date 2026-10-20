@@ -77,16 +77,17 @@ function rewriteHtml(html, { pathMatch, inject, catalogBoot, catalogSource }) {
     const headBits = [
       out.includes("id=\"jes-shell-css\"") ? "" : SITE_SHELL_CSS,
       inject?.edgeCss || "",
-      inject?.bootScript || "",
+      // Catalog only on non-material routes (see catalogPromise).
       catalogBoot || "",
     ].join("");
     out = out.replace("</head>", `${headBits}</head>`);
   }
 
+  // Edge body first, then bootstrap JSON, then #root — paints text before parsing payload.
   if (inject?.edgeHtml && out.includes('<div id="root"></div>')) {
     out = out.replace(
       '<div id="root"></div>',
-      `${inject.edgeHtml}<div id="root"></div>`,
+      `${inject.edgeHtml}${inject.bootScript || ""}<div id="root"></div>`,
     );
   }
 
@@ -118,9 +119,10 @@ export async function onRequest(context) {
       ? resolveMaterial(context.env, pathMatch).catch(() => null)
       : null;
 
-  // Catalog for every document navigation — seeds React before /api/content.
+  // Catalog for list/home shells — NOT on article/material routes (keeps HTML small,
+  // so #jes-edge-content paints without waiting on ~80KB catalog JSON).
   const catalogPromise =
-    isGet && !isAssetOrApi && context.env?.CONTENT_DB
+    isGet && !isAssetOrApi && !pathMatch && context.env?.CONTENT_DB
       ? resolveCatalog(context.env, context).catch(() => null)
       : null;
 

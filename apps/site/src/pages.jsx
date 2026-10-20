@@ -555,15 +555,16 @@ function edgeArticleStillOnPage() {
   return !!document.getElementById("jes-edge-content");
 }
 
-/** Drop edge HTML only after React article body is committed (no blank gap). */
+/** Drop edge HTML only after React article body is committed (no blank gap).
+ * Edge CSS keeps #root display:none until edge[hidden] — swap is atomic. */
 function releaseEdgeArticle() {
   const edge = document.getElementById("jes-edge-content");
   if (!edge) return;
   const reactBody = document.querySelector("#root .material .article-body");
   if (!reactBody || !reactBody.textContent?.trim()) return;
+  // Mark handoff: :has(#jes-edge-content:not([hidden])) no longer matches → #root shows.
   edge.setAttribute("hidden", "");
   edge.setAttribute("aria-hidden", "true");
-  // Remove after paint so a failed React frame can still show edge.
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const still = document.getElementById("jes-edge-content");
@@ -680,9 +681,13 @@ export function MaterialPage({ kind }) {
       document.getElementById(id)?.remove();
     };
   }, [kind, m, title, d.summary, lang, ui.publisher]);
-  // Edge HTML is the visible body until bootstrap/cache is ready — never flash ….
+  // Edge HTML / bootstrap is the visible body — never flash … on article routes.
   if (!mat) {
-    if (typeof document !== "undefined" && edgeArticleStillOnPage()) return null;
+    if (typeof document !== "undefined") {
+      if (edgeArticleStillOnPage()) return null;
+      // Bootstrap JSON still present (edge may be mid-handoff) — keep waiting, no ….
+      if (!adminPreview && document.getElementById("jes-bootstrap")) return null;
+    }
     return <p>…</p>;
   }
   if (!mat.ok || !m) return <NotFoundPage />;

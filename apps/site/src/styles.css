@@ -224,6 +224,10 @@ body {
 .jes-edge-content[hidden] {
   display: none !important;
 }
+/* Article handoff: keep React chrome invisible while edge body is the live text. */
+body:has(#jes-edge-content:not([hidden])) #root {
+  display: none !important;
+}
 .jes-edge-content h1 {
   font-family: var(--font-display);
   font-size: clamp(1.45rem, 4vw, 1.85rem);

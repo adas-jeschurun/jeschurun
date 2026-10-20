@@ -100,12 +100,15 @@ describe("content load path", () => {
     expect(mw).toMatch(/jes-catalog-bootstrap|buildCatalogBootstrapScript/);
     expect(mw).toMatch(/x-jes-catalog-boot/);
     expect(mw).toMatch(/SITE_SHELL_CSS|jes-shell-css/);
+    // Article routes skip catalog so edge body is not blocked by ~80KB JSON.
+    expect(mw).toMatch(/!pathMatch/);
     const edge = readFileSync(
       resolve(root, "packages/functions/site/_lib/edge-article-html.js"),
       "utf8",
     );
     expect(edge).toMatch(/jes-catalog-bootstrap/);
     expect(edge).toMatch(/jes-shell-css/);
+    expect(edge).toMatch(/body:has\(#jes-edge-content/);
     const hooks = readFileSync(resolve(root, "apps/site/src/hooks.js"), "utf8");
     expect(hooks).toMatch(/ingestCatalogBootstrap/);
     expect(hooks).toMatch(/jes-catalog-bootstrap/);
@@ -114,5 +117,22 @@ describe("content load path", () => {
     const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
     expect(pages).toMatch(/ListSkeleton/);
     expect(pages).not.toMatch(/if \(!data\?\.ok\) return <p>…<\/p>/);
+    expect(pages).toMatch(/jes-bootstrap/);
+  });
+
+  it("article template paints edge before React root", () => {
+    const mw = readFileSync(
+      resolve(root, "packages/functions/site/_middleware.js"),
+      "utf8",
+    );
+    expect(mw).toMatch(/inject\.edgeHtml\}\$\{inject\.bootScript/);
+    const edge = readFileSync(
+      resolve(root, "packages/functions/site/_lib/edge-article-html.js"),
+      "utf8",
+    );
+    expect(edge).toMatch(/display:none!important/);
+    const pages = readFileSync(resolve(root, "apps/site/src/pages.jsx"), "utf8");
+    expect(pages).toMatch(/edgeArticleStillOnPage/);
+    expect(pages).toMatch(/releaseEdgeArticle/);
   });
 });
